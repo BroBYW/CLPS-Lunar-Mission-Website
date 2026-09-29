@@ -1,0 +1,36 @@
+# Published points used only for validation (PLAN.md §12, item 4). Not shipped to the web app.
+# sun_mean: time-averaged visible fraction of the solar disk (%); sun_any: % of time any part visible;
+# sun_full: % of time the whole disk is visible; earth_*: the same for Earth. longest_dark_h: hours.
+# sun_lit: % of time lit by the study's own definition (Bussey: partial blockage via a sigmoid; Speyerer: image-based).
+# height_m: observer height used by the study. span: the period the study covered, where known.
+
+studies:
+  bussey2010: {label: "Bussey et al. 2010", dem: "Kaguya, 474 m/px", step: "12 h", span: [2017, 2037], span_note: "study period differs; 2017–2037 used as a full nodal cycle"}
+  mazarico2011: {label: "Mazarico et al. 2011 (as tabulated by Gläser 2018)", dem: "LOLA, 240 m/px", step: "6 h", span: [2017, 2037], span_note: "study covered several 18.6-year cycles"}
+  speyerer2013: {label: "Speyerer & Robinson 2013", dem: "WAC images, 100 m/px", step: "images", span: [2017, 2037], span_note: "image-based over about one year; not like-for-like"}
+  glaser2014: {label: "Gläser et al. 2014", dem: "LOLA, 20 m/px", step: "1 h", span: [2017, 2036], span_note: "19 years; exact years not in the abstract"}
+  glaser2018: {label: "Gläser et al. 2018", dem: "LOLA, 20 m/px", step: "1 h", span: [2017, 2037]}
+  bryant2009: {label: "Bryant 2009", dem: "Goldstone radar, 40 m", step: "multiyear", span: [2017, 2037], span_note: "multiyear averages; pre-LOLA coordinates"}
+
+points:
+  - {id: bussey-a, study: bussey2010, lat: -89.68, lon: -166.0, height_m: 0, sun_lit: 81}
+  - {id: bussey-b, study: bussey2010, lat: -89.44, lon: -141.8, height_m: 0, sun_lit: 82}
+  - {id: bussey-c, study: bussey2010, lat: -88.71, lon: -68.7, height_m: 0, sun_lit: 85}
+  - {id: bussey-d, study: bussey2010, lat: -88.74, lon: 124.5, height_m: 0, sun_lit: 86}
+  - {id: bussey-m1, study: bussey2010, lat: -86.04, lon: 2.7, height_m: 0, sun_lit: 74}
+  - {id: bussey-m2, study: bussey2010, lat: -86.00, lon: -2.9, height_m: 0, sun_lit: 74}
+  - {id: glaser18-c1, study: glaser2018, lat: -89.4398, lon: -137.17, height_m: 2, sun_mean: 88.0, sun_any: 92.1, longest_dark_h: 112}
+  - {id: glaser18-c1-surface, study: glaser2018, lat: -89.4505, lon: -137.16, height_m: 0, sun_mean: 76.0, sun_any: 81.3, longest_dark_h: 268}
+  - {id: glaser18-c2, study: glaser2018, lat: -89.3130, lon: -114.02, height_m: 2, sun_mean: 78.1, sun_any: 82.0, longest_dark_h: 165}
+  - {id: glaser18-shackleton, study: glaser2018, lat: -89.6866, lon: -162.81, height_m: 2, sun_mean: 85.5, sun_any: 89.4, longest_dark_h: 66}
+  - {id: glaser18-shackleton-surface, study: glaser2018, lat: -89.7849, lon: -156.03, height_m: 0, sun_mean: 81.0, sun_any: 85.5, longest_dark_h: 221}
+  - {id: mazarico11-c1, study: mazarico2011, lat: -89.45, lon: -137.31, height_m: 0, sun_mean: 89.0, sun_any: 92.7}
+  - {id: mazarico11-shackleton, study: mazarico2011, lat: -89.78, lon: -155.73, height_m: 0, sun_mean: 86.7, sun_any: 90.5}
+  - {id: glaser14-cr1-spot2, study: glaser2014, lat: -89.4399, lon: -137.1476, height_m: 2, sun_mean: 87.9, sun_any: 92.3, longest_dark_h: 110.9}
+  - {id: glaser14-cr1-spot4, study: glaser2014, lat: -89.4544, lon: -137.1555, height_m: 10, sun_mean: 91.9, sun_any: 95.66, longest_dark_h: 76.1}
+  - {id: speyerer13-s2, study: speyerer2013, lat: -89.740, lon: -158.8, height_m: 0, sun_lit: 71.6, longest_dark_h: 145}
+  - {id: speyerer13-s5, study: speyerer2013, lat: -89.418, lon: -138.7, height_m: 0, sun_lit: 63.3, longest_dark_h: 308}
+  - {id: bryant-b1, study: bryant2009, lat: -89.388, lon: -137.810, height_m: 2, sun_any: 97.01, sun_full: 91.67, earth_any: 65.16, earth_full: 51.33}
+  - {id: bryant-c1, study: bryant2009, lat: -88.657, lon: -70.688, height_m: 2, sun_any: 90.01, sun_full: 83.12, earth_any: 70.97, earth_full: 57.14}
+  - {id: bryant-ma, study: bryant2009, lat: -86.037, lon: 1.704, height_m: 2, sun_any: 82.08, sun_full: 74.49, earth_any: 100, earth_full: 94.68}
+  - {id: bryant-lb, study: bryant2009, lat: -84.722, lon: 39.470, height_m: 2, sun_any: 79.06, sun_full: 75.82, earth_any: 100, earth_full: 100}
