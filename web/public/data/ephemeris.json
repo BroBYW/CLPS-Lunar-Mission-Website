@@ -1,0 +1,29 @@
+{
+  "description": "Moon-centered apparent positions of the Sun and Earth, hourly on the UTC grid",
+  "format": "float32 little-endian, row-major (count x 6)",
+  "columns": [
+    "sun_x",
+    "sun_y",
+    "sun_z",
+    "earth_x",
+    "earth_y",
+    "earth_z"
+  ],
+  "units": "km",
+  "frame": "MOON_ME",
+  "abcorr": "LT+S",
+  "observer": "MOON",
+  "t0_utc": "2026-01-01T00:00:00Z",
+  "t_end_utc": "2031-01-01T00:00:00Z",
+  "step_s": 3600,
+  "count": 43825,
+  "kernels": [
+    "naif0012.tls",
+    "pck00011.tpc",
+    "de440s.bsp",
+    "moon_pa_de440_200625.bpc",
+    "moon_de440_250416.tf"
+  ],
+  "toolkit": "CSPICE_N0067",
+  "generated_utc": "2026-09-29T08:33:32Z"
+}
