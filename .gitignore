@@ -1,0 +1,31 @@
+# Web
+node_modules/
+web/dist/
+.vercel/
+*.local
+.env
+.env.*
+!.env.example
+
+# Python pipeline
+pipeline/.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# SPICE kernels are downloaded by pipeline/scripts/fetch_kernels.py
+pipeline/kernels/*
+!pipeline/kernels/README.md
+
+# Raw elevation maps and HTTP caches: never commit
+pipeline/raw/
+pipeline/validation/cache/
+
+# Local tool settings
+.claude/
+
+# OS and editors
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

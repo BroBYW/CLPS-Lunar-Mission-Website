@@ -1,0 +1,58 @@
+@import 'tailwindcss';
+@import '@fontsource-variable/jost';
+@import '@fontsource-variable/atkinson-hyperlegible-next';
+
+/* Design tokens (PLAN.md §9): color means light. Only the Sun and Earth carry hue. */
+@theme {
+  --color-sky: #000000;
+  --color-shadow: #1a1916;
+  --color-shadow-2: #262420;
+  --color-regolith: #5e5950;
+  --color-dust: #b8b2a7;
+  --color-bright: #ede9e1;
+  --color-sun: #ffc53d;
+  --color-earth: #5ab4ff;
+  --color-alert: #ff8f7d;
+
+  --font-display: 'Jost Variable', ui-sans-serif, system-ui, sans-serif;
+  --font-sans: 'Atkinson Hyperlegible Next Variable', ui-sans-serif, system-ui, sans-serif;
+
+  /* Type scale, ratio 1.25 */
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.25rem;
+  --text-xl: 1.5625rem;
+  --text-2xl: 1.9375rem;
+  --text-3xl: 2.4375rem;
+}
+
+@layer base {
+  html {
+    background: var(--color-sky);
+    color: var(--color-bright);
+    font-family: var(--font-sans);
+    color-scheme: dark;
+  }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    background: var(--color-sky);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  ::selection {
+    background: var(--color-earth);
+    color: var(--color-sky);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-bright);
+    outline-offset: 2px;
+  }
+}
+
+@utility tabular {
+  font-variant-numeric: tabular-nums lining-nums;
+}
