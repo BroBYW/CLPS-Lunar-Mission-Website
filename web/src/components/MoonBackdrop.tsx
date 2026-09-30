@@ -35,6 +35,7 @@ export function MoonBackdrop({ ephemeris, timeMs, ref }: { ephemeris: Ephemeris;
         if (cancelled || !container.current) return
         const mv = mod.createMoonViewer(container.current, { interactive: false, showBodies: false })
         mv.viewer.cesiumWidget.creditContainer.setAttribute('style', 'display:none') // credited in the page footer
+        void mod.addPolarCap(mv.viewer)
         api.current = { mod, mv }
         if (import.meta.env.DEV) (window as unknown as { __moon: unknown }).__moon = { viewer: mv.viewer, Cesium: mod.Cesium }
         // South pole toward the camera, the Sun's side partly in view

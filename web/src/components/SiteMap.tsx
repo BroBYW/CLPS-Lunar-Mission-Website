@@ -36,7 +36,7 @@ export function SiteMap({
   const sel = sites.find((s) => s.id === selected)
 
   return (
-    <figure className="mt-6">
+    <figure>
       <svg
         viewBox={`0 0 ${SIZE} ${SIZE}`}
         className="block w-full rounded-sm"

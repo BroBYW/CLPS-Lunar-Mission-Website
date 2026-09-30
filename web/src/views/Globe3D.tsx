@@ -42,47 +42,34 @@ export default function Globe3D({ data }: { data: AppData }) {
   const heightM = data.horizons.heightsM[heightIndex]
   const v6 = useRef(new Float64Array(6))
 
+  const layer = useRef<{ select: (id: string) => void; destroy: () => void } | null>(null)
+
   // Create the viewer once
   useEffect(() => {
     let cancelled = false
-    import('../globe/moonViewer.ts')
-      .then((mod) => {
+    Promise.all([import('../globe/moonViewer.ts'), import('../globe/siteLayer.ts')])
+      .then(([mod, sl]) => {
         if (cancelled || !container.current) return
         const mv = mod.createMoonViewer(container.current, { interactive: true, showBodies: true })
         api.current = { mod, mv }
-        const { Cesium } = mod
-        for (const s of data.sites) {
-          mv.viewer.entities.add({
-            id: `site-${s.id}`,
-            position: Cesium.Cartesian3.fromDegrees(s.lon, s.lat, 0),
-            point: { pixelSize: 9, color: Cesium.Color.fromCssColorString('#ede9e1'), outlineColor: Cesium.Color.BLACK, outlineWidth: 2 },
-            label: {
-              text: s.name,
-              font: '14px "Atkinson Hyperlegible Next Variable", sans-serif',
-              fillColor: Cesium.Color.fromCssColorString('#ede9e1'),
-              outlineColor: Cesium.Color.BLACK,
-              outlineWidth: 3,
-              style: Cesium.LabelStyle.FILL_AND_OUTLINE,
-              pixelOffset: new Cesium.Cartesian2(10, 0),
-              horizontalOrigin: Cesium.HorizontalOrigin.LEFT,
-              distanceDisplayCondition: new Cesium.DistanceDisplayCondition(0, 2.5e6),
-            },
-          })
-        }
-        mv.viewer.selectedEntityChanged.addEventListener((e?: import('cesium').Entity) => {
-          const id = typeof e?.id === 'string' && e.id.startsWith('site-') ? e.id.slice(5) : null
-          if (id) setSite(id)
-        })
-        mod.viewFrom(mv.viewer, -62, 30, 7.5e6)
+        void mod.addPolarCap(mv.viewer)
+        layer.current = sl.addSiteLayer(mv.viewer, data.sites, { onSelect: setSite, labelsWithinM: 1_200_000, selected: useApp.getState().siteId })
+        mod.viewSouthPole(mv.viewer, 1_100_000, 35)
         setReady(true)
       })
       .catch(() => setFailed(true))
     return () => {
       cancelled = true
+      layer.current?.destroy()
+      layer.current = null
       api.current?.mv.destroy()
       api.current = null
     }
   }, [data, setSite])
+
+  useEffect(() => {
+    layer.current?.select(siteId)
+  }, [siteId, ready])
 
   // Sun and Earth follow the app's time
   useEffect(() => {
@@ -105,7 +92,7 @@ export default function Globe3D({ data }: { data: AppData }) {
     const a = api.current
     if (!a) return
     clearGround()
-    a.mod.viewFrom(a.mv.viewer, -62, site.lon, 7.5e6)
+    a.mod.viewSouthPole(a.mv.viewer, 1_100_000, 35)
     setMode('globe')
   }
 

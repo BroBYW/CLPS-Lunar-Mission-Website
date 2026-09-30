@@ -144,6 +144,34 @@ export function createMoonViewer(container: HTMLElement, opts: { interactive: bo
   }
 }
 
+/** Our LOLA hillshade of 80 S to the pole, draped over the mosaic (which streaks near the pole). */
+export async function addPolarCap(viewer: Cesium.Viewer): Promise<void> {
+  const provider = await Cesium.SingleTileImageryProvider.fromUrl(`${import.meta.env.BASE_URL}data/polar-cap-south.webp`, {
+    rectangle: Cesium.Rectangle.fromDegrees(-180, -90, 180, -80),
+    credit: new Cesium.Credit('South polar relief: LRO LOLA (NASA GSFC PGDA, Barker et al. 2023)'),
+  })
+  if (!viewer.isDestroyed()) {
+    viewer.imageryLayers.add(new Cesium.ImageryLayer(provider))
+    viewer.scene.requestRender()
+  }
+}
+
+/**
+ * Oblique view of the south pole with the Earth-facing meridian (0°) at the top and 90°E to the right,
+ * matching the flat map. tiltDeg is the camera's angle away from straight down.
+ */
+export function viewSouthPole(viewer: Cesium.Viewer, distanceM: number, tiltDeg = 40): void {
+  const t = Cesium.Math.toRadians(tiltDeg)
+  const R = Cesium.Ellipsoid.MOON.radii.z
+  viewer.camera.setView({
+    destination: new Cesium.Cartesian3(-distanceM * Math.sin(t), 0, -R - distanceM * Math.cos(t)),
+    orientation: {
+      direction: new Cesium.Cartesian3(Math.sin(t), 0, Math.cos(t)),
+      up: new Cesium.Cartesian3(Math.cos(t), 0, -Math.sin(t)),
+    },
+  })
+}
+
 /** Camera looking at the Moon's center from a direction given in selenographic degrees. */
 export function viewFrom(viewer: Cesium.Viewer, latDeg: number, lonDeg: number, distanceM: number): void {
   const la = Cesium.Math.toRadians(latDeg)

@@ -5,7 +5,7 @@ import { Panorama } from './components/Panorama.tsx'
 import { PowerPanel } from './components/PowerPanel.tsx'
 import { SiteHeader } from './components/SiteHeader.tsx'
 import { SiteList } from './components/SiteList.tsx'
-import { SiteMap } from './components/SiteMap.tsx'
+import { SiteMapPanel } from './components/SiteMapPanel.tsx'
 import { Timeline } from './components/Timeline.tsx'
 import { TimeControls } from './components/TimeControls.tsx'
 import { WindowsTable } from './components/WindowsTable.tsx'
@@ -135,7 +135,7 @@ function Planner({ data }: { data: AppData }) {
     <div className="grid gap-6 px-4 py-4 lg:grid-cols-[minmax(280px,340px)_minmax(0,1fr)] lg:px-6">
       <aside className="order-2 lg:order-1">
         <SiteList sites={data.sites} selected={site.id} onSelect={setSite} />
-        <SiteMap sites={data.sites} selected={site.id} onSelect={setSite} basemap={data.basemap} basemapUrl={data.basemapUrl} />
+        <SiteMapPanel data={data} selected={site.id} onSelect={setSite} />
       </aside>
       <main className="order-1 min-w-0 lg:order-2">
         <div className="flex flex-wrap items-start justify-between gap-4">
