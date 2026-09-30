@@ -47,7 +47,8 @@ Citations:
 ## Imagery
 
 - [NASA Moon Trek](https://trek.nasa.gov/moon/) (NASA/JPL-Caltech Solar System Treks). The WMTS layers used are the global `LRO_WAC_Mosaic_Global_303ppd_v02` and the south polar `LRO_LOLA_ClrShade_SPole75_30mp_v04` and `LRO_NAC_Mosaic_SPole85.5_1mp`. Layer metadata says "Use_Constraints: None". Credits: LOLA Instrument Team (NASA GSFC), the LROC Team (NASA/GSFC/Arizona State University), and NASA's Lunar Mapping and Modeling Project.
-- Optional Cesium Moon (Cesium ion asset 2684829), used only when an ion token is configured. Attribution: "NASA and the USGS Astrogeology Science Center", plus the Cesium ion logo.
+- 3D views render with [CesiumJS](https://cesium.com/platform/cesiumjs/) 1.145 (Apache-2.0), using the Moon ellipsoid and the Moon Trek WAC mosaic. No Cesium ion content is used, so no token is needed.
+- Optional Cesium Moon (Cesium ion asset 2684829), not enabled by default. If an ion token is configured, credit it as "NASA and the USGS Astrogeology Science Center", plus the Cesium ion logo.
 
 ## Sites
 

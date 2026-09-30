@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { lazy, Suspense, useEffect, useMemo, useState } from 'react'
 import { CompareView } from './components/CompareView.tsx'
 import { MetricsPanel } from './components/MetricsPanel.tsx'
 import { Panorama } from './components/Panorama.tsx'
@@ -19,12 +19,17 @@ import { earthVisible, sunFraction } from './lib/visibility.ts'
 import { usePlayback } from './state/playback.ts'
 import { useApp, type View } from './state/store.ts'
 import { applyUrl, syncUrl } from './state/url.ts'
+import { Home, Logo } from './views/Home.tsx'
 import { initWorker, seriesRequest, useSeries } from './workers/client.ts'
 
 const VIEWS: [View, string][] = [
   ['plan', 'Plan'],
   ['compare', 'Compare'],
+  ['3d', '3D'],
 ]
+
+// CesiumJS only loads when the 3D view (or the home page backdrop) is shown
+const Globe3D = lazy(() => import('./views/Globe3D.tsx'))
 
 export default function App() {
   const [data, setData] = useState<AppData | null>(null)
@@ -45,11 +50,18 @@ export default function App() {
   useEffect(() => (data ? syncUrl(data.horizons.heightsM) : undefined), [data])
   usePlayback()
 
+  if (view === 'home' && !error) return <Home data={data} />
+
   return (
     <div className="min-h-screen">
       <header className="flex flex-wrap items-center gap-x-6 gap-y-2 border-b border-shadow-2 px-4 py-3 lg:px-6">
         <div className="flex flex-wrap items-baseline gap-x-4">
-          <h1 className="font-display text-xl font-medium">CLPS Lunar Mission Browser</h1>
+          <h1 className="font-display text-xl font-medium">
+            <button type="button" onClick={() => setView('home')} className="flex items-center gap-2.5 hover:text-bright" aria-label="CLPS Lunar Mission Browser, back to the home page">
+              <Logo size={26} />
+              CLPS Lunar Mission Browser
+            </button>
+          </h1>
           <p className="text-sm text-dust">Sunlight and Earth visibility at lunar south pole sites, 2026–2030</p>
         </div>
         <nav aria-label="Views" className="ml-auto flex gap-1">
@@ -76,6 +88,10 @@ export default function App() {
         </p>
       ) : view === 'compare' ? (
         <CompareView data={data} />
+      ) : view === '3d' ? (
+        <Suspense fallback={<p className="m-6 text-dust">Loading the 3D view…</p>}>
+          <Globe3D data={data} />
+        </Suspense>
       ) : (
         <Planner data={data} />
       )}

@@ -15,7 +15,9 @@ export function applyUrl(search: string, siteIds: string[], heightsM: number[]):
   const q = new URLSearchParams(search)
   const s = useApp.getState()
   const view = q.get('view')
-  if (view === 'plan' || view === 'compare') s.setView(view as View)
+  // A bare URL opens the home page; any shared state opens the app directly
+  if (view === 'plan' || view === 'compare' || view === '3d') s.setView(view as View)
+  else if ([...q.keys()].length > 0) s.setView('plan')
   const site = q.get('site')
   if (site && siteIds.includes(site)) s.setSite(site)
   const cmp = q.get('cmp')
@@ -42,6 +44,7 @@ export function applyUrl(search: string, siteIds: string[], heightsM: number[]):
 
 export function buildQuery(heightsM: number[]): string {
   const s = useApp.getState()
+  if (s.view === 'home') return ''
   const q = new URLSearchParams()
   if (s.view !== 'plan') q.set('view', s.view)
   q.set('site', s.siteId)
@@ -63,7 +66,7 @@ export function syncUrl(heightsM: number[]): () => void {
     clearTimeout(timer)
     timer = window.setTimeout(() => {
       const next = buildQuery(heightsM)
-      if (next !== window.location.search) window.history.replaceState(null, '', next)
+      if (next !== window.location.search) window.history.replaceState(null, '', next || window.location.pathname)
     }, 250)
   })
 }
