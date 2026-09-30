@@ -91,7 +91,10 @@ export function AboutPage() {
           </li>
           <li>During the total lunar eclipse of 3 March 2026, the sites lose the Sun at times that fit NASA's eclipse contact times.</li>
         </ul>
-        <p>The full validation, with every number and how to reproduce it, is in VALIDATION.md in the project repository.</p>
+        <p>
+          The full validation, with every number and how to reproduce it, is in VALIDATION.md in the{' '}
+          <a href="https://github.com/BroBYW/CLPS-Lunar-Mission-Website">project repository</a>.
+        </p>
       </section>
       <section>
         <h3>Limitations</h3>

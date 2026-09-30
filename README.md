@@ -5,6 +5,7 @@
 Built for the NASA Space Apps Challenge 2026, challenge *CLPS Lunar Mission Browser*.
 
 Live site: https://clps-lunar-mission-browser.vercel.app
+Source code: https://github.com/BroBYW/CLPS-Lunar-Mission-Website
 
 ## The problem
 
@@ -43,7 +44,8 @@ Python pipeline (run once)                          Static web app (Vercel, no b
   NAIF SPICE kernels ──► hourly Sun/Earth vectors ──► ephemeris.bin (1 MB)  ─┐
   LRO LOLA 10–240 m ───► horizon masks, 3,600 az ───► horizons.bin (0.4 MB) ─┼─► React + Web Worker
   sites.yaml (cited) ──► resolved site points ──────► sites.json            ─┤   az/el, disk fraction,
-  LOLA 80 m ───────────► hillshade basemap ─────────► basemap-south.webp    ─┘   metrics, battery
+  LOLA 80 m ───────────► hillshade basemap ─────────► basemap-south.webp    ─┤   metrics, battery
+  LOLA 7.5 m–1.5 km ───► 3D terrain grids ──────────► terrain/*.bin.gz      ─┘
   JPL Horizons API ◄──── validation                                              CesiumJS (lazy) for 3D
 ```
 
@@ -65,13 +67,15 @@ Full details and reproduction steps are in [VALIDATION.md](VALIDATION.md).
 | 3 Mar 2026 total lunar eclipse | darkness timings fit NASA's contact times |
 | Accessibility (axe-core, WCAG 2.1 AA) | 0 violations on every view |
 | Performance | first load about 1 s on broadband; 60+ fps playback |
+| 3D terrain sunlight vs the horizon masks, 13 sites × 28 days | agree 99.8% of the time |
 
 ## Run it locally
 
 You need Node 22 or later, and [uv](https://docs.astral.sh/uv/) for the pipeline.
 
 ```bash
-cd web
+git clone https://github.com/BroBYW/CLPS-Lunar-Mission-Website.git
+cd CLPS-Lunar-Mission-Website/web
 npm install
 npm run dev
 ```
@@ -97,7 +101,9 @@ uv run python scripts/fetch_dems.py         # LOLA windows and far maps, about 1
 uv run python scripts/sites.py              # resolve site points
 uv run python scripts/fetch_dems.py         # top up 10 m coverage around moved points
 uv run python scripts/horizon.py            # horizons.bin, sites.json, mask plots
-uv run python scripts/basemap.py            # basemap-south.webp
+uv run python scripts/basemap.py            # basemap-south.webp, polar-cap-south.webp
+uv run python scripts/terrain_patches.py    # 3D terrain grids, terrain/*.bin.gz
+uv run python scripts/earth_texture.py      # earth.jpg (run npm install in web/ first)
 uv run python scripts/export_fixtures.py    # Vitest fixtures
 uv run python scripts/validate_horizons.py  # JPL Horizons comparison
 uv run python scripts/validate_eclipse.py
@@ -110,7 +116,7 @@ Raw elevation maps and kernels are downloaded into `pipeline/raw/` and `pipeline
 ## Limitations
 
 In short:
-- Terrain detail below about 20 m is not modelled.
+- Terrain detail below about 20 m is not modelled. In the 3D standing view, the small craters near your feet are decorative.
 - Region points are approximate: NASA publishes region footprints, not points.
 - Earth visibility is geometric and ignores Deep Space Network coverage and link budgets.
 - The power model ignores dust and temperature.
