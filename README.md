@@ -2,10 +2,11 @@
 
 **Pick a lunar south pole site and a date range. See when it has sunlight, when it can see Earth, and how it compares to other sites.**
 
-Built for the NASA Space Apps Challenge 2026, challenge *CLPS Lunar Mission Browser*.
+### [Open the live site →](https://clps-lunar-mission-browser.vercel.app)
 
-Live site: https://clps-lunar-mission-browser.vercel.app
-Source code: https://github.com/BroBYW/CLPS-Lunar-Mission-Website
+<a href="https://clps-lunar-mission-browser.vercel.app"><img src="docs/screenshots/home.jpg" width="100%" alt="The home page: the headline Where the Sun skims the horizon, a Let's start button, and a live 3D Moon lit by the Sun as it is right now"></a>
+
+Built for the NASA Space Apps Challenge 2026, challenge *CLPS Lunar Mission Browser*. Source code: [github.com/BroBYW/CLPS-Lunar-Mission-Website](https://github.com/BroBYW/CLPS-Lunar-Mission-Website).
 
 ## The problem
 
@@ -25,6 +26,43 @@ Tools that give the Sun's and Earth's positions exist, but they are hard to use 
 | **Method, Credits** | How it works, its limitations, and every data source. |
 
 Every view has a shareable URL. The site, dates, time, observer height and criteria all live in the query string.
+
+## Screenshots
+
+Click a picture to open that view on the live site.
+
+<table>
+  <tr>
+    <td width="50%" valign="top">
+      <a href="https://clps-lunar-mission-browser.vercel.app/?site=connecting-ridge&amp;from=2027-01-01&amp;to=2027-01-30&amp;t=2027-01-12T06:00Z&amp;h=2"><img src="docs/screenshots/plan.png" alt="The Plan view for the Connecting ridge: the site list, the 3D site map, the horizon panorama with the Sun's and Earth's paths, time controls and the sunlit, Earth and both timeline"></a>
+      <br><b>Plan.</b> The Connecting ridge in January 2027: the horizon panorama with the Sun's and Earth's paths, the site list and map, and the timeline of sunlight and Earth in view.
+    </td>
+    <td width="50%" valign="top">
+      <a href="https://clps-lunar-mission-browser.vercel.app/?view=compare&amp;site=haworth&amp;cmp=haworth,connecting-ridge,shackleton-rim&amp;from=2027-01-01&amp;to=2027-01-15&amp;t=2027-01-05T00:00Z&amp;h=2"><img src="docs/screenshots/compare.png" alt="The Compare view: Haworth, the Connecting ridge and Shackleton rim side by side, with a table of metrics and aligned timelines"></a>
+      <br><b>Compare.</b> Haworth, the Connecting ridge and Shackleton rim over 1–15 January 2027, with the best value in each row marked.
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" valign="top">
+      <a href="https://clps-lunar-mission-browser.vercel.app/?view=3d&amp;site=shackleton-rim&amp;from=2027-01-01&amp;to=2027-01-31&amp;t=2027-01-12T06:00Z&amp;h=2"><img src="docs/screenshots/terrain.jpg" alt="3D LOLA terrain around Shackleton crater, seen from above at an angle: the crater floor is black, its far inner wall and nearby peaks are lit by the low Sun"></a>
+      <br><b>3D terrain.</b> Shackleton crater on 12 January 2027. Its floor stays in permanent shadow while the far wall and nearby peaks catch the low Sun. Press <i>Fly to</i> on the page.
+    </td>
+    <td width="50%" valign="top">
+      <a href="https://clps-lunar-mission-browser.vercel.app/?view=3d&amp;site=shackleton-rim&amp;from=2027-01-01&amp;to=2027-01-31&amp;t=2027-01-12T06:00Z&amp;h=2"><img src="docs/screenshots/standing.jpg" alt="Standing on Shackleton's rim: a cratered plain in the foreground, the Sun just above the skyline, and a thin line tracing the computed horizon"></a>
+      <br><b>Standing on the rim</b> at the same moment, with the Sun 0.9° up and clear of the skyline. The thin line is the computed horizon that every number uses. Press <i>Stand at the site</i>.
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" valign="top">
+      <a href="https://clps-lunar-mission-browser.vercel.app/?view=3d&amp;site=haworth&amp;from=2027-01-01&amp;to=2027-01-31&amp;t=2027-01-08T13:00Z&amp;h=2"><img src="docs/screenshots/earth.jpg" alt="A full Earth just above the dark skyline at Haworth, with Antarctica at the top, Africa on the left and South America on the right"></a>
+      <br><b>Full Earth over Haworth,</b> 8 January 2027 at 13:00 UTC, lit and turned for that hour. Seen from the Moon's south pole, Antarctica is at the top.
+    </td>
+    <td width="50%" valign="top" align="center">
+      <a href="https://clps-lunar-mission-browser.vercel.app/?view=explore&amp;site=connecting-ridge&amp;from=2027-01-01&amp;to=2027-01-15&amp;t=2027-01-05T00:00Z&amp;h=2"><img src="docs/screenshots/phone.png" width="220" alt="The Explore story on a phone: step 1, The Sun never climbs high, with the horizon panorama for the Connecting ridge"></a>
+      <br><b>Explore on a phone.</b> Step 1 of the six-step story.
+    </td>
+  </tr>
+</table>
 
 ## Metrics
 
