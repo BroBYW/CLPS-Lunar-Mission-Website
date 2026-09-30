@@ -288,6 +288,7 @@ The 2025 judging criteria were Impact, Creativity, Validity, Relevance (includin
 | P1 | 10. Explore mode story and mini-challenge | R1 | M6 |
 | P1 | 11. Share URL (site, dates, time) and CSV export of windows | R2, R5 | M4 |
 | P1 | 11b. Earth-eclipse correction (new, §2 #6) | R4, Validity | M4 |
+| P1 | 11c. Home page (your idea, 30 Sep): a 3D Moon lit by the real Sun now, one-line explanation, "Let's start" flies the camera to the south pole and opens the planner. Shared links skip it. | R1 | M5 |
 | P2 | 12. Drop a pin: rough horizon from a low-resolution DEM, computed in a worker | R2 | after M6 |
 | P2 | 13. Average illumination and Earth-visibility map overlay (PGDA product 69, 85°S to the pole) | R1, R4, R5 | after M6 |
 | P2 | 14. Mission date presets | R2 | after M6 |

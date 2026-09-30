@@ -7,9 +7,9 @@ This file records how we checked the numbers the app shows. Each section says wh
 | 1. Browser vs Python az/el | ≤ 0.01° | 9.6e-5° | Pass |
 | 2. Python vs JPL Horizons az/el | ≤ 0.1° | 8.9e-6° (pipeline), 5.8e-5° (browser) | Pass |
 | 3. Horizon masks | Synthetic terrain exact | Sphere dip within 2e-4°, mesa within 0.02° | Pass |
-| 4. Illumination and Earth visibility vs literature | Within ~5 points of LOLA-based studies | — | Pending (M4) |
-| 5. Eclipse | Sunlight drops during the 3 Mar 2026 total lunar eclipse | — | Pending (M4) |
-| 6. Performance | < 500 ms per site-range; 60 fps | — | Pending (M4/M6) |
+| 4. Illumination and Earth visibility vs literature | Within ~5 points of LOLA-based studies | Gläser points within 1.54 points (mean) and 2.1 h (longest dark); Earth within 5 points of NASA's PGDA map at 17 of 21 | Pass |
+| 5. Eclipse | Sunlight drops during the 3 Mar 2026 total lunar eclipse | Timings fall inside NASA's contact windows at 3 sites | Pass |
+| 6. Performance | < 500 ms per site-range; 60 fps | 5 years in 104–148 ms; frame rate pending (M6) | Pass (worker) |
 
 ## 1. Browser vs Python
 
@@ -113,12 +113,84 @@ Peak near Cabeus B shows why this matters. Moving 1.2 km from the mosaic center 
 
 ## 4. Illumination and Earth visibility against literature
 
-Pending (M4).
+**How.** `pipeline/scripts/validate_literature.py` runs each published point over its study's own period, hourly from 2017 to 2037 with exact SPICE positions (not the shipped 2026–2030 file), at the study's observer height. It reports every definition the studies use:
+- mean visible fraction of the solar disk
+- % of time any part of the Sun is visible
+- % of time the whole disk is visible
+- the same three for Earth
+
+Two more comparisons test coordinate sensitivity:
+- **High point.** The highest ground within 250 m of each published coordinate. Many papers give coordinates to 0.01° of latitude, about 300 m.
+- **PGDA map.** NASA's PGDA average-visibility maps ([product 69](https://pgda.gsfc.nasa.gov/products/69), 60 m, share of time any part of the disk is visible), sampled at the same coordinates.
+
+The full results are in `pipeline/validation/literature_comparison.csv`.
+
+**Like for like: LOLA-based study, same observer heights (Gläser et al. 2014 and 2018, 20 m LOLA maps).**
+
+| Point | Height | Published: mean / any / longest dark | Ours at the published point | Ours at the high point |
+|---|---|---|---|---|
+| Gläser 2018 C1, Connecting ridge | 2 m | 88.0% / 92.1% / 112 h | 87.0% / 91.7% / 114 h | 87.8% / 92.0% / 110 h (22 m away) |
+| Gläser 2018 C2 | 2 m | 78.1% / 82.0% / 165 h | 78.0% / 82.0% / 164 h | 77.9% / 81.9% / 165 h (83 m) |
+| Gläser 2018 Shackleton rim | 2 m | 85.5% / 89.4% / 66 h | 84.0% / 88.9% / 67 h | 85.2% / 89.4% / 67 h (28 m) |
+| Gläser 2014 CR1 spot 2 | 2 m | 87.9% / 92.3% / 110.9 h | 87.3% / 92.0% / 113 h | 88.1% / 92.0% / 109 h (28 m) |
+| Gläser 2014 CR1 spot 4 | 10 m | 91.9% / 95.66% / 76.1 h | 91.6% / 95.6% / 76 h | 92.4% / 95.5% / 77 h (113 m) |
+
+At the published points the agreement is within 1.54 points for mean sunlight (on average 0.71 below), 0.50 points for any sunlight, and 2.1 h for longest darkness. At the nearest high ground it tightens to 0.49 points and 0.25 points. **This is the like-for-like test, and it passes.**
+
+**At ground level (0 m) we come out lower.** Gläser's surface points give 76.0% and 81.0%; ours give 55.7% and 63.0% (64.8% and 68.7% at the high point). An eye at 0 m is shaded by bumps in the nearest tens of metres. Our 10 m map resolves more of that roughness than the studies' 20 m maps, so ground-level numbers depend on map resolution more than on the method. The app offers 2 m (lander) and 10 m (mast) observers, where the agreement is good.
+
+**Against NASA's PGDA maps at the same coordinates.**
+- **Earth visibility:** ours is within 5 points at 17 of 21 points, with a median difference of 1.3 points.
+- **Sun visibility:** within 5 points at 10 of 21, with a median of 5.3. The larger gaps are on narrow ridges, where the map's 60 m pixels average over the crest, and where our observer height differs from the map's.
+
+**Points from other maps don't transfer.** Several studies came before LOLA-grade control, or used other data: Bussey et al. 2010 (Kaguya DEM), Bryant 2009 (Goldstone radar DEM) and Speyerer & Robinson 2013 (camera images). Mazarico et al. 2011's points were also only available to us as coordinates rounded in Gläser 2018's table. At their published coordinates, both our model and NASA's PGDA map give much less light than the papers report:
+- Mazarico's Shackleton point: 0.0% for us, 6.3% on the PGDA map, 86.7% published.
+- Bryant's B1: 30.2% for us, 29.8% on the PGDA map, 97.0% published.
+
+When the model and NASA's own map agree with each other and both disagree with the paper, the paper's coordinates are the likeliest cause. The high-point test confirms how sharp these peaks are: moving 51 m lifts Mazarico's Shackleton point from 0% to 72%, and moving 222 m lifts Speyerer's S2 from 34% to 62%. Coordinates measured on other maps and control networks cannot be used like for like on LOLA maps at this precision. We report them for transparency, not as a pass or fail.
+
+**Known inconsistencies in the sources,** left unresolved:
+- Speyerer & Robinson 2013 is quoted as both about 94% and 92.1% for its three-station set.
+- Mazarico's rim darkness appears as both about 1.5 days and 141 h.
 
 ## 5. Eclipse
 
-Pending (M4).
+**What.** From the Moon, a lunar eclipse is Earth passing in front of the Sun. The app subtracts the part of the solar disk that Earth covers (`sun_fraction` in `pipeline/clps/visibility.py`, `sunFraction` in `web/src/lib/visibility.ts`). Script: `pipeline/scripts/validate_eclipse.py`, minute by minute on 3 Mar 2026 at three sites where the Sun stays clear of the terrain.
+
+**NASA contacts** for the total lunar eclipse of 3 Mar 2026 ([NASA eclipse site](https://eclipse.gsfc.nasa.gov/OH/OH2026.html), UT):
+
+| P1 | U1 | U2 | Greatest | U3 | U4 | P4 |
+|---|---|---|---|---|---|---|
+| 08:44 | 09:50 | 11:04 | 11:34 | 12:03 | 13:17 | 14:23 |
+
+**Result** (UT, 2 m observer):
+
+| Site | Dimming starts | Sun fully hidden | Sun back | Dimming ends |
+|---|---|---|---|---|
+| Malapert Massif | 09:27 | 10:55 | 12:06 | 13:34 |
+| Nobile Rim 2 | 09:29 | 10:58 | 12:08 | 13:36 |
+| Mons Mouton | 09:28 | 10:56 | 12:07 | 13:35 |
+
+Every time falls where the geometry requires:
+- A site starts dimming when it enters Earth's penumbra, between P1 and U1.
+- It loses the whole Sun when it enters the umbra, between U1 and U2.
+- It gets the Sun back between U3 and U4.
+- It stops dimming between U4 and P4.
+
+A single point is in the umbra for about 71 minutes, longer than the 59 minutes the whole Moon spends there.
+
+Our model uses Earth's solid disk, while NASA enlarges the shadow slightly for the atmosphere, so each site's darkness could run a minute or so shorter than a shadow-based calculation. The ephemeris-level check for this epoch is in §2: Horizons puts the Sun and Earth 0.6° apart at 11:30 UT.
+
+**Where it matters.** Totality leaves near-side sites without sunlight for over an hour while the Sun is otherwise up. The battery simulation in the app includes it.
 
 ## 6. Performance
 
-Pending (M4 and M6).
+Measured in Chrome on this development machine, dev build, Web Worker, 10-minute steps:
+
+| Range | Samples | Series in the worker | Round trip | Metrics |
+|---|---|---|---|---|
+| 5 years (2026–2030), one site | 262,944 | 103–136 ms | 104–148 ms | 7–14 ms |
+
+That is about 4× under the 500 ms target. Changing the darkness threshold or Earth margin only reruns the metrics (under 15 ms), because the series stores the visible fraction and Earth's clearance above the terrain.
+
+First-load size and frame rate are measured in M6.

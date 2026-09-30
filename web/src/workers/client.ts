@@ -1,0 +1,72 @@
+import * as Comlink from 'comlink'
+import { useEffect, useRef, useState } from 'react'
+import type { AppData, Site } from '../data/load.ts'
+import { STEP_MS } from '../state/store.ts'
+import type { MetricsWorkerApi, SeriesRequest, TimedSeries } from './metrics.worker.ts'
+
+let remote: Comlink.Remote<MetricsWorkerApi> | null = null
+let ready: Promise<void> | null = null
+
+export function initWorker(data: AppData): void {
+  if (remote) return
+  const worker = new Worker(new URL('./metrics.worker.ts', import.meta.url), { type: 'module' })
+  remote = Comlink.wrap<MetricsWorkerApi>(worker)
+  // Copies, so the main thread keeps its own buffers for per-frame drawing
+  const eph = data.ephemeris.data.slice().buffer
+  const hz = data.horizons.data.slice().buffer
+  ready = remote.init(Comlink.transfer(eph, [eph]), data.ephemerisMeta, Comlink.transfer(hz, [hz]), data.horizonsMeta)
+}
+
+const cache = new Map<string, Promise<TimedSeries>>()
+const CACHE_SIZE = 16
+
+export function requestSeries(req: SeriesRequest): Promise<TimedSeries> {
+  const key = JSON.stringify(req)
+  const hit = cache.get(key)
+  if (hit) {
+    cache.delete(key)
+    cache.set(key, hit)
+    return hit
+  }
+  if (!remote || !ready) return Promise.reject(new Error('worker not started'))
+  const r = remote
+  const p = ready.then(() => r.series(req))
+  cache.set(key, p)
+  if (cache.size > CACHE_SIZE) cache.delete(cache.keys().next().value!)
+  p.catch(() => cache.delete(key))
+  return p
+}
+
+export function seriesRequest(site: Site, heightIndex: number, heightsM: number[], startMs: number, endMs: number): SeriesRequest {
+  return {
+    lat: site.lat,
+    lon: site.lon,
+    heightM: site.height_m + heightsM[heightIndex],
+    maskIndex: site.mask_index,
+    heightIndex,
+    startMs,
+    endMs,
+    stepMs: STEP_MS,
+  }
+}
+
+/** The series for a request; keeps showing the previous result while a new one computes. */
+export function useSeries(req: SeriesRequest | null): { series: TimedSeries | null; pending: boolean } {
+  const key = req ? JSON.stringify(req) : ''
+  const [state, setState] = useState<{ key: string; series: TimedSeries | null }>({ key: '', series: null })
+  const reqRef = useRef(req)
+  reqRef.current = req
+  useEffect(() => {
+    const r = reqRef.current
+    if (!r) return
+    let live = true
+    requestSeries(r).then(
+      (series) => live && setState({ key, series }),
+      () => live && setState({ key, series: null }),
+    )
+    return () => {
+      live = false
+    }
+  }, [key])
+  return { series: state.series, pending: state.key !== key }
+}

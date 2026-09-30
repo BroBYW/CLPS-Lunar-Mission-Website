@@ -1,20 +1,12 @@
-import type { Site, SiteGroup } from '../data/load.ts'
+import { GROUP_LABELS, GROUP_ORDER } from '../data/groups.ts'
+import type { Site } from '../data/load.ts'
 import { fmtLatLon } from '../lib/format.ts'
-
-export const GROUP_LABELS: Record<SiteGroup, string> = {
-  artemis: 'Artemis candidate regions',
-  illumination: 'High-illumination points',
-  clps: 'CLPS landing sites',
-  contrast: 'Permanent shadow',
-}
-
-const ORDER: SiteGroup[] = ['illumination', 'artemis', 'clps', 'contrast']
 
 export function SiteList({ sites, selected, onSelect }: { sites: Site[]; selected: string; onSelect: (id: string) => void }) {
   return (
     <fieldset>
       <legend className="font-display text-lg font-medium">Sites</legend>
-      {ORDER.map((g) => {
+      {GROUP_ORDER.map((g) => {
         const items = sites.filter((s) => s.group === g)
         if (!items.length) return null
         return (

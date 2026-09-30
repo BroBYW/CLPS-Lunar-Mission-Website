@@ -96,7 +96,7 @@ def metrics(f_sun: np.ndarray, earth_vis: np.ndarray, step_h: float, dark_thresh
     return {
         "sun_mean_pct": float(f_sun.mean() * 100),
         "sun_any_pct": float((f_sun > 0).mean() * 100),
-        "sun_full_pct": float((f_sun >= 1.0 - 1e-9).mean() * 100),
+        "sun_full_pct": float((f_sun >= 1.0 - 1e-6).mean() * 100),  # tolerance matches the browser's float32
         "longest_dark_h": ld * step_h, "longest_dark_at_edge": ld_edge,
         "earth_pct": float(earth_vis.mean() * 100),
         "longest_blackout_h": lb * step_h, "longest_blackout_at_edge": lb_edge,

@@ -1,6 +1,6 @@
 import type { Site } from '../data/load.ts'
 import { fmtLatLon } from '../lib/format.ts'
-import { GROUP_LABELS } from './SiteList.tsx'
+import { GROUP_LABELS } from '../data/groups.ts'
 
 export function SiteHeader({ site }: { site: Site }) {
   return (

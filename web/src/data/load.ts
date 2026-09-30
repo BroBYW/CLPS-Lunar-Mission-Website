@@ -31,7 +31,9 @@ export interface BasemapMeta {
 
 export interface AppData {
   ephemeris: Ephemeris
+  ephemerisMeta: EphemerisMeta
   horizons: HorizonSet
+  horizonsMeta: HorizonMeta
   sites: Site[]
   basemap: BasemapMeta
   basemapUrl: string
@@ -62,7 +64,9 @@ async function load(): Promise<AppData> {
   ])
   return {
     ephemeris: new Ephemeris(ephBin, ephMeta),
+    ephemerisMeta: ephMeta,
     horizons: new HorizonSet(hBin, hMeta),
+    horizonsMeta: hMeta,
     sites: sites.sites,
     basemap,
     basemapUrl: `${base}basemap-south.webp`,
