@@ -51,7 +51,7 @@ Citations:
 
 ## Sites
 
-The list, with each site's source and its exact or approximate label, is in `pipeline/sites.yaml` and PLAN.md §7.
+The list, with each site's source and its exact or approximate label, is in `pipeline/sites.yaml`; the points actually used are in `pipeline/sites_resolved.json`. For a region, the approximate point is the highest LOLA point inside its footprint. The footprints are the 2022 list served by Moon Trek, which covers six of the nine 2024 regions. Where a region has no footprint, the point is the highest within 7.5 km of its LROC mosaic center. The USGS data release with the 2024 footprints blocks automated downloads (HTTP 403), so Slater Plain is on hold until someone downloads that file by hand.
 
 - Artemis candidate landing regions:
   - [NASA, Oct 2024](https://www.nasa.gov/news-release/nasa-provides-update-on-artemis-iii-moon-landing-regions/)

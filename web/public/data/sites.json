@@ -1,0 +1,387 @@
+{
+  "generated_utc": "2026-09-30T00:57:57Z",
+  "sites": [
+    {
+      "id": "peak-near-cabeus-b",
+      "name": "Peak near Cabeus B",
+      "group": "artemis",
+      "lat": -83.58392,
+      "lon": -68.46415,
+      "kind": "approx",
+      "point": "Highest LOLA point within 7.5 km of the LROC NAC mosaic center (the 2024 footprint was not available). lat/lon below is the mosaic center.",
+      "source": "LROC NAC ROI CABEUSPKLO1_P836S2912",
+      "url": "https://pds.lroc.im-ldi.com/data/LRO-L-LROC-5-RDR-V1.0/LROLRC_2001/DATA/BDR/NAC_ROI/",
+      "notes": "Region added in 2024. Its official footprint is in the USGS data release (doi:10.5066/P1MEQ6UK).",
+      "anchor": {
+        "lat": -83.6,
+        "lon": -68.8
+      },
+      "height_m": 4602.1,
+      "dem_10m_radius_km": 20.0,
+      "mask_index": 0
+    },
+    {
+      "id": "haworth",
+      "name": "Haworth",
+      "group": "artemis",
+      "lat": -86.36428,
+      "lon": -23.20814,
+      "kind": "approx",
+      "point": "Highest LOLA point inside the region footprint (2022 list, served by NASA Moon Trek). lat/lon below is the footprint centroid.",
+      "footprint": "Haworth",
+      "source": "NASA Moon Trek, A3_Named_regions_SP",
+      "url": "https://trek.nasa.gov/moon/trekarcgis2/rest/services/A3_Named_regions_SP/MapServer/0",
+      "anchor": {
+        "lat": -86.7639,
+        "lon": -22.777
+      },
+      "footprint_lonlat": [
+        [
+          -26.65196,
+          -86.1124
+        ],
+        [
+          -34.98185,
+          -86.95784
+        ],
+        [
+          -16.99082,
+          -87.39353
+        ],
+        [
+          -12.36178,
+          -86.44277
+        ],
+        [
+          -26.65196,
+          -86.1124
+        ]
+      ],
+      "height_m": 2842.2,
+      "dem_10m_radius_km": 20.0,
+      "mask_index": 1
+    },
+    {
+      "id": "malapert-massif",
+      "name": "Malapert Massif",
+      "group": "artemis",
+      "lat": -85.98794,
+      "lon": 2.06238,
+      "kind": "approx",
+      "point": "Highest LOLA point inside the region footprint (2022 list, served by NASA Moon Trek). lat/lon below is the footprint centroid.",
+      "footprint": "Malapert Massif",
+      "source": "NASA Moon Trek, A3_Named_regions_SP",
+      "url": "https://trek.nasa.gov/moon/trekarcgis2/rest/services/A3_Named_regions_SP/MapServer/0",
+      "notes": "Intuitive Machines IM-5 plans to land at Mons Malapert (no coordinates published).",
+      "anchor": {
+        "lat": -85.9948,
+        "lon": -0.2358
+      },
+      "footprint_lonlat": [
+        [
+          -4.76364,
+          -85.63394
+        ],
+        [
+          -5.65948,
+          -86.32279
+        ],
+        [
+          5.14788,
+          -86.32589
+        ],
+        [
+          4.33231,
+          -85.63656
+        ],
+        [
+          -4.76364,
+          -85.63394
+        ]
+      ],
+      "height_m": 5173.3,
+      "dem_10m_radius_km": 20.0,
+      "mask_index": 2
+    },
+    {
+      "id": "mons-mouton-plateau",
+      "name": "Mons Mouton Plateau",
+      "group": "artemis",
+      "lat": -84.37473,
+      "lon": 32.00484,
+      "kind": "approx",
+      "point": "Highest LOLA point within 7.5 km of the LROC NAC mosaic center (the 2024 footprint was not available). lat/lon below is the mosaic center.",
+      "source": "LROC NAC ROI MOUTNPLTLO1_P843S0306",
+      "url": "https://pds.lroc.im-ldi.com/data/LRO-L-LROC-5-RDR-V1.0/LROLRC_2001/DATA/BDR/NAC_ROI/",
+      "notes": "Region added in 2024. A large region; the IM-2 landing site lies inside the mosaic.",
+      "anchor": {
+        "lat": -84.3,
+        "lon": 30.6
+      },
+      "height_m": 5605.6,
+      "dem_10m_radius_km": 24.1,
+      "mask_index": 3
+    },
+    {
+      "id": "mons-mouton",
+      "name": "Mons Mouton",
+      "group": "artemis",
+      "lat": -85.40381,
+      "lon": 31.70225,
+      "kind": "approx",
+      "point": "Highest LOLA point inside the region footprint (2022 list, served by NASA Moon Trek). lat/lon below is the footprint centroid. The 2022 list calls this region \"Leibnitz Beta Plateau\".",
+      "footprint": "Leibnitz Beta Plateau",
+      "source": "NASA Moon Trek, A3_Named_regions_SP",
+      "url": "https://trek.nasa.gov/moon/trekarcgis2/rest/services/A3_Named_regions_SP/MapServer/0",
+      "notes": "Intuitive Machines IM-4 plans to land at Mons Mouton in 2027 (no coordinates published).",
+      "anchor": {
+        "lat": -85.4266,
+        "lon": 31.7428
+      },
+      "footprint_lonlat": [
+        [
+          27.28799,
+          -85.32705
+        ],
+        [
+          30.57923,
+          -85.78834
+        ],
+        [
+          36.36658,
+          -85.49737
+        ],
+        [
+          32.73523,
+          -85.0633
+        ],
+        [
+          27.28799,
+          -85.32705
+        ]
+      ],
+      "height_m": 6463.6,
+      "dem_10m_radius_km": 20.4,
+      "mask_index": 4
+    },
+    {
+      "id": "nobile-rim-1",
+      "name": "Nobile Rim 1",
+      "group": "artemis",
+      "lat": -85.23291,
+      "lon": 36.59181,
+      "kind": "approx",
+      "point": "Highest LOLA point inside the region footprint (2022 list, served by NASA Moon Trek). lat/lon below is the footprint centroid.",
+      "footprint": "Nobile Rim 1",
+      "source": "NASA Moon Trek, A3_Named_regions_SP",
+      "url": "https://trek.nasa.gov/moon/trekarcgis2/rest/services/A3_Named_regions_SP/MapServer/0",
+      "notes": "Astrobotic's Griffin Mission One targets the Nobile crater region (no coordinates published).",
+      "anchor": {
+        "lat": -85.4381,
+        "lon": 37.3667
+      },
+      "footprint_lonlat": [
+        [
+          31.66075,
+          -85.35325
+        ],
+        [
+          36.50144,
+          -85.89922
+        ],
+        [
+          43.22853,
+          -85.47632
+        ],
+        [
+          38.07278,
+          -84.97628
+        ],
+        [
+          31.66075,
+          -85.35325
+        ]
+      ],
+      "height_m": 6800.0,
+      "dem_10m_radius_km": 26.1,
+      "mask_index": 5
+    },
+    {
+      "id": "nobile-rim-2",
+      "name": "Nobile Rim 2",
+      "group": "artemis",
+      "lat": -84.07924,
+      "lon": 54.89488,
+      "kind": "approx",
+      "point": "Highest LOLA point inside the region footprint (2022 list, served by NASA Moon Trek). lat/lon below is the footprint centroid.",
+      "footprint": "Nobile Rim 2",
+      "source": "NASA Moon Trek, A3_Named_regions_SP",
+      "url": "https://trek.nasa.gov/moon/trekarcgis2/rest/services/A3_Named_regions_SP/MapServer/0",
+      "anchor": {
+        "lat": -83.954,
+        "lon": 58.8221
+      },
+      "footprint_lonlat": [
+        [
+          54.46232,
+          -84.04794
+        ],
+        [
+          59.96216,
+          -84.40462
+        ],
+        [
+          63.02472,
+          -83.82634
+        ],
+        [
+          57.84068,
+          -83.50155
+        ],
+        [
+          54.46232,
+          -84.04794
+        ]
+      ],
+      "height_m": 1817.4,
+      "dem_10m_radius_km": 20.0,
+      "mask_index": 6
+    },
+    {
+      "id": "de-gerlache-rim-2",
+      "name": "de Gerlache Rim 2",
+      "group": "artemis",
+      "lat": -88.58734,
+      "lon": -67.89559,
+      "kind": "approx",
+      "point": "Highest LOLA point inside the region footprint (2022 list, served by NASA Moon Trek). lat/lon below is the footprint centroid.",
+      "footprint": "de Gerlache Rim 2",
+      "source": "NASA Moon Trek, A3_Named_regions_SP",
+      "url": "https://trek.nasa.gov/moon/trekarcgis2/rest/services/A3_Named_regions_SP/MapServer/0",
+      "anchor": {
+        "lat": -88.23,
+        "lon": -64.6284
+      },
+      "footprint_lonlat": [
+        [
+          -60.57254,
+          -87.78529
+        ],
+        [
+          -77.47119,
+          -88.02393
+        ],
+        [
+          -71.34211,
+          -88.65999
+        ],
+        [
+          -49.39871,
+          -88.32789
+        ],
+        [
+          -60.57254,
+          -87.78529
+        ]
+      ],
+      "height_m": 1764.9,
+      "dem_10m_radius_km": 22.7,
+      "mask_index": 7
+    },
+    {
+      "id": "connecting-ridge",
+      "name": "Connecting ridge",
+      "group": "illumination",
+      "lat": -89.4398,
+      "lon": -137.17,
+      "kind": "exact",
+      "point": "Point C1 of Gläser et al. 2018 (same spot as Gläser et al. 2014 CR1 spot 2)",
+      "source": "Gläser et al. 2018, Planetary and Space Science 162",
+      "url": "https://ntrs.nasa.gov/api/citations/20170007365/downloads/20170007365.pdf",
+      "notes": "Published 88.0% mean solar illumination at 2 m, 2017–2037. Blue Origin's Blue Moon MK1 pathfinder targets the Shackleton connecting ridge (no coordinates published).",
+      "anchor": {
+        "lat": -89.4398,
+        "lon": -137.17
+      },
+      "height_m": 1958.6,
+      "dem_10m_radius_km": 21.3,
+      "mask_index": 8
+    },
+    {
+      "id": "shackleton-rim",
+      "name": "Shackleton rim",
+      "group": "illumination",
+      "lat": -89.6866,
+      "lon": -162.81,
+      "kind": "exact",
+      "point": "Shackleton rim point of Gläser et al. 2018",
+      "source": "Gläser et al. 2018, Planetary and Space Science 162",
+      "url": "https://ntrs.nasa.gov/api/citations/20170007365/downloads/20170007365.pdf",
+      "notes": "Published 85.5% mean solar illumination at 2 m, 2017–2037.",
+      "anchor": {
+        "lat": -89.6866,
+        "lon": -162.81
+      },
+      "height_m": 1729.6,
+      "dem_10m_radius_km": 23.1,
+      "mask_index": 9
+    },
+    {
+      "id": "im2-athena",
+      "name": "IM-2 Athena landing site",
+      "group": "clps",
+      "lat": -84.7906,
+      "lon": 29.1957,
+      "kind": "exact",
+      "point": "Where Intuitive Machines' Athena lander came to rest on 6 Mar 2025",
+      "source": "LROC image release 1408",
+      "url": "https://lroc.im-ldi.com/images/1408",
+      "notes": "Athena landed on its side in a small crater about 250 m from its target.",
+      "anchor": {
+        "lat": -84.7906,
+        "lon": 29.1957
+      },
+      "height_m": 5321.7,
+      "dem_10m_radius_km": 24.3,
+      "mask_index": 10
+    },
+    {
+      "id": "viper",
+      "name": "VIPER mission area",
+      "group": "clps",
+      "lat": -85.42088,
+      "lon": 31.6218,
+      "kind": "exact",
+      "point": "Center of VIPER's planned mission area (about 5 × 4 km)",
+      "source": "Planetary Science Journal, doi:10.3847/PSJ/ae061a",
+      "url": "https://iopscience.iop.org/article/10.3847/PSJ/ae061a",
+      "notes": "VIPER is now scheduled on Blue Origin's second Blue Moon MK1 (CLPS task order CS-7, late 2027). NASA has not confirmed whether this area is kept.",
+      "anchor": {
+        "lat": -85.42088,
+        "lon": 31.6218
+      },
+      "height_m": 6417.6,
+      "dem_10m_radius_km": 20.0,
+      "mask_index": 11
+    },
+    {
+      "id": "shackleton-floor",
+      "name": "Shackleton crater floor",
+      "group": "contrast",
+      "lat": -89.62511,
+      "lon": 118.60583,
+      "kind": "approx",
+      "point": "Lowest LOLA point within 3 km of the IAU crater center (89.67°S, 129.78°E); set by scripts/sites.py",
+      "source": "IAU Gazetteer of Planetary Nomenclature; LOLA 10 m map",
+      "url": "https://planetarynames.wr.usgs.gov/",
+      "notes": "Permanently shadowed. Included to contrast with the sunlit rim a few kilometres away.",
+      "anchor": {
+        "lat": -89.67,
+        "lon": 129.78
+      },
+      "height_m": -2872.3,
+      "dem_10m_radius_km": 20.0,
+      "mask_index": 12
+    }
+  ]
+}

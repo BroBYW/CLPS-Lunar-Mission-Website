@@ -7,7 +7,9 @@ Four tiers, finest first (PLAN.md §4.3):
   far240  240 m, +-931.2 km from the pole         (LDEM_60S_240MPP_ADJ, downloaded whole)
 """
 
+import json
 from dataclasses import dataclass
+from functools import lru_cache
 from pathlib import Path
 
 import numpy as np
@@ -16,6 +18,7 @@ from rasterio.transform import Affine
 from rasterio.windows import from_bounds
 from scipy.ndimage import map_coordinates
 
+from .geometry import polar_stereo
 from .paths import RAW_DIR, USER_AGENT
 
 PGDA_20MPP = "https://pgda.gsfc.nasa.gov/data/LOLA_20mpp/"
@@ -29,11 +32,13 @@ FAR_FILES = {
     "far240": (PGDA_240M_URL, RAW_DIR / "LDEM_60S_240MPP_ADJ.TIF"),
 }
 WINDOW_TIERS = {
-    # name: (url, half-size of the window around each point in metres, resolution in metres)
-    "near10": (PGDA_10M_URL, 20_000.0, 10.0),
-    "mid20": (PGDA_20M_URL, 60_000.0, 20.0),
+    # name: (url, half-size of a new window around a point, resolution, coverage a point needs), metres
+    "near10": (PGDA_10M_URL, 20_000.0, 10.0, 20_000.0),
+    "mid20": (PGDA_20M_URL, 60_000.0, 20.0, 40_000.0),
 }
+COG_LIMITS = {"near10": 216_400.0, "mid20": 304_000.0}
 WINDOW_DIR = RAW_DIR / "windows"
+MANIFEST = WINDOW_DIR / "manifest.json"
 
 GDAL_HTTP_ENV = {
     "GDAL_DISABLE_READDIR_ON_OPEN": "EMPTY_DIR",
@@ -159,3 +164,40 @@ class DemStack:
             if inside.any():
                 out[inside] = r.sample(x[inside], y[inside])
         return out
+
+
+def load_manifest() -> dict[str, list[dict]]:
+    return json.loads(MANIFEST.read_text()) if MANIFEST.exists() else {}
+
+
+def required_box(tier: str, x: float, y: float) -> Box:
+    """The box a point needs covered in this tier, clipped to the extent of the source COG."""
+    _, _, res, need = WINDOW_TIERS[tier]
+    return snap_box((x - need, y - need, x + need, y + need), res, COG_LIMITS[tier])
+
+
+def box_inside(inner: Box, outer: Box) -> bool:
+    return outer[0] <= inner[0] and inner[2] <= outer[2] and outer[1] <= inner[1] and inner[3] <= outer[3]
+
+
+@lru_cache(maxsize=1)
+def far_rasters() -> tuple[Raster, ...]:
+    return tuple(Raster.open(path, name) for name, (_, path) in FAR_FILES.items())
+
+
+@lru_cache(maxsize=4)
+def open_window(path: Path) -> Raster:
+    return Raster.open(path)
+
+
+def stack_for(lat: float, lon: float) -> DemStack:
+    """Per tier, the local window in which the point sits most centrally, plus the two far rasters."""
+    x, y = (float(v) for v in polar_stereo(np.array(lat), np.array(lon)))
+    chosen: dict[str, tuple[float, Path]] = {}
+    for tier, windows in load_manifest().items():
+        for w in windows:
+            b = w["box"]
+            margin = min(x - b[0], b[2] - x, y - b[1], b[3] - y)
+            if margin > 0 and (tier not in chosen or margin > chosen[tier][0]):
+                chosen[tier] = (margin, WINDOW_DIR / w["file"])
+    return DemStack([open_window(p) for _, p in chosen.values()] + list(far_rasters()))

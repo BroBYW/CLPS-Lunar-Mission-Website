@@ -212,11 +212,11 @@ DATA_SOURCES.md is written in M0 from this list, with a citation for every item.
 
 ## 7. Sites
 
-There are 14 sites (P0 needs 8), all using planetocentric latitude and east longitude. `pipeline/sites.yaml` holds each site with its source and a label: **exact** for a published point, **approx** for a representative point chosen to stand for a region.
+There are 13 sites (P0 needs 8), all using planetocentric latitude and east longitude. Slater Plain is on hold: its only official footprint is in the USGS release, which blocks automated downloads. `pipeline/sites.yaml` holds each site with its source and a label: **exact** for a published point, **approx** for a representative point chosen to stand for a region.
 
 **Artemis candidate landing regions.** NASA named these nine in Oct 2024 for Artemis III. In May 2026 NASA made Artemis III an Earth-orbit test for 2027, so Artemis IV is now the first landing ([NASA](https://www.nasa.gov/missions/artemis/artemis-3/nasa-outlines-preliminary-artemis-iii-mission-plans/)). I found no revised region list. NASA has never published center points; the official footprints are in a USGS data release ([McClernan 2024, doi:10.5066/P1MEQ6UK](https://www.usgs.gov/data/down-selected-artemis-iii-candidate-landing-site-navigational-grids)).
 
-In M2 I'll replace each anchor below with the centroid of its official footprint, still labeled approx. Moon Trek serves the region polygons as GeoJSON (§6), so no manual download should be needed; the USGS release is the cross-check.
+**Updated in M2.** Moon Trek's polygons turned out to be the 2022 list, which covers six of the nine regions. A footprint's centroid can land on a slope, so each approximate site now uses the highest LOLA point inside its footprint. Peak near Cabeus B and Mons Mouton Plateau have no footprint, so they use the highest point within 7.5 km of their LROC mosaic center. The table below keeps the declared anchors; VALIDATION.md §3 lists how far each point moved and why.
 
 | Site | Lat | Lon | Point used now | Source |
 |---|---|---|---|---|

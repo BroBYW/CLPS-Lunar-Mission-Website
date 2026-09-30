@@ -1,0 +1,34 @@
+{
+  "description": "Terrain horizon elevation (deg) per site, observer height and azimuth bin",
+  "format": "float32 little-endian, [site][height][azimuth]",
+  "az_step_deg": 0.1,
+  "az_count": 3600,
+  "heights_m": [
+    2.0,
+    10.0
+  ],
+  "sites": [
+    "peak-near-cabeus-b",
+    "haworth",
+    "malapert-massif",
+    "mons-mouton-plateau",
+    "mons-mouton",
+    "nobile-rim-1",
+    "nobile-rim-2",
+    "de-gerlache-rim-2",
+    "connecting-ridge",
+    "shackleton-rim",
+    "im2-athena",
+    "viper",
+    "shackleton-floor"
+  ],
+  "ray_length_km": 300.0,
+  "ray_samples": 7000,
+  "dems": [
+    "PGDA LDEM_83S_10MPP_ADJ (10 m, +-20 km window)",
+    "PGDA LDEM_80S_20MPP_ADJ (20 m, +-40-60 km window)",
+    "PGDA LDEM_80S_80MPP_ADJ (80 m)",
+    "PGDA LDEM_60S_240MPP_ADJ (240 m)"
+  ],
+  "generated_utc": "2026-09-30T00:57:57Z"
+}

@@ -1,0 +1,90 @@
+{
+ "generated_utc": "2026-09-30T00:59:54Z",
+ "description": "P0 metrics (threshold 0, margin 0) over 2027-01-01T00:00:00..2027-04-01T00:00:00 UTC at 10 min.",
+ "cases": [
+  {
+   "site": "connecting-ridge",
+   "height_index": 0,
+   "start_ms": 1798761600000.0,
+   "end_ms": 1806537600000.0,
+   "step_ms": 600000,
+   "samples": 12960,
+   "metrics": {
+    "sun_mean_pct": 91.82000316733806,
+    "sun_any_pct": 95.51697530864197,
+    "sun_full_pct": 87.2145061728395,
+    "longest_dark_h": 73.5,
+    "longest_dark_at_edge": false,
+    "earth_pct": 47.13734567901234,
+    "longest_blackout_h": 318.66666666666663,
+    "longest_blackout_at_edge": false,
+    "both_pct": 44.86882716049383,
+    "windows": 3,
+    "longest_window_h": 339.8333333333333
+   }
+  },
+  {
+   "site": "connecting-ridge",
+   "height_index": 1,
+   "start_ms": 1798761600000.0,
+   "end_ms": 1806537600000.0,
+   "step_ms": 600000,
+   "samples": 12960,
+   "metrics": {
+    "sun_mean_pct": 95.26173079074984,
+    "sun_any_pct": 97.01388888888889,
+    "sun_full_pct": 91.86728395061728,
+    "longest_dark_h": 23.333333333333332,
+    "longest_dark_at_edge": false,
+    "earth_pct": 47.13734567901234,
+    "longest_blackout_h": 318.66666666666663,
+    "longest_blackout_at_edge": false,
+    "both_pct": 46.08796296296296,
+    "windows": 4,
+    "longest_window_h": 339.8333333333333
+   }
+  },
+  {
+   "site": "shackleton-rim",
+   "height_index": 0,
+   "start_ms": 1798761600000.0,
+   "end_ms": 1806537600000.0,
+   "step_ms": 600000,
+   "samples": 12960,
+   "metrics": {
+    "sun_mean_pct": 86.1897715582474,
+    "sun_any_pct": 90.4320987654321,
+    "sun_full_pct": 80.625,
+    "longest_dark_h": 44.166666666666664,
+    "longest_dark_at_edge": false,
+    "earth_pct": 42.31481481481482,
+    "longest_blackout_h": 353.0,
+    "longest_blackout_at_edge": false,
+    "both_pct": 42.31481481481482,
+    "windows": 3,
+    "longest_window_h": 306.3333333333333
+   }
+  },
+  {
+   "site": "shackleton-rim",
+   "height_index": 1,
+   "start_ms": 1798761600000.0,
+   "end_ms": 1806537600000.0,
+   "step_ms": 600000,
+   "samples": 12960,
+   "metrics": {
+    "sun_mean_pct": 87.36583352115957,
+    "sun_any_pct": 90.87191358024691,
+    "sun_full_pct": 82.92438271604938,
+    "longest_dark_h": 43.33333333333333,
+    "longest_dark_at_edge": false,
+    "earth_pct": 42.93981481481482,
+    "longest_blackout_h": 348.5,
+    "longest_blackout_at_edge": false,
+    "both_pct": 42.93981481481482,
+    "windows": 3,
+    "longest_window_h": 310.8333333333333
+   }
+  }
+ ]
+}

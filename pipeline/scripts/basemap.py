@@ -35,8 +35,8 @@ def main() -> None:
     z = far80.data[r0:r0 + n, c0:c0 + n].astype(np.float64)
     z = np.where(np.isnan(z), np.nanmean(z), z)
     # Image rows run from +Y (top, toward 0 deg longitude) to -Y, matching the GeoTIFF row order.
-    shade = hillshade(z, res)
-    shade = 0.15 + 0.85 * shade ** 0.9
+    # Keep the map quiet: flat ground renders near Regolith grey, only sunward slopes reach Dust.
+    shade = hillshade(z, res) ** 1.7
     rgb = (DARK + (LIGHT - DARK) * shade[..., None]).astype(np.uint8)
     img = Image.fromarray(rgb, "RGB").resize((SIZE_PX, SIZE_PX), Image.LANCZOS)
     out = WEB_DATA_DIR / "basemap-south.webp"

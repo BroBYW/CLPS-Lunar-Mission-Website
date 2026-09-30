@@ -6,7 +6,7 @@ This file records how we checked the numbers the app shows. Each section says wh
 |---|---|---|---|
 | 1. Browser vs Python az/el | ≤ 0.01° | 9.6e-5° | Pass |
 | 2. Python vs JPL Horizons az/el | ≤ 0.1° | 8.9e-6° (pipeline), 5.8e-5° (browser) | Pass |
-| 3. Horizon masks | Synthetic terrain exact | — | Pending (M2) |
+| 3. Horizon masks | Synthetic terrain exact | Sphere dip within 2e-4°, mesa within 0.02° | Pass |
 | 4. Illumination and Earth visibility vs literature | Within ~5 points of LOLA-based studies | — | Pending (M4) |
 | 5. Eclipse | Sunlight drops during the 3 Mar 2026 total lunar eclipse | — | Pending (M4) |
 | 6. Performance | < 500 ms per site-range; 60 fps | — | Pending (M4/M6) |
@@ -83,7 +83,33 @@ The 2026-03-03 11:30 epoch falls during the total lunar eclipse. From these site
 
 ## 3. Horizon masks
 
-Pending (M2).
+**Synthetic terrain** (`pipeline/tests/test_horizon.py`):
+- **Smooth sphere.** The computed horizon equals the exact dip, −acos(R/(R + h)): −0.0869° at 2 m and −0.1944° at 10 m, to within 2e-4° at every one of the 3,600 azimuths.
+- **A 1,000 m mesa 20 km away.** The computed elevation angle is within 0.02° of the exact spherical value. The small residual comes from the test grid's 25 m pixels softening the mesa's edge.
+
+**Physical consistency.** Raising the observer can only lower the horizon. Across all 13 sites and 3,600 azimuths (46,800 values), the 10 m horizon is below the 2 m horizon everywhere: by 0.42° on average, and never by less than 0.0018°.
+
+**Coverage.** Every ray reaches 300 km on real data; the script stops if any sample falls outside all four maps. Every site has 10 m data to at least 20 km in every direction.
+
+**Visual review.** Each mask is plotted in `pipeline/validation/masks/`, with an overview in `_sheet.png`.
+- Peaks and rims have horizons near or below 0°: Malapert Massif, Mons Mouton, Nobile Rim 1, Peak near Cabeus B and the Connecting ridge.
+- The Shackleton crater floor is walled in at 18–27°, which is why it never sees the Sun.
+
+**Representative points for regions.** A region's centroid can land on a slope. In the first build, de Gerlache Rim 2's centroid sat at −88 m with a 15° horizon: a crater wall, not the rim the region was chosen for. Approximate sites now use the highest LOLA point inside the region's footprint. For the two regions without a footprint, they use the highest point within 7.5 km of the LROC mosaic center. The resolved de Gerlache point lies 2.9 km from Bryant's rim point C1 and 3.8 km from Bussey's point C, two published high-illumination spots.
+
+| Site | Rule | Moved from anchor |
+|---|---|---|
+| Peak near Cabeus B | highest within 7.5 km | 1.2 km |
+| Haworth | highest in footprint | 12.2 km |
+| Malapert Massif | highest in footprint | 4.9 km |
+| Mons Mouton Plateau | highest within 7.5 km | 4.8 km |
+| Mons Mouton | highest in footprint | 0.7 km |
+| Nobile Rim 1 | highest in footprint | 6.5 km |
+| Nobile Rim 2 | highest in footprint | 13.0 km |
+| de Gerlache Rim 2 | highest in footprint | 11.2 km |
+| Shackleton crater floor | lowest within 3 km | 2.5 km |
+
+Peak near Cabeus B shows why this matters. Moving 1.2 km from the mosaic center to the actual summit lowered its highest horizon from +6.5° to −0.5°: the mosaic center sits on the peak's own flank.
 
 ## 4. Illumination and Earth visibility against literature
 

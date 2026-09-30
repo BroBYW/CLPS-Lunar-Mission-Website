@@ -1,0 +1,14 @@
+{
+  "description": "Hillshade of LOLA heights (PGDA LDEM_80S_80MPP_ADJ), south polar stereographic",
+  "proj": "+proj=stere +lat_0=-90 +lat_ts=-90 +lon_0=0 +R=1737400 +units=m",
+  "extent_m": [
+    -220000.0,
+    -220000.0,
+    220000.0,
+    220000.0
+  ],
+  "width": 1600,
+  "height": 1600,
+  "up": "+Y, toward 0 deg longitude (the Earth-facing meridian)",
+  "light": "from the upper left, 35 deg altitude, 2x vertical exaggeration"
+}
