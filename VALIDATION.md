@@ -217,6 +217,8 @@ Checked with [axe-core](https://github.com/dequelabs/axe-core) 4.13 against WCAG
 - Explore, at step 1 and at the challenge with every site shown
 - 3D, in globe view, over the terrain and standing at a site
 
+The same check at a 375 px phone width (headless Chrome, 30 Sep 2026) also finds 0 violations on Home, Plan, Compare, 3D, Explore and Credits. At 360 px and 390 px, no view scrolls sideways.
+
 Beyond the automated check:
 - **Keyboard.** Everything works from the keyboard: sites are a radio group, all controls are buttons or inputs, and the panorama takes focus and responds to arrow keys, + and −, and 0. The standing view in 3D takes focus too: arrow keys look around, + and − zoom.
 - **Reduced motion.** It is respected: playback steps once a second instead of animating, the home page entrance and Moon rotation are off, and "Let's start" skips the flight.

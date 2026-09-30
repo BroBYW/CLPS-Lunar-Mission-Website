@@ -61,6 +61,8 @@ export function Home({ data }: { data: AppData | null }) {
       {data && <MoonBackdrop ref={backdrop} ephemeris={data.ephemeris} timeMs={nowMs} />}
       <div className="pointer-events-none absolute inset-0" style={{ background: 'linear-gradient(to right, rgba(0,0,0,0.78) 0%, rgba(0,0,0,0.42) 38%, transparent 62%)' }} />
       <div className="pointer-events-none absolute inset-0" style={{ background: 'linear-gradient(to bottom, rgba(0,0,0,0.35) 0%, transparent 22%, transparent 70%, rgba(0,0,0,0.5) 100%)' }} />
+      {/* On phones the Moon sits behind the credits line; darken it there so the text stays readable */}
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-48 sm:hidden" style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.9) 35%, rgba(0,0,0,0.55) 70%, transparent 100%)' }} />
 
       <nav aria-label="Main" className={`rise absolute inset-x-0 top-0 z-20 flex items-center justify-between px-6 py-6 md:px-11 ${leaving ? 'opacity-0 transition-opacity duration-500' : ''}`}>
         <a href="/" onClick={(e) => e.preventDefault()} className="flex items-center gap-3 text-bright no-underline" aria-label="CLPS Lunar Mission Browser, home">

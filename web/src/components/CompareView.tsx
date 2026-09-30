@@ -1,4 +1,4 @@
-import { useId, useMemo } from 'react'
+import { useMemo } from 'react'
 import type { AppData, Site } from '../data/load.ts'
 import { windowsCsv, downloadText } from '../lib/csv.ts'
 import { fmtHours, fmtLatLon } from '../lib/format.ts'
@@ -6,7 +6,7 @@ import { computeMetrics, type Metrics } from '../lib/metrics.ts'
 import { formatUtcDate } from '../lib/time.ts'
 import { MAX_COMPARE, useApp } from '../state/store.ts'
 import { seriesRequest, useSeries } from '../workers/client.ts'
-import { GROUP_LABELS } from '../data/groups.ts'
+import { SitePicker } from './SitePicker.tsx'
 import { Timeline } from './Timeline.tsx'
 import { TimeControls } from './TimeControls.tsx'
 
@@ -25,29 +25,6 @@ const ROWS: Row[] = [
   { label: 'Sun and Earth together', value: (m) => m.bothPct, text: (m) => `${m.bothPct.toFixed(1)}%`, better: 'high' },
   { label: 'Longest window with both', value: (m) => m.longestWindowH, text: (m) => fmtHours(m.longestWindowH), better: 'high' },
 ]
-
-function SitePicker({ index, sites, value, onChange }: { index: number; sites: Site[]; value: string; onChange: (id: string) => void }) {
-  const id = useId()
-  return (
-    <div>
-      <label htmlFor={id} className="block text-xs text-dust">
-        Site {index + 1}
-      </label>
-      <select id={id} value={value} onChange={(e) => onChange(e.target.value)} className="mt-1 w-full rounded-sm border border-regolith bg-sky px-2 py-1 text-sm">
-        {index > 0 && <option value="">None</option>}
-        {(['illumination', 'artemis', 'clps', 'contrast'] as const).map((g) => (
-          <optgroup key={g} label={GROUP_LABELS[g]}>
-            {sites.filter((s) => s.group === g).map((s) => (
-              <option key={s.id} value={s.id}>
-                {s.name}
-              </option>
-            ))}
-          </optgroup>
-        ))}
-      </select>
-    </div>
-  )
-}
 
 export function CompareView({ data }: { data: AppData }) {
   const compareIds = useApp((s) => s.compareIds)
@@ -83,6 +60,12 @@ export function CompareView({ data }: { data: AppData }) {
   }
   const pickers = Array.from({ length: Math.min(MAX_COMPARE, sites.length + 1) }, (_, i) => i)
   const ready = metrics.every((m) => m)
+  const table = ROWS.map((row) => {
+    const vals = metrics.map((m) => (m ? row.value(m) : NaN))
+    const best = ready && sites.length > 1 ? (row.better === 'high' ? Math.max(...vals) : Math.min(...vals)) : NaN
+    return { row, vals, best }
+  })
+  const siteColumns = { gridTemplateColumns: `repeat(${Math.max(1, sites.length)}, minmax(0, 1fr))` }
 
   const download = () => {
     const entries = sites.flatMap((s, i) => (results[i]?.series ? [{ siteId: s.id, series: results[i].series! }] : []))
@@ -100,13 +83,13 @@ export function CompareView({ data }: { data: AppData }) {
       </p>
       <div className="mt-4 grid max-w-3xl gap-3 sm:grid-cols-3">
         {pickers.map((i) => (
-          <SitePicker key={i} index={i} sites={data.sites} value={compareIds[i] ?? ''} onChange={(id) => setAt(i, id)} />
+          <SitePicker key={i} label={`Site ${i + 1}`} allowNone={i > 0} sites={data.sites} value={compareIds[i] ?? ''} onChange={(id) => setAt(i, id)} />
         ))}
       </div>
 
       <TimeControls />
 
-      <section aria-label="Comparison table" aria-busy={pending} className="mt-6 overflow-x-auto">
+      <section aria-label="Comparison table" aria-busy={pending} className="mt-6 overflow-x-auto max-sm:hidden">
         <table className={`w-full min-w-[640px] text-sm tabular ${pending ? 'opacity-60' : ''}`}>
           <caption className="sr-only">
             Metrics per site from {formatUtcDate(startMs)} to {formatUtcDate(endMs - 86_400_000)}, observer {heightsM[heightIndex]} m. The best value in each row is marked.
@@ -127,9 +110,7 @@ export function CompareView({ data }: { data: AppData }) {
             </tr>
           </thead>
           <tbody>
-            {ROWS.map((row) => {
-              const vals = metrics.map((m) => (m ? row.value(m) : NaN))
-              const best = ready && sites.length > 1 ? (row.better === 'high' ? Math.max(...vals) : Math.min(...vals)) : NaN
+            {table.map(({ row, vals, best }) => {
               return (
                 <tr key={row.label} className="border-t border-shadow-2">
                   <th scope="row" className="py-2 pr-4 text-left font-normal text-dust">
@@ -152,6 +133,43 @@ export function CompareView({ data }: { data: AppData }) {
             })}
           </tbody>
         </table>
+      </section>
+
+      {/* Phones: each metric with the sites' values side by side beneath it, instead of a wide table */}
+      <section aria-label="Comparison" aria-busy={pending} className={`mt-6 text-sm tabular sm:hidden ${pending ? 'opacity-60' : ''}`}>
+        <p className="text-xs text-dust">
+          {heightsM[heightIndex]} m observer. The best value in each row is marked.
+        </p>
+        <div className="mt-3 grid gap-3" style={siteColumns} aria-hidden="true">
+          {sites.map((s) => (
+            <p key={s.id} className="font-display text-sm leading-tight">
+              {s.name}
+              <span className="block font-sans text-[11px] text-dust">{s.kind === 'exact' ? 'published point' : 'approximate'}</span>
+            </p>
+          ))}
+        </div>
+        <dl className="mt-2">
+          {table.map(({ row, vals, best }) => (
+            <div key={row.label} className="border-t border-shadow-2 py-2">
+              <dt className="text-xs text-dust">{row.label}</dt>
+              <dd className="mt-1 grid gap-3" style={siteColumns}>
+                {metrics.map((m, i) => (
+                  <span key={i} className="block">
+                    <span className="sr-only">{sites[i]?.name}: </span>
+                    {m ? (
+                      <>
+                        <span className={vals[i] === best ? 'text-bright' : 'text-dust'}>{row.text(m)}</span>
+                        {vals[i] === best && <span className="mt-1 block w-fit rounded-sm border border-bright px-1 text-xs text-bright">best</span>}
+                      </>
+                    ) : (
+                      '…'
+                    )}
+                  </span>
+                ))}
+              </dd>
+            </div>
+          ))}
+        </dl>
       </section>
 
       <section aria-label="Aligned timelines" className="mt-6">

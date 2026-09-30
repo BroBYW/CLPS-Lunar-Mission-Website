@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, type KeyboardEvent, type PointerEvent } from 'react'
 import { EarthGlyph, SunGlyph } from '../components/Glyphs.tsx'
+import { SitePicker } from '../components/SitePicker.tsx'
 import { TimeControls } from '../components/TimeControls.tsx'
 import type { AppData, Site } from '../data/load.ts'
 import type { MoonViewer } from '../globe/moonViewer.ts'
@@ -424,7 +425,7 @@ export default function Globe3D({ data }: { data: AppData }) {
   const b = bodiesAt(data.ephemeris, frame, timeMs)
   const f = sunFraction(mask, b.sunAz, b.sunEl, b.sunRadius, { az: b.earthAz, el: b.earthEl, radius: b.earthRadius })
   const earthUp = earthVisible(mask, b.earthAz, b.earthEl)
-  const btn = 'rounded-sm border px-3 py-1.5 text-sm backdrop-blur-sm'
+  const btn = 'rounded-sm border px-3 py-1.5 text-sm backdrop-blur-sm max-sm:px-2.5 max-sm:text-[13px]'
   const on = 'border-bright bg-sky/60 text-bright'
   const off = 'border-regolith bg-sky/60 text-dust hover:border-dust hover:text-bright'
   const description =
@@ -441,26 +442,35 @@ export default function Globe3D({ data }: { data: AppData }) {
           <h2 className="font-display text-2xl font-medium">3D view</h2>
           <p className="mt-1 max-w-prose text-sm text-dust">
             Fly to a site to see the LOLA terrain around it, lit and shadowed by the Sun at the time below, then stand
-            on it. The thin line around you is the computed horizon for a {heightM} m observer. Every number in the app
-            uses it, and the Sun and Earth cross it exactly when the panorama says.
+            on it.{' '}
+            <span className="max-sm:hidden">
+              The thin line around you is the computed horizon for a {heightM} m observer. Every number in the app uses it,
+              and the Sun and Earth cross it exactly when the panorama says.
+            </span>
           </p>
         </div>
-        <label className="text-sm">
-          <span className="block text-xs text-dust">Site</span>
-          <select value={site.id} onChange={(e) => setSite(e.target.value)} className="mt-1 rounded-sm border border-regolith bg-sky px-2 py-1">
-            {data.sites.map((s) => (
-              <option key={s.id} value={s.id}>
-                {s.name}
-              </option>
-            ))}
-          </select>
-        </label>
+        <SitePicker label="Site" sites={data.sites} value={site.id} onChange={setSite} className="max-sm:w-full sm:w-60" />
       </div>
 
-      <div className="relative mt-4 h-[62vh] min-h-[420px] w-full overflow-hidden rounded-sm bg-sky">
+      {/* On phones the view buttons sit in a bar above the 3D view; on larger screens they float over it */}
+      <div className="relative mt-4 flex h-[62vh] min-h-[420px] w-full flex-col overflow-hidden rounded-sm bg-sky">
+        {ready && (
+          <div className="z-10 flex flex-wrap gap-2 border-b border-shadow-2 p-2 sm:absolute sm:left-3 sm:top-3 sm:border-0 sm:p-0">
+            <button type="button" className={`${btn} ${mode === 'globe' ? on : off}`} onClick={showGlobe}>
+              Globe
+            </button>
+            <button type="button" className={`${btn} ${mode === 'flying' || mode === 'terrain' ? on : off}`} onClick={() => flyToSite()}>
+              Fly to <span className="max-sm:hidden">{site.name}</span>
+              <span className="sm:hidden">site</span>
+            </button>
+            <button type="button" className={`${btn} ${mode === 'ground' ? on : off}`} onClick={() => void standAtSite()}>
+              Stand at the site
+            </button>
+          </div>
+        )}
         <div
           ref={container}
-          className={`absolute inset-0 ${mode === 'ground' ? 'cursor-grab active:cursor-grabbing' : ''}`}
+          className={`relative min-h-0 flex-1 ${mode === 'ground' ? 'cursor-grab active:cursor-grabbing' : ''}`}
           onPointerDown={onPointerDown}
           onPointerMove={onPointerMove}
           onPointerUp={onPointerUp}
@@ -477,19 +487,6 @@ export default function Globe3D({ data }: { data: AppData }) {
           <p role="alert" className="absolute inset-0 flex items-center justify-center p-6 text-center text-alert">
             The 3D view needs WebGL, which this browser didn't provide. The panorama in the Plan view shows the same skyline.
           </p>
-        )}
-        {ready && (
-          <div className="absolute left-3 top-3 flex flex-wrap gap-2">
-            <button type="button" className={`${btn} ${mode === 'globe' ? on : off}`} onClick={showGlobe}>
-              Globe
-            </button>
-            <button type="button" className={`${btn} ${mode === 'flying' || mode === 'terrain' ? on : off}`} onClick={() => flyToSite()}>
-              Fly to {site.name}
-            </button>
-            <button type="button" className={`${btn} ${mode === 'ground' ? on : off}`} onClick={() => void standAtSite()}>
-              Stand at the site
-            </button>
-          </div>
         )}
         {terrainState === 'loading' && (
           <p className="absolute inset-x-0 top-1/2 mx-auto w-fit rounded-sm bg-sky/70 px-3 py-1.5 text-sm text-dust backdrop-blur-sm" role="status">

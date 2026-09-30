@@ -42,7 +42,7 @@ export function SiteMapPanel({ data, selected, onSelect }: { data: AppData; sele
   return (
     <section aria-label="Map of the sites" className="mt-6">
       <div className="mb-2 flex items-center justify-between">
-        <h3 className="font-display text-lg font-medium">Map</h3>
+        <h2 className="font-display text-lg font-medium">Map</h2>
         <div role="group" aria-label="Map style" className="flex gap-1">
           {btn('globe', '3D Moon')}
           {btn('flat', 'Flat map')}

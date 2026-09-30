@@ -6,6 +6,7 @@ import { PowerPanel } from './components/PowerPanel.tsx'
 import { SiteHeader } from './components/SiteHeader.tsx'
 import { SiteList } from './components/SiteList.tsx'
 import { SiteMapPanel } from './components/SiteMapPanel.tsx'
+import { SitePicker } from './components/SitePicker.tsx'
 import { Timeline } from './components/Timeline.tsx'
 import { TimeControls } from './components/TimeControls.tsx'
 import { WindowsTable } from './components/WindowsTable.tsx'
@@ -30,6 +31,9 @@ const VIEWS: [View, string][] = [
   ['about', 'Method'],
   ['credits', 'Credits'],
 ]
+/** On phones the header keeps the four main views; these two move to the footer. */
+const SECONDARY: View[] = ['about', 'credits']
+const REPO_URL = 'https://github.com/BroBYW/CLPS-Lunar-Mission-Website'
 
 // CesiumJS only loads when the 3D view (or the home page backdrop) is shown
 const Globe3D = lazy(() => import('./views/Globe3D.tsx'))
@@ -67,14 +71,14 @@ export default function App() {
           </h1>
           <p className="text-sm text-dust max-md:hidden">Sunlight and Earth visibility at lunar south pole sites, 2026–2030</p>
         </div>
-        <nav aria-label="Views" className="-mx-1 ml-auto flex gap-1 max-sm:w-full max-sm:overflow-x-auto">
+        <nav aria-label="Views" className="-mx-1 ml-auto flex gap-1 max-sm:w-full max-sm:justify-between">
           {VIEWS.map(([v, label]) => (
             <button
               key={v}
               type="button"
               aria-current={view === v ? 'page' : undefined}
               onClick={() => setView(v)}
-              className={`rounded-sm px-3 py-1 text-sm ${view === v ? 'bg-shadow-2 text-bright' : 'text-dust hover:text-bright'}`}
+              className={`rounded-sm px-3 py-1 text-sm ${SECONDARY.includes(v) ? 'max-sm:hidden' : ''} ${view === v ? 'bg-shadow-2 text-bright' : 'text-dust hover:text-bright'}`}
             >
               {label}
             </button>
@@ -104,6 +108,18 @@ export default function App() {
       ) : (
         <Planner data={data} />
       )}
+      <footer className="mt-10 border-t border-shadow-2 px-4 py-4 text-xs text-dust lg:px-6">
+        <nav aria-label="About this project" className="flex flex-wrap gap-x-5 gap-y-2">
+          {VIEWS.filter(([v]) => SECONDARY.includes(v)).map(([v, label]) => (
+            <button key={v} type="button" onClick={() => setView(v)} className="underline decoration-regolith underline-offset-2 hover:text-bright">
+              {label}
+            </button>
+          ))}
+          <a href={REPO_URL} className="underline decoration-regolith underline-offset-2 hover:text-bright">
+            Source code
+          </a>
+        </nav>
+      </footer>
     </div>
   )
 }
@@ -138,6 +154,8 @@ function Planner({ data }: { data: AppData }) {
         <SiteMapPanel data={data} selected={site.id} onSelect={setSite} />
       </aside>
       <main className="order-1 min-w-0 lg:order-2">
+        {/* On phones the site list comes after everything else, so the site can be changed here too */}
+        <SitePicker label="Site" sites={data.sites} value={site.id} onChange={setSite} className="mb-4 lg:hidden" />
         <div className="flex flex-wrap items-start justify-between gap-4">
           <SiteHeader site={site} />
           <fieldset className="flex items-center gap-1 text-sm">

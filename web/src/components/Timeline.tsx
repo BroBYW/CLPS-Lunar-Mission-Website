@@ -16,6 +16,12 @@ const ROW_H = 16
 const ROW_GAP = 3
 const BLOCK_GAP = 14
 const LABEL_W = 132
+/** Narrower row labels on phones, where the plot needs the room. */
+const LABEL_W_NARROW = 104
+/** With several sites, each block gets a line with the site's name above its three rows. */
+const NAME_H = 18
+/** Date labels are dropped when they would come closer than this, in pixels. */
+const TICK_SPACING = 58
 
 const css = (name: string) => getComputedStyle(document.documentElement).getPropertyValue(name).trim()
 
@@ -68,13 +74,16 @@ export function Timeline({ rows, startMs, endMs }: { rows: TimelineRow[]; startM
   const wrapRef = useRef<HTMLDivElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const width = useElementWidth(wrapRef)
-  const plotW = Math.max(100, width - LABEL_W)
+  const labelW = width < 480 ? LABEL_W_NARROW : LABEL_W
+  const plotW = Math.max(100, width - labelW)
   const timeMs = useApp((s) => s.timeMs)
   const setTime = useApp((s) => s.setTime)
   const darkThreshold = useApp((s) => s.darkThreshold)
   const earthMarginDeg = useApp((s) => s.earthMarginDeg)
   const blockH = 3 * ROW_H + 2 * ROW_GAP
-  const height = rows.length * blockH + (rows.length - 1) * BLOCK_GAP
+  const nameH = rows.length > 1 ? NAME_H : 0
+  const pitch = nameH + blockH + BLOCK_GAP
+  const height = rows.length * (nameH + blockH) + (rows.length - 1) * BLOCK_GAP
 
   useEffect(() => {
     const canvas = canvasRef.current
@@ -91,7 +100,7 @@ export function Timeline({ rows, startMs, endMs }: { rows: TimelineRow[]; startM
     const stripes = pattern(ctx, [sunC, earthC], dpr)
     const cols = Math.max(1, Math.round(plotW * dpr))
     rows.forEach((row, r) => {
-      const y0 = r * (blockH + BLOCK_GAP) * dpr
+      const y0 = (r * pitch + nameH) * dpr
       const rh = ROW_H * dpr
       ctx.fillStyle = css('--color-shadow')
       for (let k = 0; k < 3; k++) ctx.fillRect(0, y0 + k * (ROW_H + ROW_GAP) * dpr, cols, rh)
@@ -109,12 +118,18 @@ export function Timeline({ rows, startMs, endMs }: { rows: TimelineRow[]; startM
       draw(agg.earth, 1, hatch)
       draw(agg.both, 2, stripes)
     })
-  }, [rows, plotW, height, blockH, darkThreshold, earthMarginDeg])
+  }, [rows, plotW, height, blockH, nameH, pitch, darkThreshold, earthMarginDeg])
 
   const scale = useMemo(() => scaleUtc().domain([startMs, endMs]).range([0, plotW]), [startMs, endMs, plotW])
   const span = endMs - startMs
   const fmt = utcFormat(span > 400 * 86_400_000 ? '%Y' : span > 60 * 86_400_000 ? '%b %Y' : '%d %b')
-  const ticks = scale.ticks(Math.max(2, Math.floor(plotW / 110)))
+  const ticks: Date[] = []
+  for (const t of scale.ticks(Math.max(2, Math.floor(plotW / 70)))) {
+    const x = scale(t)
+    const last = ticks.length ? scale(ticks[ticks.length - 1]) : -Infinity
+    // Keep labels apart, and clear of the right edge where they would stick out
+    if (x - last >= TICK_SPACING && x <= plotW - 20) ticks.push(t)
+  }
   const cursorX = scale(timeMs)
 
   const seek = (e: PointerEvent<HTMLDivElement>) => {
@@ -123,14 +138,21 @@ export function Timeline({ rows, startMs, endMs }: { rows: TimelineRow[]; startM
   }
 
   return (
-    <div ref={wrapRef} className="w-full">
+    <div ref={wrapRef} className="relative w-full">
+      {/* Site names over each block, across the full width so long names are never cut */}
+      {nameH > 0 &&
+        rows.map((row, r) => (
+          <p key={r} className="absolute inset-x-0 truncate text-xs text-bright" style={{ top: r * pitch, height: nameH, lineHeight: `${nameH - 4}px` }} aria-hidden="true">
+            {row.label}
+          </p>
+        ))}
       <div className="flex">
-        <div className="shrink-0" style={{ width: LABEL_W }} aria-hidden="true">
+        <div className="shrink-0" style={{ width: labelW }} aria-hidden="true">
           {rows.map((row, r) => (
-            <div key={r} style={{ height: blockH, marginBottom: r < rows.length - 1 ? BLOCK_GAP : 0 }} className="text-xs">
+            <div key={r} style={{ height: nameH + blockH, paddingTop: nameH, marginBottom: r < rows.length - 1 ? BLOCK_GAP : 0 }} className="text-xs">
               {rows.length > 1 && <span className="sr-only">{row.label}</span>}
               {[
-                [<SunGlyph key="s" className="text-sun" />, rows.length > 1 ? `${row.label}: sunlit` : 'Sunlit'],
+                [<SunGlyph key="s" className="text-sun" />, 'Sunlit'],
                 [<EarthGlyph key="e" className="text-earth" />, 'Earth in view'],
                 [
                   <span key="b" className="flex">

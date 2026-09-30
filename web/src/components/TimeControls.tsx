@@ -74,21 +74,24 @@ export function TimeControls() {
         <button type="button" className={btn} onClick={() => setTime(timeMs + HOUR_MS)} aria-label="Forward one hour">
           +1 h
         </button>
-        <label htmlFor={ids.speed} className="ml-2 text-xs text-dust">
-          Speed
-        </label>
-        <select
-          id={ids.speed}
-          value={speedHps}
-          onChange={(e) => setSpeed(Number(e.target.value))}
-          className="rounded-sm border border-regolith bg-sky px-2 py-1 text-sm"
-        >
-          {SPEEDS_HPS.map((h) => (
-            <option key={h} value={h}>
-              {speedLabel(h)}
-            </option>
-          ))}
-        </select>
+        {/* The label and its menu wrap together on narrow screens */}
+        <span className="flex items-center gap-2 sm:ml-2">
+          <label htmlFor={ids.speed} className="text-xs text-dust">
+            Speed
+          </label>
+          <select
+            id={ids.speed}
+            value={speedHps}
+            onChange={(e) => setSpeed(Number(e.target.value))}
+            className="rounded-sm border border-regolith bg-sky px-2 py-1 text-sm"
+          >
+            {SPEEDS_HPS.map((h) => (
+              <option key={h} value={h}>
+                {speedLabel(h)}
+              </option>
+            ))}
+          </select>
+        </span>
       </div>
 
       <label htmlFor={ids.scrub} className="sr-only">
