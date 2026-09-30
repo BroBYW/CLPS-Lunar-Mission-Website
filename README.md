@@ -4,7 +4,7 @@
 
 Built for the NASA Space Apps Challenge 2026, challenge *CLPS Lunar Mission Browser*.
 
-Live site: *(Vercel URL, added after deployment)*
+Live site: https://clps-lunar-mission-browser.vercel.app
 
 ## The problem
 

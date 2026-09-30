@@ -2,7 +2,7 @@
 
 In 2025, Space Apps capped the demo at a **30-second video** or **7 slides**, publicly viewable and in English, with subtitles for video. The 2026 guide is due on 13 Nov 2026; check it and adjust. This script fits the 30 s version and ends with a 7-slide backup.
 
-Record at 1920×1080 in Chrome with reduced motion **off**. Use the production site, not the dev server. The links below reproduce each shot exactly; append them to the site URL.
+Record at 1920×1080 in Chrome with reduced motion **off**. Use the production site (https://clps-lunar-mission-browser.vercel.app), not the dev server. The links below reproduce each shot exactly; append them to the site URL.
 
 ## 30-second video
 
