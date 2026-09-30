@@ -38,7 +38,7 @@ All of these maps are LOLA heights in metres above the 1737.4 km sphere, in a so
 | PGDA `AVGVISIB_85S_060M_201608.TIF` and `..._EARTH.TIF` ([product 69](https://pgda.gsfc.nasa.gov/products/69)) | 60 m, 85°S to the pole | Validation of illumination and Earth visibility; optional map overlay |
 | PDS [LOLA polar GDRs](https://pds-geosciences.wustl.edu/lro/lro-l-lola-3-rdr-v1/lrolol_1xxx/data/lola_gdr/polar/) | 5–240 m | Backup only |
 
-**Derived terrain for the 3D views** (`pipeline/scripts/terrain_patches.py`, `web/public/data/terrain/`): for each site, three 401 × 401 height grids centred on it, sampled from the same tiers as the horizon masks. They are 30 m spacing to ±6 km (point samples), 240 m to ±48 km (mean of 3 × 3 samples per node) and 1.5 km to ±300 km (mean of 5 × 5). About 400 kB per site, 5.3 MB in all. They are cropped, downsampled grids, not the raw maps.
+**Derived terrain for the 3D views** (`pipeline/scripts/terrain_patches.py`, `web/public/data/terrain/`): for each site, four 401 × 401 height grids centred on it, sampled from the same tiers as the horizon masks. They are 7.5 m spacing to ±1.5 km and 30 m to ±6 km (point samples), 240 m to ±48 km (mean of 3 × 3 samples per node) and 1.5 km to ±300 km (mean of 5 × 5). About 500 kB per site, 6.4 MB in all. They are cropped, downsampled grids, not the raw maps.
 
 Citations:
 - Smith, D. E., et al. (2010), The Lunar Orbiter Laser Altimeter investigation on the Lunar Reconnaissance Orbiter mission, *Space Science Reviews* 150, 209–241.

@@ -26,7 +26,7 @@ describe.skipIf(!process.env.CLPS_VALIDATE)('3D terrain against the horizon mask
     const hz = new HorizonSet(buffer('horizons.bin'), json('horizons.json'))
     const sitesJson = json('sites.json')
     const sites: { id: string; lat: number; lon: number; height_m: number; mask_index: number }[] = sitesJson.sites ?? sitesJson
-    const index: { n: number; grids: GridSpec[]; sites: Record<string, { file: string; center_m: [number, number] }> } = json('terrain/index.json')
+    const index: { n: number; grids: GridSpec[]; sites: Record<string, { file: string; center_m: [number, number]; base_m: number }> } = json('terrain/index.json')
     const { n } = index
     const start = Date.parse('2027-01-01T00:00:00Z')
     const v = new Float64Array(6)
@@ -39,7 +39,7 @@ describe.skipIf(!process.env.CLPS_VALIDATE)('3D terrain against the horizon mask
       const patch: Patch = {
         n,
         center: index.sites[s.id].center_m,
-        grids: index.grids.map((g, k) => ({ ...g, heights: decodeGrid(res, k * n * n, n, g.unit_m) })),
+        grids: index.grids.map((g, k) => ({ ...g, heights: decodeGrid(res, k * n * n, n, g.unit_m, index.sites[s.id].base_m) })),
       }
       const terrain = new TerrainSun(patch)
       const mask = hz.mask(s.mask_index, 0)

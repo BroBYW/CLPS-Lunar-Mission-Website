@@ -68,12 +68,17 @@ export function AboutPage() {
       <section>
         <h3>The 3D views</h3>
         <p>
-          Around each site, the 3D view draws LOLA terrain from three nested grids: 30 m spacing to 6 km, 240 m to 48 km and
-          1.5 km to 300 km. It is lit by the Sun at the time shown. Shadows come from the terrain itself: along lines toward
-          the Sun, a point is lit when no terrain between it and the Sun rises past the line to the Sun's center, so a ridge
-          300 km away can shade the site, as in the horizon masks. The Earth is drawn at its true position and size, lit by
-          the Sun and turned to the right time of day. The Sun is drawn in its true direction at its true size, with a glow so
-          it stays visible.
+          Around each site, the 3D view draws LOLA terrain from four nested grids: 7.5 m spacing to 1.5 km (from the 10 m
+          map), 30 m to 6 km, 240 m to 48 km and 1.5 km to 300 km. It is lit by the Sun at the time shown. Shadows come from
+          the terrain itself: along lines toward the Sun, a point is lit when no terrain between it and the Sun rises past
+          the line to the Sun's center, so a ridge 300 km away can shade the site, as in the horizon masks. The Earth is
+          drawn at its true position and size, lit by the Sun and turned to the right time of day. The Sun is drawn in its
+          true direction at its true size, with a glow so it stays visible.
+        </p>
+        <p>
+          The maps stop at 10 m, so when you stand on the ground, the craters under 5 m across near your feet are
+          decorative. They only shape the shading, to show how a low Sun catches a cratered surface. They are not in the
+          data, and they change no shadow or number.
         </p>
       </section>
       <section>
@@ -119,10 +124,11 @@ export function AboutPage() {
             <strong>Power model.</strong> It ignores dust, temperature, panel ageing and battery losses.
           </li>
           <li>
-            <strong>3D terrain.</strong> The 3D view is coarser than the analysis: 30 m at best against 10 m for the horizon
-            masks, so its skyline can differ from the computed one by a fraction of a degree. The thin line in the standing
-            view is the computed horizon that every number uses. Shadowed ground gets a faint fill light so its shape stays
-            visible; in reality it is darker.
+            <strong>3D terrain.</strong> Beyond 1.5 km the 3D view is coarser than the maps behind the horizon masks (grids of
+            30 m, 240 m and 1.5 km against maps of 10 m to 240 m), so its skyline can differ from the computed one by a
+            fraction of a degree.
+            The thin line in the standing view is the computed horizon that every number uses. Shadowed ground gets a faint
+            fill light so its shape stays visible; in reality it is darker. The small craters near your feet are decorative.
           </li>
         </ul>
       </section>

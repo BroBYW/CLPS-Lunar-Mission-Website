@@ -78,3 +78,8 @@
     animation: none;
   }
 }
+
+/* No Cesium ion content is used, so its logo is not needed; the data credits beside it stay */
+.cesium-credit-logoContainer {
+  display: none !important;
+}

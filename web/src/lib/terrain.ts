@@ -27,8 +27,8 @@ export interface Patch {
 export const R_M = 1_737_400
 const F = 4 * R_M * R_M
 
-/** Undo the planar predictor (value = residual + left + up − upleft) and scale to metres. */
-export function decodeGrid(res: Int16Array, offset: number, n: number, unit: number): Float32Array {
+/** Undo the planar predictor (value = residual + left + up − upleft), scale to metres and add the base height. */
+export function decodeGrid(res: Int16Array, offset: number, n: number, unit: number, base = 0): Float32Array {
   const q = new Int32Array(n * n)
   const out = new Float32Array(n * n)
   for (let j = 0; j < n; j++) {
@@ -38,7 +38,7 @@ export function decodeGrid(res: Int16Array, offset: number, n: number, unit: num
       const up = j > 0 ? q[k - n] : 0
       const upLeft = i > 0 && j > 0 ? q[k - n - 1] : 0
       q[k] = res[offset + k] + left + up - upLeft
-      out[k] = q[k] * unit
+      out[k] = q[k] * unit + base
     }
   }
   return out

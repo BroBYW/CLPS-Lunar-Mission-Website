@@ -42,13 +42,13 @@ describe('diskAbove', () => {
   })
 })
 
-// A synthetic site at 88° S with the same three nested grids as the real patches, but smaller
+// A synthetic site at 88° S with the same four nested grids as the real patches, but smaller
 const n = 201
 const site: [number, number] = (() => {
   const rho = 2 * R_M * Math.tan(Math.PI / 4 + (-88 * D2R) / 2)
   return [rho * Math.sin(30 * D2R), rho * Math.cos(30 * D2R)]
 })()
-const SPACINGS = [30, 240, 1500]
+const SPACINGS = [7.5, 30, 240, 1500]
 
 /** Sun vector at a given elevation (deg) above the site's horizon, toward stereographic +x. */
 function sunAt(elDeg: number): number[] {
@@ -75,7 +75,7 @@ function patch(height: (along: number) => number, sun: number[]): Patch {
       const half = ((n - 1) / 2) * spacing
       const heights = new Float32Array(n * n)
       for (let j = 0; j < n; j++) for (let i = 0; i < n; i++) heights[j * n + i] = height((-half + i * spacing) * ux + (half - j * spacing) * uy)
-      return { name: ['fine', 'coarse', 'far'][k], spacing_m: spacing, half_m: half, unit_m: 1, heights }
+      return { name: ['near', 'fine', 'coarse', 'far'][k], spacing_m: spacing, half_m: half, unit_m: 1, heights }
     }),
   }
 }
@@ -95,10 +95,10 @@ describe('sunlight', () => {
     const p = patch(() => 0, sun)
     const lit = sunlight(p, sun, TINY_SUN)
     // Sun at 1° here sets 1° of arc (30.3 km) further away from it
-    const along = alongOf(p, 2, sun)
+    const along = alongOf(p, 3, sun)
     for (let k = 0; k < n * n; k++) {
-      if (along[k] > -28_000) expect(lit[2][k]).toBe(1)
-      if (along[k] < -33_000) expect(lit[2][k]).toBe(0)
+      if (along[k] > -28_000) expect(lit[3][k]).toBe(1)
+      if (along[k] < -33_000) expect(lit[3][k]).toBe(0)
     }
     expect(lit[0][(n * n - 1) / 2]).toBe(1)
   })
@@ -108,23 +108,23 @@ describe('sunlight', () => {
     // 500 m high, 1 km wide ridge 1.5–2.5 km sunward of the site
     const p = patch((a) => (a > 1500 && a < 2500 ? 500 : 0), sun)
     const lit = sunlight(p, sun, TINY_SUN)
-    const fine = alongOf(p, 0, sun)
-    const coarse = alongOf(p, 1, sun)
+    const fine = alongOf(p, 1, sun)
+    const coarse = alongOf(p, 2, sun)
     const lat = (g: number) => {
       const ul = Math.hypot(sun[1], sun[0])
       const [vx, vy] = [-sun[0] / ul, sun[1] / ul]
       const { spacing_m: s, half_m: half } = p.grids[g]
       return (k: number) => Math.abs((-half + (k % n) * s) * vx + (half - Math.floor(k / n) * s) * vy)
     }
-    const latFine = lat(0)
-    const latCoarse = lat(1)
+    const latFine = lat(1)
+    const latCoarse = lat(2)
     for (let k = 0; k < n * n; k++) {
       // In the shadow just behind the ridge, lit in front of it
-      if (fine[k] > -1000 && fine[k] < 1300 && latFine(k) < 1000) expect(lit[0][k]).toBe(0)
-      if (fine[k] > 2700 && latFine(k) < 1000) expect(lit[0][k]).toBe(1)
+      if (fine[k] > -1000 && fine[k] < 1300 && latFine(k) < 1000) expect(lit[1][k]).toBe(0)
+      if (fine[k] > 2700 && latFine(k) < 1000) expect(lit[1][k]).toBe(1)
       // 500 m at 2° with curvature: the shadow ends about 16.4 km behind the ridge's sunward edge
-      if (coarse[k] < 1300 && coarse[k] > -12_000 && latCoarse(k) < 2000) expect(lit[1][k]).toBe(0)
-      if (coarse[k] < -17_000 && latCoarse(k) < 2000) expect(lit[1][k]).toBe(1)
+      if (coarse[k] < 1300 && coarse[k] > -12_000 && latCoarse(k) < 2000) expect(lit[2][k]).toBe(0)
+      if (coarse[k] < -17_000 && latCoarse(k) < 2000) expect(lit[2][k]).toBe(1)
     }
   })
 

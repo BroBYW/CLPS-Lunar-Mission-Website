@@ -1,13 +1,20 @@
 {
- "description": "Per-site height grids, concatenated in the order listed: int16 residuals of the predictor left + up - upleft, in each grid's unit, gzip",
+ "description": "Per-site height grids, concatenated in the order listed: int16 residuals of the predictor left + up - upleft, in each grid's unit relative to the site's base_m, gzip",
  "n": 401,
  "grids": [
+  {
+   "name": "near",
+   "spacing_m": 7.5,
+   "half_m": 1500.0,
+   "samples": 1,
+   "unit_m": 0.1
+  },
   {
    "name": "fine",
    "spacing_m": 30.0,
    "half_m": 6000.0,
    "samples": 1,
-   "unit_m": 0.5
+   "unit_m": 0.25
   },
   {
    "name": "coarse",
@@ -25,98 +32,111 @@
   }
  ],
  "proj": "+proj=stere +lat_0=-90 +lat_ts=-90 +lon_0=0 +R=1737400 +units=m",
- "generated_utc": "2026-09-30T03:07:46Z",
+ "generated_utc": "2026-09-30T03:57:26Z",
  "sites": {
   "peak-near-cabeus-b": {
    "file": "peak-near-cabeus-b.bin.gz",
    "center_m": [
     -181163.99,
     71493.37
-   ]
+   ],
+   "base_m": 4602.0
   },
   "haworth": {
    "file": "haworth.bin.gz",
    "center_m": [
     -43459.98,
     101359.95
-   ]
+   ],
+   "base_m": 2842.0
   },
   "malapert-massif": {
    "file": "malapert-massif.bin.gz",
    "center_m": [
     4380.0,
     121630.0
-   ]
+   ],
+   "base_m": 5173.0
   },
   "mons-mouton-plateau": {
    "file": "mons-mouton-plateau.bin.gz",
    "center_m": [
     90476.96,
     144766.2
-   ]
+   ],
+   "base_m": 5606.0
   },
   "mons-mouton": {
    "file": "mons-mouton.bin.gz",
    "center_m": [
     73279.93,
     118639.9
-   ]
+   ],
+   "base_m": 6464.0
   },
   "nobile-rim-1": {
    "file": "nobile-rim-1.bin.gz",
    "center_m": [
     86219.93,
     116129.91
-   ]
+   ],
+   "base_m": 6800.0
   },
   "nobile-rim-2": {
    "file": "nobile-rim-2.bin.gz",
    "center_m": [
     147009.99,
     103339.98
-   ]
+   ],
+   "base_m": 1817.0
   },
   "de-gerlache-rim-2": {
    "file": "de-gerlache-rim-2.bin.gz",
    "center_m": [
     -39690.09,
     16120.03
-   ]
+   ],
+   "base_m": 1765.0
   },
   "connecting-ridge": {
    "file": "connecting-ridge.bin.gz",
    "center_m": [
     -11548.38,
     -12458.03
-   ]
+   ],
+   "base_m": 1959.0
   },
   "shackleton-rim": {
    "file": "shackleton-rim.bin.gz",
    "center_m": [
     -2808.64,
     -9078.85
-   ]
+   ],
+   "base_m": 1730.0
   },
   "im2-athena": {
    "file": "im2-athena.bin.gz",
    "center_m": [
     77108.24,
     137993.27
-   ]
+   ],
+   "base_m": 5322.0
   },
   "viper": {
    "file": "viper.bin.gz",
    "center_m": [
     72841.44,
     118301.2
-   ]
+   ],
+   "base_m": 6418.0
   },
   "shackleton-floor": {
    "file": "shackleton-floor.bin.gz",
    "center_m": [
     9980.32,
     -5442.77
-   ]
+   ],
+   "base_m": -2872.0
   }
  }
 }

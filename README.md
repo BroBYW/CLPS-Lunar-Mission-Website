@@ -19,7 +19,7 @@ Tools that give the Sun's and Earth's positions exist, but they are hard to use 
 | **Home** | A live 3D Moon lit by the Sun as it is right now. "Let's start" flies you down to the south pole. |
 | **Plan** | Pick one of 13 cited sites on a list or a polar map. The horizon panorama shows the terrain skyline with the Sun's and Earth's paths over your dates and their true-size disks at the chosen moment. Time controls are in UTC. Below it: metrics, a sunlit / Earth / both timeline, overlap windows as CSV, and a power and battery calculator. |
 | **Compare** | Two or three sites side by side, with the best value in each row marked and the timelines aligned. |
-| **3D** | Fly to any site to see the LOLA terrain around it (30 m detail near the site, out to 300 km), lit by the Sun at the chosen time with shadows cast by the terrain itself. Then stand on it: the Sun, and a textured Earth lit and turned for that moment, sit over the computed skyline. |
+| **3D** | Fly to any site to see the LOLA terrain around it (7.5 m detail near the site, out to 300 km), lit by the Sun at the chosen time with shadows cast by the terrain itself. Then stand on it: the Sun, and a textured Earth lit and turned for that moment, sit over the computed skyline. |
 | **Explore** | A six-step story for classrooms, from the low Sun to libration, ending with a landing-site challenge. It works on phones. |
 | **Method, Credits** | How it works, its limitations, and every data source. |
 
