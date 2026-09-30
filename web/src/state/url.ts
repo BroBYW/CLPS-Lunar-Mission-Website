@@ -16,7 +16,8 @@ export function applyUrl(search: string, siteIds: string[], heightsM: number[]):
   const s = useApp.getState()
   const view = q.get('view')
   // A bare URL opens the home page; any shared state opens the app directly
-  if (view === 'plan' || view === 'compare' || view === '3d' || view === 'explore') s.setView(view as View)
+  const views: View[] = ['plan', 'compare', '3d', 'explore', 'about', 'credits']
+  if (views.includes(view as View)) s.setView(view as View)
   else if ([...q.keys()].length > 0) s.setView('plan')
   const site = q.get('site')
   if (site && siteIds.includes(site)) s.setSite(site)

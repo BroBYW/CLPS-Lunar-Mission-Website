@@ -18,6 +18,7 @@ import { useApp, type View } from './state/store.ts'
 import { applyUrl, syncUrl } from './state/url.ts'
 import { useSiteScene } from './state/useSiteScene.ts'
 import Explore from './views/Explore.tsx'
+import { AboutPage, CreditsPage } from './views/InfoPages.tsx'
 import { Home, Logo } from './views/Home.tsx'
 import { initWorker, seriesRequest, useSeries } from './workers/client.ts'
 
@@ -26,6 +27,8 @@ const VIEWS: [View, string][] = [
   ['compare', 'Compare'],
   ['3d', '3D'],
   ['explore', 'Explore'],
+  ['about', 'Method'],
+  ['credits', 'Credits'],
 ]
 
 // CesiumJS only loads when the 3D view (or the home page backdrop) is shown
@@ -88,6 +91,10 @@ export default function App() {
         </p>
       ) : view === 'compare' ? (
         <CompareView data={data} />
+      ) : view === 'about' ? (
+        <AboutPage />
+      ) : view === 'credits' ? (
+        <CreditsPage />
       ) : view === 'explore' ? (
         <Explore data={data} />
       ) : view === '3d' ? (
