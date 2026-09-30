@@ -110,12 +110,12 @@ export function MoonBackdrop({ ephemeris, timeMs, ref }: { ephemeris: Ephemeris;
     <div aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden">
       {/* Placeholder while Cesium loads, and the fallback without WebGL */}
       <div
-        className={`absolute left-[58%] top-1/2 aspect-square h-[74vh] -translate-x-1/2 -translate-y-1/2 rounded-full transition-opacity duration-1000 max-md:left-1/2 ${ready ? 'opacity-0' : 'opacity-100'}`}
+        className={`absolute left-[58%] top-1/2 aspect-square h-[74vh] -translate-x-1/2 -translate-y-1/2 rounded-full transition-opacity duration-1000 max-md:left-1/2 max-md:top-[84%] max-md:h-[52vh] ${ready ? 'opacity-0' : 'opacity-100'}`}
         style={{ background: 'radial-gradient(circle at 35% 70%, #5e5950 0%, #262420 45%, #0b0b0a 72%)' }}
       />
       <div
         ref={container}
-        className={`absolute inset-y-0 left-[8vw] w-screen transition-opacity duration-1000 max-md:left-0 ${ready ? 'opacity-100' : 'opacity-0'}`}
+        className={`absolute inset-y-0 left-[8vw] w-screen transition-opacity duration-1000 max-md:left-0 max-md:translate-y-[34vh] ${ready ? 'opacity-100' : 'opacity-0'}`}
       />
     </div>
   )

@@ -9,7 +9,8 @@ This file records how we checked the numbers the app shows. Each section says wh
 | 3. Horizon masks | Synthetic terrain exact | Sphere dip within 2e-4°, mesa within 0.02° | Pass |
 | 4. Illumination and Earth visibility vs literature | Within ~5 points of LOLA-based studies | Gläser points within 1.54 points (mean) and 2.1 h (longest dark); Earth within 5 points of NASA's PGDA map at 17 of 21 | Pass |
 | 5. Eclipse | Sunlight drops during the 3 Mar 2026 total lunar eclipse | Timings fall inside NASA's contact windows at 3 sites | Pass |
-| 6. Performance | < 500 ms per site-range; 60 fps | 5 years in 104–148 ms; frame rate pending (M6) | Pass (worker) |
+| 6. Performance | < 500 ms per site-range; first load < 3 s; 60 fps | 5 years in 104–148 ms; first load about 1 s; 142 fps playback | Pass |
+| 7. Accessibility | WCAG 2.1 AA | axe-core: 0 violations on every view | Pass |
 
 ## 1. Browser vs Python
 
@@ -193,4 +194,28 @@ Measured in Chrome on this development machine, dev build, Web Worker, 10-minute
 
 That is about 4× under the 500 ms target. Changing the darkness threshold or Earth margin only reruns the metrics (under 15 ms), because the series stores the visible fraction and Earth's clearance above the terrain.
 
-First-load size and frame rate are measured in M6.
+**First load** (production build served locally; broadband estimate assumes 25 Mbit/s and a 50 ms round trip):
+
+| Page | What loads | Largest paint (local) | Estimated on broadband |
+|---|---|---|---|
+| Planner (shared link) | App JS 100 kB gzip, CSS 6 kB, fonts 59 kB, data 1.77 MB (ephemeris, horizons, basemap, sites). No Cesium. | 184 ms | 0.8–1.0 s |
+| Home page | The same first, then CesiumJS (1.36 MB gzip, lazy), 36 Cesium worker and asset files (0.75 MB) and Moon Trek tiles | 64 ms (headline) | Text in about 0.3 s, live Moon in about 1.5–2 s |
+
+Both are under the 3 s target. Cesium never loads for the Plan, Compare or Explore views.
+
+**Frame rate during playback** (Plan view, production build, 1 day per second): 571 frames in 4 s, a mean of 142 fps, which is the display's refresh limit. The 95th percentile is 7.0 ms per frame and the worst frame 13.9 ms; none took over 20 ms. The target was a steady 60 fps.
+
+## 7. Accessibility
+
+Checked with [axe-core](https://github.com/dequelabs/axe-core) 4.13 against WCAG 2.1 A and AA plus best practices, including color contrast. Every view has **0 violations**:
+- Home
+- Plan
+- Compare
+- Explore, at step 1 and at the challenge with every site shown
+- 3D, in globe view and standing at a site
+
+Beyond the automated check:
+- **Keyboard.** Everything works from the keyboard: sites are a radio group, all controls are buttons or inputs, and the panorama takes focus and responds to arrow keys, + and −, and 0.
+- **Reduced motion.** It is respected: playback steps once a second instead of animating, the home page entrance and Moon rotation are off, and "Let's start" skips the flight.
+- **Text alternatives.** Each chart has one: the panorama has a live description of the Sun and Earth positions, the timeline a text summary, and the windows are a real table. The map describes itself, and the site list duplicates it.
+- **Never color alone.** The Sun and Earth always carry an icon and a label, and the timeline rows use solid, hatched and striped fills.

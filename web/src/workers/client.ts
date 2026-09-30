@@ -50,6 +50,29 @@ export function seriesRequest(site: Site, heightIndex: number, heightsM: number[
   }
 }
 
+/** Several series at once (a fixed or changing list); null entries until each arrives. */
+export function useManySeries(reqs: SeriesRequest[]): (TimedSeries | null)[] {
+  const key = JSON.stringify(reqs)
+  const [state, setState] = useState<{ key: string; list: (TimedSeries | null)[] }>({ key: '', list: [] })
+  const reqRef = useRef(reqs)
+  reqRef.current = reqs
+  useEffect(() => {
+    let live = true
+    const list: (TimedSeries | null)[] = reqRef.current.map(() => null)
+    reqRef.current.forEach((r, i) =>
+      requestSeries(r).then((s) => {
+        if (!live) return
+        list[i] = s
+        setState({ key, list: [...list] })
+      }),
+    )
+    return () => {
+      live = false
+    }
+  }, [key])
+  return state.key === key ? state.list : reqs.map(() => null)
+}
+
 /** The series for a request; keeps showing the previous result while a new one computes. */
 export function useSeries(req: SeriesRequest | null): { series: TimedSeries | null; pending: boolean } {
   const key = req ? JSON.stringify(req) : ''

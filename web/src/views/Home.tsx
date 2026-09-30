@@ -49,10 +49,11 @@ export function Home({ data }: { data: AppData | null }) {
   const [nowMs] = useState(() => Math.min(MAX_MS, Math.max(MIN_MS, Date.now())))
 
   const go = (view: View) => setView(view)
+  // The planner is built for desktops; on phones the guided story is the better start
   const start = async () => {
     setLeaving(true)
     await backdrop.current?.flyToPole()
-    go('plan')
+    go(window.matchMedia('(min-width: 1024px)').matches ? 'plan' : 'explore')
   }
 
   return (
@@ -70,8 +71,14 @@ export function Home({ data }: { data: AppData | null }) {
           <button type="button" onClick={() => go('plan')} className="hover:text-bright">
             Plan
           </button>
-          <button type="button" onClick={() => go('compare')} className="hover:text-bright">
+          <button type="button" onClick={() => go('compare')} className="hover:text-bright max-sm:hidden">
             Compare
+          </button>
+          <button type="button" onClick={() => go('3d')} className="hover:text-bright max-sm:hidden">
+            3D
+          </button>
+          <button type="button" onClick={() => go('explore')} className="hover:text-bright">
+            Explore
           </button>
         </div>
       </nav>
@@ -121,10 +128,10 @@ export function Home({ data }: { data: AppData | null }) {
         </div>
       </main>
 
-      <p className={`rise absolute bottom-7 left-6 z-10 max-w-[520px] text-xs text-dust md:left-16 ${leaving ? 'opacity-0' : ''}`} style={{ animationDelay: '0.75s' }}>
+      <footer className={`rise absolute bottom-7 left-6 z-10 max-w-[520px] text-xs text-dust md:left-16 ${leaving ? 'opacity-0' : ''}`} style={{ animationDelay: '0.75s' }}>
         Sun and Earth positions from NASA JPL SPICE ephemerides. Terrain from LRO LOLA (NASA GSFC). Imagery: NASA Moon
         Trek, LRO WAC mosaic. Built for the NASA Space Apps Challenge 2026.
-      </p>
+      </footer>
     </div>
   )
 }

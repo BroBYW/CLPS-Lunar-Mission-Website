@@ -10,15 +10,14 @@ import { Timeline } from './components/Timeline.tsx'
 import { TimeControls } from './components/TimeControls.tsx'
 import { WindowsTable } from './components/WindowsTable.tsx'
 import { loadAppData, type AppData } from './data/load.ts'
-import { siteFrame } from './lib/astro.ts'
 import { downloadText, windowsCsv } from './lib/csv.ts'
 import { computeMetrics } from './lib/metrics.ts'
 import { formatUtcDate } from './lib/time.ts'
-import { bodiesAt, computeTrack } from './lib/track.ts'
-import { earthVisible, sunFraction } from './lib/visibility.ts'
 import { usePlayback } from './state/playback.ts'
 import { useApp, type View } from './state/store.ts'
 import { applyUrl, syncUrl } from './state/url.ts'
+import { useSiteScene } from './state/useSiteScene.ts'
+import Explore from './views/Explore.tsx'
 import { Home, Logo } from './views/Home.tsx'
 import { initWorker, seriesRequest, useSeries } from './workers/client.ts'
 
@@ -26,6 +25,7 @@ const VIEWS: [View, string][] = [
   ['plan', 'Plan'],
   ['compare', 'Compare'],
   ['3d', '3D'],
+  ['explore', 'Explore'],
 ]
 
 // CesiumJS only loads when the 3D view (or the home page backdrop) is shown
@@ -56,15 +56,15 @@ export default function App() {
     <div className="min-h-screen">
       <header className="flex flex-wrap items-center gap-x-6 gap-y-2 border-b border-shadow-2 px-4 py-3 lg:px-6">
         <div className="flex flex-wrap items-baseline gap-x-4">
-          <h1 className="font-display text-xl font-medium">
-            <button type="button" onClick={() => setView('home')} className="flex items-center gap-2.5 hover:text-bright" aria-label="CLPS Lunar Mission Browser, back to the home page">
+          <h1 className="font-display text-base font-medium sm:text-xl">
+            <button type="button" onClick={() => setView('home')} className="flex items-center gap-2.5 text-left hover:text-bright" aria-label="CLPS Lunar Mission Browser, back to the home page">
               <Logo size={26} />
               CLPS Lunar Mission Browser
             </button>
           </h1>
-          <p className="text-sm text-dust">Sunlight and Earth visibility at lunar south pole sites, 2026–2030</p>
+          <p className="text-sm text-dust max-md:hidden">Sunlight and Earth visibility at lunar south pole sites, 2026–2030</p>
         </div>
-        <nav aria-label="Views" className="ml-auto flex gap-1">
+        <nav aria-label="Views" className="-mx-1 ml-auto flex gap-1 max-sm:w-full max-sm:overflow-x-auto">
           {VIEWS.map(([v, label]) => (
             <button
               key={v}
@@ -88,6 +88,8 @@ export default function App() {
         </p>
       ) : view === 'compare' ? (
         <CompareView data={data} />
+      ) : view === 'explore' ? (
+        <Explore data={data} />
       ) : view === '3d' ? (
         <Suspense fallback={<p className="m-6 text-dust">Loading the 3D view…</p>}>
           <Globe3D data={data} />
@@ -104,28 +106,15 @@ function Planner({ data }: { data: AppData }) {
   const setSite = useApp((s) => s.setSite)
   const startMs = useApp((s) => s.startMs)
   const endMs = useApp((s) => s.endMs)
-  const timeMs = useApp((s) => s.timeMs)
-  const heightIndex = useApp((s) => s.heightIndex)
   const setHeightIndex = useApp((s) => s.setHeightIndex)
   const darkThreshold = useApp((s) => s.darkThreshold)
   const earthMarginDeg = useApp((s) => s.earthMarginDeg)
 
   const site = data.sites.find((s) => s.id === siteId) ?? data.sites[0]
   const heightsM = data.horizons.heightsM
-  const heightM = heightsM[heightIndex]
-  const frame = useMemo(() => siteFrame(site.lat, site.lon, site.height_m + heightM), [site, heightM])
-  const mask = useMemo(() => data.horizons.mask(site.mask_index, heightIndex), [data, site, heightIndex])
-  const track = useMemo(() => computeTrack(data.ephemeris, frame, startMs, endMs), [data, frame, startMs, endMs])
+  const { heightIndex, heightM, mask, track, bodies, sunFrac, earthVis } = useSiteScene(data, site)
   const { series, pending } = useSeries(seriesRequest(site, heightIndex, heightsM, startMs, endMs))
   const metrics = useMemo(() => (series ? computeMetrics(series, { darkThreshold, earthMarginDeg }) : null), [series, darkThreshold, earthMarginDeg])
-
-  const bodies = bodiesAt(data.ephemeris, frame, timeMs)
-  const sunFrac = sunFraction(mask, bodies.sunAz, bodies.sunEl, bodies.sunRadius, {
-    az: bodies.earthAz,
-    el: bodies.earthEl,
-    radius: bodies.earthRadius,
-  })
-  const earthVis = earthVisible(mask, bodies.earthAz, bodies.earthEl, earthMarginDeg)
 
   const download = () => {
     if (!series) return

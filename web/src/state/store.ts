@@ -10,7 +10,7 @@ export const SPEEDS_HPS = [1, 6, 24, 72] as const
 export const DEFAULT_SITE = 'connecting-ridge'
 export const MAX_COMPARE = 3
 
-export type View = 'home' | 'plan' | 'compare' | '3d'
+export type View = 'home' | 'plan' | 'compare' | '3d' | 'explore'
 
 export interface AppState {
   view: View

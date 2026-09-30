@@ -6,15 +6,18 @@ import type { Bodies, Track } from '../lib/track.ts'
 import { useElementWidth } from '../lib/useElementWidth.ts'
 import { EarthGlyph, SunGlyph } from './Glyphs.tsx'
 
+export type Follow = 'none' | 'sun' | 'earth'
+
 interface Props {
   mask: Float32Array
   track: Track
   bodies: Bodies
   sunFrac: number
   earthVis: boolean
+  /** Starting view; remount the component (change its key) to apply a new one */
+  initialWidth?: number
+  initialFollow?: Follow
 }
-
-type Follow = 'none' | 'sun' | 'earth'
 interface View {
   center: number
   width: number
@@ -34,14 +37,17 @@ function azTickStep(w: number): number {
   return 5
 }
 
-export function Panorama({ mask, track, bodies, sunFrac, earthVis }: Props) {
+export function Panorama({ mask, track, bodies, sunFrac, earthVis, initialWidth = 360, initialFollow = 'none' }: Props) {
   const wrapRef = useRef<HTMLDivElement>(null)
   const width = useElementWidth(wrapRef)
   const height = width < 640 ? 240 : width < 1000 ? 320 : 360
   const plotW = Math.max(50, width - MARGIN.l - MARGIN.r)
   const plotH = height - MARGIN.t - MARGIN.b
-  const [view, setView] = useState<View>({ center: 180, width: 360 })
-  const [follow, setFollow] = useState<Follow>('none')
+  const [view, setView] = useState<View>(() => {
+    const az = initialFollow === 'sun' ? bodies.sunAz : initialFollow === 'earth' ? bodies.earthAz : 180
+    return { center: initialWidth >= 360 ? 180 : norm(az), width: initialWidth }
+  })
+  const [follow, setFollow] = useState<Follow>(initialFollow)
   const clipId = useId()
   const terrainClipId = useId()
   const descId = useId()

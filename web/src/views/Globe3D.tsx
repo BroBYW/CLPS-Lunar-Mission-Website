@@ -243,9 +243,11 @@ export default function Globe3D({ data }: { data: AppData }) {
           onPointerMove={onPointerMove}
           onPointerUp={onPointerUp}
           onPointerCancel={onPointerUp}
-          role="img"
-          aria-label={`3D view of the Moon. ${mode === 'ground' ? `Standing at ${site.name}, looking around the skyline.` : `Globe view, ${site.name} selected.`}`}
+          aria-describedby="globe-desc"
         />
+        <p id="globe-desc" className="sr-only">
+          {`3D view of the Moon. ${mode === 'ground' ? `Standing at ${site.name}, looking around the computed skyline.` : `Globe view, ${site.name} selected.`} The status line below gives the Sun and Earth positions in words.`}
+        </p>
         {!ready && !failed && <p className="absolute inset-0 flex items-center justify-center text-dust">Loading the 3D Moon…</p>}
         {failed && (
           <p role="alert" className="absolute inset-0 flex items-center justify-center p-6 text-center text-alert">
