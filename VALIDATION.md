@@ -1,6 +1,6 @@
 # Validation
 
-This file records how we checked the numbers the app shows. Each section says what was compared, how, and the result. To reproduce, run the scripts named in each section from `pipeline/` (`uv run python scripts/<name>.py`) and `npm test` from `web/`.
+This file records how we checked the numbers the app shows. Each section says what was compared, how, and the result. To reproduce, run the scripts named in each section from `pipeline/` (`uv run python scripts/<name>.py`) and `npm test` from `web/` (§8 names one opt-in test).
 
 | Check | Target | Result | Status |
 |---|---|---|---|
@@ -11,6 +11,7 @@ This file records how we checked the numbers the app shows. Each section says wh
 | 5. Eclipse | Sunlight drops during the 3 Mar 2026 total lunar eclipse | Timings fall inside NASA's contact windows at 3 sites | Pass |
 | 6. Performance | < 500 ms per site-range; first load < 3 s; 60 fps | 5 years in 104–148 ms; first load about 1 s; 142 fps playback | Pass |
 | 7. Accessibility | WCAG 2.1 AA | axe-core: 0 violations on every view | Pass |
+| 8. 3D terrain sunlight | Matches the horizon masks | Synthetic shadows exact; agrees with the masks 99.2% of the time, sunlight within 3.7 points at every site | Pass |
 
 ## 1. Browser vs Python
 
@@ -205,6 +206,8 @@ Both are under the 3 s target. Cesium never loads for the Plan, Compare or Explo
 
 **Frame rate during playback** (Plan view, production build, 1 day per second): 571 frames in 4 s, a mean of 142 fps, which is the display's refresh limit. The 95th percentile is 7.0 ms per frame and the worst frame 13.9 ms; none took over 20 ms. The target was a steady 60 fps.
 
+**3D terrain** (dev build, this machine, 1.25× display, drawn at full resolution): a site's three terrain meshes build in about 130 ms, and orbiting over them runs at 143 fps. During playback, the worker re-computes the terrain's sunlight about 24 times a second while drawing stays at 144 fps.
+
 ## 7. Accessibility
 
 Checked with [axe-core](https://github.com/dequelabs/axe-core) 4.13 against WCAG 2.1 A and AA plus best practices, including color contrast. Every view has **0 violations**:
@@ -212,10 +215,49 @@ Checked with [axe-core](https://github.com/dequelabs/axe-core) 4.13 against WCAG
 - Plan
 - Compare
 - Explore, at step 1 and at the challenge with every site shown
-- 3D, in globe view and standing at a site
+- 3D, in globe view, over the terrain and standing at a site
 
 Beyond the automated check:
-- **Keyboard.** Everything works from the keyboard: sites are a radio group, all controls are buttons or inputs, and the panorama takes focus and responds to arrow keys, + and −, and 0.
+- **Keyboard.** Everything works from the keyboard: sites are a radio group, all controls are buttons or inputs, and the panorama takes focus and responds to arrow keys, + and −, and 0. The standing view in 3D takes focus too: arrow keys look around, + and − zoom.
 - **Reduced motion.** It is respected: playback steps once a second instead of animating, the home page entrance and Moon rotation are off, and "Let's start" skips the flight.
 - **Text alternatives.** Each chart has one: the panorama has a live description of the Sun and Earth positions, the timeline a text summary, and the windows are a real table. The map describes itself, and the site list duplicates it.
 - **Never color alone.** The Sun and Earth always carry an icon and a label, and the timeline rows use solid, hatched and striped fills.
+
+## 8. 3D terrain sunlight
+
+**What.** The 3D view draws LOLA terrain from three grids per site (30 m spacing to 6 km, 240 m to 48 km, 1.5 km to 300 km). It works out which ground the Sun reaches from those grids alone (`web/src/lib/terrain.ts`, run in a Web Worker). It was checked two ways.
+
+**Synthetic terrain** (`web/src/lib/terrain.test.ts`, part of `npm test`):
+- **Smooth Moon.** Every node is lit or dark exactly where the Sun's center is above or below its local horizon, within 2.5 grid steps. This holds for four Sun azimuths and elevations from −0.2° to 1.6°.
+- **Ridge shadow.** A 500 m ridge with the Sun 2° up shades the ground behind it for the 16.4 km that geometry predicts, curvature included.
+- **Distant massif.** A 4 km massif 100 km away hides the Sun from the site when it is 0.3° up. Without the massif, the site is lit.
+- **Partial Sun.** A ridge top in line with the Sun's center gives a partly visible disk.
+
+**Against the horizon masks** (`web/src/lib/terrain.validation.test.ts`; run with `CLPS_VALIDATE=1 npx vitest run src/lib/terrain.validation.test.ts` from `web/`). Every 2 hours for 28 days from 1 Jan 2027, the test compares two things 2 m above each site: the Sun as the 3D terrain sees it, and the share of the Sun visible over the mask. That is 4,368 samples across all 13 sites.
+
+| Site | Agree on "more than half the Sun visible" | Sunlight, masks | Sunlight, 3D terrain |
+|---|---|---|---|
+| Peak near Cabeus B | 100.0% | 68.0% | 68.6% |
+| Haworth | 99.1% | 84.8% | 87.2% |
+| Malapert Massif | 97.6% | 74.3% | 76.6% |
+| Mons Mouton Plateau | 99.7% | 56.4% | 56.9% |
+| Mons Mouton | 99.4% | 77.1% | 78.1% |
+| Nobile Rim 1 | 96.1% | 69.8% | 73.5% |
+| Nobile Rim 2 | 100.0% | 56.3% | 56.4% |
+| de Gerlache Rim 2 | 99.7% | 90.7% | 91.0% |
+| Connecting ridge | 100.0% | 100.0% | 100.0% |
+| Shackleton rim | 99.7% | 98.3% | 98.9% |
+| IM-2 Athena landing site | 99.7% | 50.5% | 50.8% |
+| VIPER mission area | 99.1% | 65.0% | 66.6% |
+| Shackleton crater floor | 100.0% | 0.0% | 0.0% |
+
+**Result.** They agree 99.2% of the time. The 3D terrain comes out up to 3.7 points sunnier, because its grids are coarser than the 10–20 m maps behind the masks and smooth away some peaks. The 3D view also lights the ground itself. On a high point with the Sun below the local horizontal, the ground within a few hundred meters hides the Sun from your feet, even while a 2 m observer still sees it. So the 3D view is a picture of the place, and every number in the app comes from the masks.
+
+**Earth's rotation.** The subsolar point was read back from the drawn Earth's orientation. The expected longitude is (12 h − UTC − equation of time) × 15°.
+
+| Time (UTC) | Drawn | Expected |
+|---|---|---|
+| 21 Dec 2026, 12:00 | 23.5° S, 1.0° W | 23.4° S, 0.5° W |
+| 20 Mar 2027, 12:00 | 0.3° S, 1.6° E | 0°, 1.9° E |
+| 21 Jun 2027, 00:00 | 23.4° N, 179.9° E | 23.4° N, 180° |
+| 23 Sep 2027, 18:00 | 0.1° S, 92.2° W | 0°, 92.0° W |

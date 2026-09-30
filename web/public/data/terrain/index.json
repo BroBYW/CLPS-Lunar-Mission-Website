@@ -1,0 +1,122 @@
+{
+ "description": "Per-site height grids, concatenated in the order listed: int16 residuals of the predictor left + up - upleft, in each grid's unit, gzip",
+ "n": 401,
+ "grids": [
+  {
+   "name": "fine",
+   "spacing_m": 30.0,
+   "half_m": 6000.0,
+   "samples": 1,
+   "unit_m": 0.5
+  },
+  {
+   "name": "coarse",
+   "spacing_m": 240.0,
+   "half_m": 48000.0,
+   "samples": 9,
+   "unit_m": 1.0
+  },
+  {
+   "name": "far",
+   "spacing_m": 1500.0,
+   "half_m": 300000.0,
+   "samples": 25,
+   "unit_m": 2.0
+  }
+ ],
+ "proj": "+proj=stere +lat_0=-90 +lat_ts=-90 +lon_0=0 +R=1737400 +units=m",
+ "generated_utc": "2026-09-30T03:07:46Z",
+ "sites": {
+  "peak-near-cabeus-b": {
+   "file": "peak-near-cabeus-b.bin.gz",
+   "center_m": [
+    -181163.99,
+    71493.37
+   ]
+  },
+  "haworth": {
+   "file": "haworth.bin.gz",
+   "center_m": [
+    -43459.98,
+    101359.95
+   ]
+  },
+  "malapert-massif": {
+   "file": "malapert-massif.bin.gz",
+   "center_m": [
+    4380.0,
+    121630.0
+   ]
+  },
+  "mons-mouton-plateau": {
+   "file": "mons-mouton-plateau.bin.gz",
+   "center_m": [
+    90476.96,
+    144766.2
+   ]
+  },
+  "mons-mouton": {
+   "file": "mons-mouton.bin.gz",
+   "center_m": [
+    73279.93,
+    118639.9
+   ]
+  },
+  "nobile-rim-1": {
+   "file": "nobile-rim-1.bin.gz",
+   "center_m": [
+    86219.93,
+    116129.91
+   ]
+  },
+  "nobile-rim-2": {
+   "file": "nobile-rim-2.bin.gz",
+   "center_m": [
+    147009.99,
+    103339.98
+   ]
+  },
+  "de-gerlache-rim-2": {
+   "file": "de-gerlache-rim-2.bin.gz",
+   "center_m": [
+    -39690.09,
+    16120.03
+   ]
+  },
+  "connecting-ridge": {
+   "file": "connecting-ridge.bin.gz",
+   "center_m": [
+    -11548.38,
+    -12458.03
+   ]
+  },
+  "shackleton-rim": {
+   "file": "shackleton-rim.bin.gz",
+   "center_m": [
+    -2808.64,
+    -9078.85
+   ]
+  },
+  "im2-athena": {
+   "file": "im2-athena.bin.gz",
+   "center_m": [
+    77108.24,
+    137993.27
+   ]
+  },
+  "viper": {
+   "file": "viper.bin.gz",
+   "center_m": [
+    72841.44,
+    118301.2
+   ]
+  },
+  "shackleton-floor": {
+   "file": "shackleton-floor.bin.gz",
+   "center_m": [
+    9980.32,
+    -5442.77
+   ]
+  }
+ }
+}

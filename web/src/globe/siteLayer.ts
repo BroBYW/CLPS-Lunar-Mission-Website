@@ -13,6 +13,8 @@ const LABEL_FONT = '13px "Atkinson Hyperlegible Next Variable", sans-serif'
 
 export interface SiteLayer {
   select: (id: string) => void
+  /** Hide the markers (for the terrain views, which draw the site themselves). */
+  show: (visible: boolean) => void
   destroy: () => void
 }
 
@@ -108,6 +110,10 @@ export function addSiteLayer(
     select(id) {
       selected = id
       restyle()
+    },
+    show(visible) {
+      for (const e of [...byId.values(), ...footprints]) e.show = visible
+      viewer.scene.requestRender()
     },
     destroy() {
       handler.destroy()

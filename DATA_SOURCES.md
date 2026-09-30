@@ -38,6 +38,8 @@ All of these maps are LOLA heights in metres above the 1737.4 km sphere, in a so
 | PGDA `AVGVISIB_85S_060M_201608.TIF` and `..._EARTH.TIF` ([product 69](https://pgda.gsfc.nasa.gov/products/69)) | 60 m, 85°S to the pole | Validation of illumination and Earth visibility; optional map overlay |
 | PDS [LOLA polar GDRs](https://pds-geosciences.wustl.edu/lro/lro-l-lola-3-rdr-v1/lrolol_1xxx/data/lola_gdr/polar/) | 5–240 m | Backup only |
 
+**Derived terrain for the 3D views** (`pipeline/scripts/terrain_patches.py`, `web/public/data/terrain/`): for each site, three 401 × 401 height grids centred on it, sampled from the same tiers as the horizon masks. They are 30 m spacing to ±6 km (point samples), 240 m to ±48 km (mean of 3 × 3 samples per node) and 1.5 km to ±300 km (mean of 5 × 5). About 400 kB per site, 5.3 MB in all. They are cropped, downsampled grids, not the raw maps.
+
 Citations:
 - Smith, D. E., et al. (2010), The Lunar Orbiter Laser Altimeter investigation on the Lunar Reconnaissance Orbiter mission, *Space Science Reviews* 150, 209–241.
 - Barker, M. K., et al. (2023), *Planetary Science Journal* 4, 183, doi:10.3847/PSJ/acf3e1. Data: doi:10.60903/gsfcpgda-lola-spole.
@@ -47,6 +49,7 @@ Citations:
 ## Imagery
 
 - [NASA Moon Trek](https://trek.nasa.gov/moon/) (NASA/JPL-Caltech Solar System Treks). The WMTS layers used are the global `LRO_WAC_Mosaic_Global_303ppd_v02` and the south polar `LRO_LOLA_ClrShade_SPole75_30mp_v04` and `LRO_NAC_Mosaic_SPole85.5_1mp`. Layer metadata says "Use_Constraints: None". Credits: LOLA Instrument Team (NASA GSFC), the LROC Team (NASA/GSFC/Arizona State University), and NASA's Lunar Mapping and Modeling Project.
+- Earth texture for the 3D views: [Natural Earth](https://www.naturalearthdata.com/) II by Tom Patterson (public domain), the level-2 tiles bundled with CesiumJS, stitched into one 1024 × 512 image by `pipeline/scripts/earth_texture.py`.
 - 3D views render with [CesiumJS](https://cesium.com/platform/cesiumjs/) 1.145 (Apache-2.0), using the Moon ellipsoid and the Moon Trek WAC mosaic. No Cesium ion content is used, so no token is needed.
 - Optional Cesium Moon (Cesium ion asset 2684829), not enabled by default. If an ion token is configured, credit it as "NASA and the USGS Astrogeology Science Center", plus the Cesium ion logo.
 

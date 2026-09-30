@@ -15,7 +15,7 @@ Record at 1920×1080 in Chrome with reduced motion **off**. Use the production s
 | 0:22–0:27 | **Plan**, Malapert Massif, scrolled to **Power and battery**. Change the load from 100 W to 250 W; the battery estimate updates. | Size solar power and batteries for the longest darkness. |
 | 0:27–0:30 | End card: title, "NASA SPICE ephemerides and LRO LOLA terrain, checked against JPL Horizons", and the site URL. | Open data, open source, validated. |
 
-If a few seconds are spare, add **3D** at 0:15. Stand at Nobile Rim 2 (`?view=3d&site=nobile-rim-2&from=2026-10-01&to=2026-10-30&t=2026-10-18T12:00Z&h=2`) and drag toward the west to reveal the massif on the skyline.
+If a few seconds are spare, add **3D** at 0:15. Open `?view=3d&site=shackleton-rim&from=2027-01-01&to=2027-01-31&t=2027-01-12T06:00Z&h=2`, press **Fly to Shackleton rim** and Ctrl+drag to tilt: the crater's floor is black while its far wall catches the low Sun. Or stand at Nobile Rim 2 (`?view=3d&site=nobile-rim-2&from=2026-10-01&to=2026-10-30&t=2026-10-18T12:00Z&h=2`) and drag toward the west to reveal the massif on the skyline.
 
 **Recording tips:**
 - Hide the cursor except for clicks.

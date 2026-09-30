@@ -66,6 +66,17 @@ export function AboutPage() {
         </ul>
       </section>
       <section>
+        <h3>The 3D views</h3>
+        <p>
+          Around each site, the 3D view draws LOLA terrain from three nested grids: 30 m spacing to 6 km, 240 m to 48 km and
+          1.5 km to 300 km. It is lit by the Sun at the time shown. Shadows come from the terrain itself: along lines toward
+          the Sun, a point is lit when no terrain between it and the Sun rises past the line to the Sun's center, so a ridge
+          300 km away can shade the site, as in the horizon masks. The Earth is drawn at its true position and size, lit by
+          the Sun and turned to the right time of day. The Sun is drawn in its true direction at its true size, with a glow so
+          it stays visible.
+        </p>
+      </section>
+      <section>
         <h3>How we checked it</h3>
         <ul>
           <li>Sun and Earth directions match NASA JPL Horizons to within 0.00001°, and the browser matches the Python pipeline to within 0.0001°.</li>
@@ -108,8 +119,10 @@ export function AboutPage() {
             <strong>Power model.</strong> It ignores dust, temperature, panel ageing and battery losses.
           </li>
           <li>
-            <strong>3D ground view.</strong> It draws the computed skyline as a wall 4 km away. It is a faithful horizon, not
-            a terrain model.
+            <strong>3D terrain.</strong> The 3D view is coarser than the analysis: 30 m at best against 10 m for the horizon
+            masks, so its skyline can differ from the computed one by a fraction of a degree. The thin line in the standing
+            view is the computed horizon that every number uses. Shadowed ground gets a faint fill light so its shape stays
+            visible; in reality it is darker.
           </li>
         </ul>
       </section>
@@ -137,6 +150,10 @@ export function CreditsPage() {
           <li>
             Imagery: <a href="https://trek.nasa.gov/moon/">NASA Moon Trek</a> (NASA/JPL-Caltech), LRO WAC global mosaic (LROC
             team, NASA/GSFC/Arizona State University).
+          </li>
+          <li>
+            Earth texture: <a href="https://www.naturalearthdata.com/">Natural Earth</a> II by Tom Patterson (public domain),
+            the copy bundled with CesiumJS.
           </li>
           <li>
             Sites:{' '}
