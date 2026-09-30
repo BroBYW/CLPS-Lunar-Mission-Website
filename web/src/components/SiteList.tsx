@@ -1,0 +1,63 @@
+import type { Site, SiteGroup } from '../data/load.ts'
+import { fmtLatLon } from '../lib/format.ts'
+
+export const GROUP_LABELS: Record<SiteGroup, string> = {
+  artemis: 'Artemis candidate regions',
+  illumination: 'High-illumination points',
+  clps: 'CLPS landing sites',
+  contrast: 'Permanent shadow',
+}
+
+const ORDER: SiteGroup[] = ['illumination', 'artemis', 'clps', 'contrast']
+
+export function SiteList({ sites, selected, onSelect }: { sites: Site[]; selected: string; onSelect: (id: string) => void }) {
+  return (
+    <fieldset>
+      <legend className="font-display text-lg font-medium">Sites</legend>
+      {ORDER.map((g) => {
+        const items = sites.filter((s) => s.group === g)
+        if (!items.length) return null
+        return (
+          <div key={g} className="mt-3">
+            <p className="text-xs text-dust">{GROUP_LABELS[g]}</p>
+            <ul className="mt-1">
+              {items.map((s) => (
+                <li key={s.id}>
+                  <label
+                    className={`flex cursor-pointer items-baseline gap-2 rounded-sm px-2 py-1 hover:bg-shadow-2 has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-bright ${
+                      s.id === selected ? 'bg-shadow-2 text-bright' : 'text-dust'
+                    }`}
+                  >
+                    <input
+                      type="radio"
+                      name="site"
+                      value={s.id}
+                      checked={s.id === selected}
+                      onChange={() => onSelect(s.id)}
+                      aria-label={s.name}
+                      aria-description={`${fmtLatLon(s.lat, s.lon, 1)}, ${s.kind === 'exact' ? 'published point' : 'approximate point for a region'}`}
+                      className="sr-only"
+                    />
+                    <span
+                      aria-hidden="true"
+                      className={`inline-block size-2 shrink-0 translate-y-[-1px] rounded-full ${
+                        s.kind === 'exact' ? 'bg-bright' : 'border border-bright'
+                      }`}
+                    />
+                    <span className="flex-1 text-sm">{s.name}</span>
+                    <span className="text-xs tabular text-dust">{fmtLatLon(s.lat, s.lon, 1)}</span>
+                  </label>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )
+      })}
+      <p className="mt-3 text-xs text-dust">
+        <span aria-hidden="true" className="mr-1 inline-block size-2 rounded-full bg-bright" /> published point{' '}
+        <span aria-hidden="true" className="ml-3 mr-1 inline-block size-2 rounded-full border border-bright" /> approximate
+        point for a region
+      </p>
+    </fieldset>
+  )
+}

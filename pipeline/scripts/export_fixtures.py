@@ -82,7 +82,7 @@ def fraction_cases(eph: Ephemeris) -> list[dict]:
         mask = masks[s["mask_index"], 0]
         ser = site_series(eph, s["lat"], s["lon"], s["height_m"] + heights[0], mask, hourly)
         f = ser["f_sun"]
-        partial = np.flatnonzero((f > 0) & (f < 1))
+        partial = np.flatnonzero((f > 0.01) & (f < 0.99))  # clearly partial, not just grazing an edge
         full = np.flatnonzero(f >= 1)
         dark = np.flatnonzero(f <= 0)
         pick = np.concatenate([
