@@ -23,6 +23,9 @@ type Mode = 'globe' | 'flying' | 'terrain' | 'ground'
 const SKYLINE_KM = 250
 const R_SUN_KM = 695_700
 const FLY_ALTITUDE_M = 90_000
+/** Farthest the globe view zooms out, above the surface (as in the Plan view's globe). */
+const GLOBE_MAX_ZOOM_M = 5_000_000
+const TERRAIN_MAX_ZOOM_M = 600_000
 /** Earthshine at full Earth, as a share of full sunlight on a surface facing it. */
 const EARTHSHINE = 0.07
 
@@ -53,6 +56,8 @@ export default function Globe3D({ data }: { data: AppData }) {
   const extras = useRef<import('cesium').Entity[]>([])
   const look = useRef<{ x: number; y: number; heading: number; pitch: number } | null>(null)
   const fov = useRef(75)
+  /** Camera height limits above the sphere (m) for the globe and terrain views. */
+  const zoomRange = useRef({ min: 1, max: GLOBE_MAX_ZOOM_M })
   const [mode, setModeState] = useState<Mode>('globe')
   const modeRef = useRef<Mode>('globe')
   const [ready, setReady] = useState(false)
@@ -78,6 +83,18 @@ export default function Globe3D({ data }: { data: AppData }) {
       .then(([mod, sl, terrainMod]) => {
         if (cancelled || !container.current) return
         const mv = mod.createMoonViewer(container.current, { interactive: true, showBodies: true })
+        // Cesium's zoom misjudges its distance here (one wheel tick could throw the camera millions of km out, or
+        // pull it in), and its maximumZoomDistance then zooms the wrong way. So the wheel zoom is ours (onWheel
+        // below); Cesium keeps right-drag and pinch, and the camera is held within zoomRange every frame.
+        const { CameraEventType, Cartesian3, Ellipsoid, Matrix4 } = mod.Cesium
+        mv.viewer.scene.screenSpaceCameraController.zoomEventTypes = [CameraEventType.RIGHT_DRAG, CameraEventType.PINCH]
+        mv.viewer.scene.preRender.addEventListener(() => {
+          const cam = mv.viewer.camera
+          if ((modeRef.current !== 'globe' && modeRef.current !== 'terrain') || !Matrix4.equals(cam.transform, Matrix4.IDENTITY)) return
+          const r = Cartesian3.magnitude(cam.position)
+          const rMax = Ellipsoid.MOON.radii.x + zoomRange.current.max
+          if (r > rMax) Cartesian3.multiplyByScalar(cam.position, rMax / r, cam.position)
+        })
         void mod.addPolarCap(mv.viewer)
         const layer = sl.addSiteLayer(mv.viewer, data.sites, { onSelect: setSite, labelsWithinM: 1_200_000, selected: useApp.getState().siteId })
         const shading = new TerrainShading((id, images) => {
@@ -182,6 +199,7 @@ export default function Globe3D({ data }: { data: AppData }) {
     c.enableInputs = true
     c.minimumZoomDistance = 1
     c.maximumZoomDistance = Number.POSITIVE_INFINITY
+    zoomRange.current = { min: 1, max: GLOBE_MAX_ZOOM_M }
     defaultFrustum()
     scene.requestRender()
   }
@@ -208,7 +226,8 @@ export default function Globe3D({ data }: { data: AppData }) {
     const c = viewer.scene.screenSpaceCameraController
     c.enableInputs = true
     c.minimumZoomDistance = Math.max(0, t.maxNearHeight) + 1500
-    c.maximumZoomDistance = 600_000
+    c.maximumZoomDistance = Number.POSITIVE_INFINITY
+    zoomRange.current = { min: c.minimumZoomDistance, max: TERRAIN_MAX_ZOOM_M }
     defaultFrustum()
     const bright = Cesium.Color.fromCssColorString('#ede9e1')
     extras.current.push(
@@ -389,14 +408,62 @@ export default function Globe3D({ data }: { data: AppData }) {
     }
   }
 
-  // Scroll to zoom while standing (the page must not scroll, so the listener cannot be passive)
+  /**
+   * Globe and terrain views: move the camera toward or away from the surface point at the centre of the view, by a
+   * factor of the distance to it, keeping its height within zoomRange. That point stays centred. If the view has
+   * drifted off the Moon, the camera first turns back to face the Moon's centre.
+   */
+  const zoomHeight = (factor: number) => {
+    const a = api.current
+    if (!a) return
+    const { Cartesian2, Cartesian3, Ellipsoid } = a.mod.Cesium
+    const viewer = a.mv.viewer
+    const cam = viewer.camera
+    const R = Ellipsoid.MOON.radii.x
+    const pos = cam.position.clone()
+    const centre = new Cartesian2(viewer.canvas.clientWidth / 2, viewer.canvas.clientHeight / 2)
+    let target = cam.pickEllipsoid(centre, Ellipsoid.MOON)
+    if (!target) {
+      const direction = Cartesian3.normalize(Cartesian3.negate(pos, new Cartesian3()), new Cartesian3())
+      const z = Cartesian3.UNIT_Z
+      let up = Cartesian3.subtract(z, Cartesian3.multiplyByScalar(direction, Cartesian3.dot(z, direction), new Cartesian3()), new Cartesian3())
+      if (Cartesian3.magnitude(up) < 1e-6) up = Cartesian3.clone(Cartesian3.UNIT_X)
+      cam.setView({ destination: pos, orientation: { direction, up: Cartesian3.normalize(up, up) } })
+      target = Cartesian3.multiplyByScalar(Cartesian3.normalize(pos, new Cartesian3()), R, new Cartesian3())
+    }
+    const offset = Cartesian3.subtract(pos, target, new Cartesian3())
+    const at = (s: number) => Cartesian3.add(target, Cartesian3.multiplyByScalar(offset, s, new Cartesian3()), new Cartesian3())
+    const height = (s: number) => Cartesian3.magnitude(at(s)) - R
+    // Height grows with s along this line, so a bisection finds where it meets either limit
+    const { min, max } = zoomRange.current
+    const solve = (h: number, lo: number, hi: number) => {
+      for (let i = 0; i < 40; i++) {
+        const mid = (lo + hi) / 2
+        if (height(mid) > h) hi = mid
+        else lo = mid
+      }
+      return lo
+    }
+    let s = factor
+    if (height(s) > max) s = solve(max, 0, s)
+    else if (height(s) < min) s = solve(min, s, Math.max(1, s))
+    Cartesian3.clone(at(s), cam.position)
+    viewer.scene.requestRender()
+  }
+
+  // Scroll to zoom: the field of view while standing, the height otherwise (the page must not scroll, so the
+  // listener cannot be passive)
   useEffect(() => {
     const el = container.current
     if (!el) return
     const onWheel = (e: WheelEvent) => {
-      if (modeRef.current !== 'ground') return
+      const m = modeRef.current
+      if (m === 'flying') return
       e.preventDefault()
-      zoom(Math.exp(e.deltaY * 0.001))
+      // Lines or pages (some browsers and mice) to pixels
+      const dy = e.deltaY * (e.deltaMode === 1 ? 33 : e.deltaMode === 2 ? 400 : 1)
+      if (m === 'ground') zoom(Math.exp(dy * 0.001))
+      else zoomHeight(Math.exp(Math.max(-300, Math.min(300, dy)) * 0.0015))
     }
     el.addEventListener('wheel', onWheel, { passive: false })
     return () => el.removeEventListener('wheel', onWheel)
