@@ -131,8 +131,8 @@ export function Home({ data }: { data: AppData | null }) {
       </main>
 
       <footer className={`rise absolute bottom-7 left-6 z-10 max-w-[520px] text-xs text-dust md:left-16 ${leaving ? 'opacity-0' : ''}`} style={{ animationDelay: '0.75s' }}>
-        Sun and Earth positions from NASA JPL SPICE ephemerides. Terrain from LRO LOLA (NASA GSFC). Imagery: NASA Moon
-        Trek, LRO WAC mosaic. Built for the NASA Space Apps Challenge 2026.{' '}
+        Sun and Earth positions from NASA JPL SPICE ephemerides. Terrain from LRO LOLA (NASA GSFC). Moon model: NASA
+        SVS (Goddard Space Flight Center). Built for the NASA Space Apps Challenge 2026.{' '}
         <button type="button" onClick={() => go('about')} className="underline underline-offset-2 hover:text-bright">
           How it works
         </button>{' '}

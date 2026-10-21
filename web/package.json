@@ -27,6 +27,9 @@
     "zustand": "^5.0.15"
   },
   "devDependencies": {
+    "@gltf-transform/core": "^4.5.1",
+    "@gltf-transform/extensions": "^4.5.1",
+    "@gltf-transform/functions": "^4.5.1",
     "@tailwindcss/vite": "^4.3.3",
     "@types/d3-scale": "^4.0.9",
     "@types/d3-time": "^3.0.4",
@@ -36,6 +39,7 @@
     "@types/react-dom": "^19.3.0",
     "@vitejs/plugin-react": "^6.1.1",
     "axe-core": "^4.13.0",
+    "sharp": "^0.35.5",
     "tailwindcss": "^4.3.3",
     "typescript": "~6.0.0",
     "vercel": "^61.1.0",

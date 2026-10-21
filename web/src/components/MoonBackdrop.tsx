@@ -33,9 +33,8 @@ export function MoonBackdrop({ ephemeris, timeMs, ref }: { ephemeris: Ephemeris;
     import('../globe/moonViewer.ts')
       .then((mod) => {
         if (cancelled || !container.current) return
-        const mv = mod.createMoonViewer(container.current, { interactive: false, showBodies: false })
+        const mv = mod.createMoonViewer(container.current, { interactive: false, showBodies: false, model: true })
         mv.viewer.cesiumWidget.creditContainer.setAttribute('style', 'display:none') // credited in the page footer
-        void mod.addPolarCap(mv.viewer)
         api.current = { mod, mv }
         if (import.meta.env.DEV) (window as unknown as { __moon: unknown }).__moon = { viewer: mv.viewer, Cesium: mod.Cesium }
         // South pole toward the camera, the Sun's side partly in view
@@ -43,7 +42,9 @@ export function MoonBackdrop({ ephemeris, timeMs, ref }: { ephemeris: Ephemeris;
         const sunLon = (Math.atan2(v.current[1], v.current[0]) * 180) / Math.PI
         mod.viewFrom(mv.viewer, -48, sunLon - 55, 8.2e6)
         light(timeMs)
-        setReady(true)
+        mv.ready.then(() => !cancelled && setReady(true)).catch(() => {
+          /* the model failed to load: the static backdrop stays */
+        })
         if (!prefersReducedMotion()) {
           let last = performance.now()
           const spin = (now: number) => {

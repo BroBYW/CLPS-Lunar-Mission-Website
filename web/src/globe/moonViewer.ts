@@ -74,10 +74,16 @@ export interface MoonViewer {
   setSun: (sunKm: ArrayLike<number>) => void
   /** Earth position relative to the Moon, MOON_ME km, and the time (UTC ms) for its rotation. */
   setEarth: (earthKm: ArrayLike<number>, timeMs: number) => void
+  /** Resolves once the Moon can be drawn: at once for the globe, after its texture loads for the model. */
+  ready: Promise<void>
   destroy: () => void
 }
 
-export function createMoonViewer(container: HTMLElement, opts: { interactive: boolean; showBodies: boolean }): MoonViewer {
+/** `model`: draw the NASA SVS Moon model instead of the streamed Moon Trek globe (no polar cap, no terrain). */
+export function createMoonViewer(
+  container: HTMLElement,
+  opts: { interactive: boolean; showBodies: boolean; model?: boolean },
+): MoonViewer {
   Cesium.Ellipsoid.default = Cesium.Ellipsoid.MOON
   const imagery = new Cesium.UrlTemplateImageryProvider({
     url: MOON_TREK_WAC,
@@ -86,7 +92,7 @@ export function createMoonViewer(container: HTMLElement, opts: { interactive: bo
     credit: new Cesium.Credit(MOON_TREK_CREDIT),
   })
   const viewer = new Cesium.Viewer(container, {
-    baseLayer: new Cesium.ImageryLayer(imagery),
+    baseLayer: opts.model ? false : new Cesium.ImageryLayer(imagery),
     terrainProvider: new Cesium.EllipsoidTerrainProvider({ ellipsoid: Cesium.Ellipsoid.MOON }),
     animation: false,
     timeline: false,
@@ -140,6 +146,12 @@ export function createMoonViewer(container: HTMLElement, opts: { interactive: bo
   })
   const light = new Cesium.DirectionalLight({ direction: new Cesium.Cartesian3(-1, 0, 0), intensity: 2.2 })
   scene.light = light
+  let ready = Promise.resolve()
+  if (opts.model) {
+    // The camera still works against the ellipsoid; only the globe's drawing is off
+    globe.show = false
+    ready = addMoonModel(viewer)
+  }
 
   if (!opts.interactive) {
     const c = scene.screenSpaceCameraController
@@ -152,6 +164,7 @@ export function createMoonViewer(container: HTMLElement, opts: { interactive: bo
 
   return {
     viewer,
+    ready,
     setSun(sunKm) {
       const d = Math.hypot(sunKm[0], sunKm[1], sunKm[2])
       sunDistM = d * 1000
@@ -168,6 +181,45 @@ export function createMoonViewer(container: HTMLElement, opts: { interactive: bo
       if (!viewer.isDestroyed()) viewer.destroy()
     },
   }
+}
+
+export const MOON_MODEL_CREDIT = 'Moon model: NASA SVS 14959, Moon 3D Models for Web, AR, and Animation (NASA Goddard Space Flight Center)'
+
+/** Vertex radius of the SVS model's cube-sphere, in model units. */
+const MODEL_RADIUS = 1.2719
+/**
+ * Rotation from the model's glTF frame to MOON_ME (north = glTF +Y, 0° meridian = glTF −Z, 90°E = glTF −X). Found by
+ * matching the model's texture to the Moon Trek WAC mosaic over all 24 axis-aligned rotations: correlation 0.70
+ * against 0.14 for the runner-up, best within 1° of longitude.
+ */
+const MODEL_ORIENTATION = new Cesium.Matrix3(0, 0, -1, -1, 0, 0, 0, 1, 0)
+
+/** The NASA SVS Moon model (public/data/moon.glb, from scripts/compress-moon-model.mjs), lunar-sized, at the center. */
+async function addMoonModel(viewer: Cesium.Viewer): Promise<void> {
+  const r = Cesium.Ellipsoid.MOON.radii.x / MODEL_RADIUS
+  const model = await Cesium.Model.fromGltfAsync({
+    url: `${import.meta.env.BASE_URL}data/moon.glb`,
+    modelMatrix: Cesium.Matrix4.fromRotationTranslation(
+      Cesium.Matrix3.multiplyByScalar(MODEL_ORIENTATION, r, new Cesium.Matrix3()),
+      Cesium.Cartesian3.ZERO,
+    ),
+    // Z-up and X-forward switch off Cesium's own glTF axis correction; MODEL_ORIENTATION does it all
+    upAxis: Cesium.Axis.Z,
+    forwardAxis: Cesium.Axis.X,
+    credit: new Cesium.Credit(MOON_MODEL_CREDIT),
+    allowPicking: false,
+    // Ready only with the texture, so it never shows as a plain grey ball
+    incrementallyLoadTextures: false,
+  })
+  // No sky light in space: only the Sun lights the surface
+  model.imageBasedLighting.imageBasedLightingFactor = new Cesium.Cartesian2(0, 0)
+  if (viewer.isDestroyed()) return model.destroy()
+  viewer.scene.primitives.add(model)
+  // The model loads during renders, which request-render mode only runs on demand
+  const tick = viewer.clock.onTick.addEventListener(() => viewer.scene.requestRender())
+  await new Promise<void>((resolve) => model.readyEvent.addEventListener(() => resolve()))
+  tick()
+  viewer.scene.requestRender()
 }
 
 const t1 = new Cesium.Cartesian3()

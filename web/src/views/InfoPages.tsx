@@ -161,6 +161,11 @@ export function CreditsPage() {
             team, NASA/GSFC/Arizona State University).
           </li>
           <li>
+            Home page Moon: <a href="https://svs.gsfc.nasa.gov/14959/">Moon 3D Models for Web, AR, and Animation</a> (NASA
+            Scientific Visualization Studio, ID 14959), made from LRO imagery and topography. Credit: NASA&apos;s Goddard
+            Space Flight Center.
+          </li>
+          <li>
             Earth texture: <a href="https://www.naturalearthdata.com/">Natural Earth</a> II by Tom Patterson (public domain),
             the copy bundled with CesiumJS.
           </li>
