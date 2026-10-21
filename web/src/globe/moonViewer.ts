@@ -129,10 +129,13 @@ export function createMoonViewer(
   // outside a render, and the "off" frame must actually be drawn before lighting comes back.
   globe.enableLighting = true
   const relight = () => {
+    // The page may have moved on, destroying the viewer, before these timers fire
+    if (viewer.isDestroyed()) return
     globe.enableLighting = false
     scene.requestRender()
     requestAnimationFrame(() =>
       requestAnimationFrame(() => {
+        if (viewer.isDestroyed()) return
         globe.enableLighting = true
         scene.requestRender()
       }),

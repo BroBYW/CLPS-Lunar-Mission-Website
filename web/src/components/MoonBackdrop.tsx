@@ -17,7 +17,10 @@ export function MoonBackdrop({ ephemeris, timeMs, ref }: { ephemeris: Ephemeris;
   const container = useRef<HTMLDivElement>(null)
   const api = useRef<{ mod: Loaded; mv: ReturnType<Loaded['createMoonViewer']> } | null>(null)
   const sweep = useRef<number | null>(null)
+  const flight = useRef<number | null>(null)
   const [ready, setReady] = useState(false)
+  /** The "Let's start" flight: the Moon recentres while the camera pushes in, then fades out. */
+  const [leaving, setLeaving] = useState<'no' | 'flying' | 'fading'>('no')
   const v = useRef(new Float64Array(6))
 
   const light = (t: number) => {
@@ -50,7 +53,7 @@ export function MoonBackdrop({ ephemeris, timeMs, ref }: { ephemeris: Ephemeris;
           const spin = (now: number) => {
             const dt = (now - last) / 1000
             last = now
-            if (!document.hidden && !mv.viewer.isDestroyed()) {
+            if (!document.hidden && !mv.viewer.isDestroyed() && flight.current === null) {
               mv.viewer.camera.rotate(mod.Cesium.Cartesian3.UNIT_Z, -0.02 * dt)
               mv.viewer.scene.requestRender()
             }
@@ -66,6 +69,7 @@ export function MoonBackdrop({ ephemeris, timeMs, ref }: { ephemeris: Ephemeris;
       cancelled = true
       cancelAnimationFrame(raf)
       if (sweep.current) cancelAnimationFrame(sweep.current)
+      if (flight.current) cancelAnimationFrame(flight.current)
       api.current?.mv.destroy()
       api.current = null
     }
@@ -80,15 +84,46 @@ export function MoonBackdrop({ ephemeris, timeMs, ref }: { ephemeris: Ephemeris;
     flyToPole: () =>
       new Promise<void>((resolve) => {
         const a = api.current
-        if (!a || prefersReducedMotion()) return resolve()
-        const { Cesium } = a.mod
-        a.mv.viewer.camera.flyTo({
-          destination: Cesium.Cartesian3.fromDegrees(-137.17, -89.44, 260_000),
-          orientation: { heading: 0, pitch: Cesium.Math.toRadians(-90), roll: 0 },
-          duration: 2.4,
-          complete: resolve,
-          cancel: resolve,
-        })
+        if (!a || prefersReducedMotion() || flight.current !== null) return resolve()
+        const { Cartesian3 } = a.mod.Cesium
+        const viewer = a.mv.viewer
+        const cam = viewer.camera
+        // Push in along the line to the pole, so it never leaves the view, turning to face it on the way. The
+        // distance shrinks exponentially (a steady zoom rate) to a tenth, where the polar region fills the view,
+        // and the backdrop fades out over the last part instead of ending on a dark close-up.
+        const pole = new Cartesian3(0, 0, -a.mod.Cesium.Ellipsoid.MOON.radii.z)
+        const start = cam.position.clone()
+        const offset = Cartesian3.subtract(start, pole, new Cartesian3())
+        const toPole = Cartesian3.normalize(Cartesian3.negate(offset, new Cartesian3()), new Cartesian3())
+        const dir0 = cam.direction.clone()
+        const up0 = cam.up.clone()
+        const DURATION_MS = 1800
+        const FADE_AT = 0.6
+        const END = 0.1
+        const t0 = performance.now()
+        setLeaving('flying')
+        // Quadratic ease, short on the way in (a click gets a visible response at once) and long on the way out.
+        // The two halves meet at f = A with the same value and slope.
+        const A = 0.35
+        const ease = (f: number) => (f < A ? (f * f) / A : 1 - (1 - f) ** 2 / (1 - A))
+        const step = (now: number) => {
+          if (viewer.isDestroyed()) return resolve()
+          const f = Math.min(1, (now - t0) / DURATION_MS)
+          const e = ease(f)
+          Cartesian3.add(pole, Cartesian3.multiplyByScalar(offset, END ** e, new Cartesian3()), cam.position)
+          const k = Math.min(1, e / 0.6)
+          const direction = Cartesian3.normalize(Cartesian3.lerp(dir0, toPole, k * k * (3 - 2 * k), new Cartesian3()), new Cartesian3())
+          const up = Cartesian3.subtract(up0, Cartesian3.multiplyByScalar(direction, Cartesian3.dot(up0, direction), new Cartesian3()), new Cartesian3())
+          cam.setView({ destination: cam.position, orientation: { direction, up: Cartesian3.normalize(up, up) } })
+          viewer.scene.requestRender()
+          if (f >= FADE_AT) setLeaving('fading')
+          if (f < 1) flight.current = requestAnimationFrame(step)
+          else {
+            flight.current = null
+            resolve()
+          }
+        }
+        flight.current = requestAnimationFrame(step)
       }),
     playMonth: () => {
       if (!api.current || sweep.current !== null) return
@@ -115,9 +150,16 @@ export function MoonBackdrop({ ephemeris, timeMs, ref }: { ephemeris: Ephemeris;
         className={`absolute left-[58%] top-1/2 aspect-square h-[74vh] -translate-x-1/2 -translate-y-1/2 rounded-full transition-opacity duration-1000 max-md:left-1/2 max-md:top-[84%] max-md:h-[52vh] ${ready ? 'opacity-0' : 'opacity-100'}`}
         style={{ background: 'radial-gradient(circle at 35% 70%, #5e5950 0%, #262420 45%, #0b0b0a 72%)' }}
       />
+      {/* Off-centre beside the headline (below it on phones); the "Let's start" flight slides it to the centre */}
       <div
         ref={container}
-        className={`absolute inset-y-0 left-[8vw] w-screen transition-opacity duration-1000 max-md:left-0 max-md:translate-y-[34vh] ${ready ? 'opacity-100' : 'opacity-0'}`}
+        className={`absolute inset-y-0 w-screen ${leaving === 'no' ? 'left-[8vw] max-md:left-0 max-md:translate-y-[34vh]' : 'left-0 translate-y-0'} ${ready && leaving !== 'fading' ? 'opacity-100' : 'opacity-0'}`}
+        style={{
+          transition:
+            leaving === 'no'
+              ? 'opacity 1000ms'
+              : 'left 1100ms cubic-bezier(0.65, 0, 0.35, 1), translate 1100ms cubic-bezier(0.65, 0, 0.35, 1), opacity 500ms ease-in',
+        }}
       />
     </div>
   )
