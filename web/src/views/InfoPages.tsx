@@ -76,9 +76,10 @@ export function AboutPage() {
           true direction at its true size, with a glow so it stays visible.
         </p>
         <p>
-          The maps stop at 10 m, so when you stand on the ground, the craters under 5 m across near your feet are
-          decorative. They only shape the shading, to show how a low Sun catches a cratered surface. They are not in the
-          data, and they change no shadow or number.
+          The maps stop at 10 m, so when you stand on the ground, the detail near your feet is decorative: craters up to
+          about 11 m across (many small ones, few large, most worn down, about one in ten fresh with bright ejecta), a
+          gentle bumpiness, and faint light and dark patches. It only shapes the shading, to show how a low Sun catches a
+          real regolith surface. It is not in the data, and it changes no shadow or number.
         </p>
       </section>
       <section>
@@ -131,7 +132,8 @@ export function AboutPage() {
             30 m, 240 m and 1.5 km against maps of 10 m to 240 m), so its skyline can differ from the computed one by a
             fraction of a degree.
             The thin line in the standing view is the computed horizon that every number uses. Shadowed ground gets a faint
-            fill light so its shape stays visible; in reality it is darker. The small craters near your feet are decorative.
+            fill light so its shape stays visible; in reality it is darker. The small craters and surface texture near your
+            feet are decorative.
           </li>
         </ul>
       </section>

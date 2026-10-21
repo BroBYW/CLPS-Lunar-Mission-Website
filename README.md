@@ -154,7 +154,7 @@ Raw elevation maps and kernels are downloaded into `pipeline/raw/` and `pipeline
 ## Limitations
 
 In short:
-- Terrain detail below about 20 m is not modelled. In the 3D standing view, the small craters near your feet are decorative.
+- Terrain detail below about 20 m is not modelled. In the 3D standing view, the small craters and surface texture near your feet are decorative.
 - Region points are approximate: NASA publishes region footprints, not points.
 - Earth visibility is geometric and ignores Deep Space Network coverage and link budgets.
 - The power model ignores dust and temperature.

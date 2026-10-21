@@ -68,13 +68,17 @@ function drawnBy(g: GridSpec, gi: number, dx: number, dy: number): boolean {
 // black, with a mild phase term (brighter looking away from the Sun). Earthshine and a faint constant stand-in
 // for light scattered off sunlit slopes keep shadowed ground just visible.
 //
-// The finest map is 10 m, so up close the ground would be a few smooth triangles. Decorative relief below that
-// scale gives a low Sun something to catch, as on real regolith: small craters at three scales, 0.1–5 m across.
-// Fresh ones have 27° inner walls and raised rims; older ones are shallower. The relief tilts the shading normal
-// only: the shape, the shadows and every number come from the data alone. Each scale fades out once it would span
-// fewer than a few pixels.
+// The finest map is 10 m, so up close the ground would be a few smooth triangles. Decorative detail below that
+// scale gives a low Sun something to catch, as on real regolith:
+// - craters at four scales, 0.1–11 m across, in about a third of the cells of each scale (so smaller ones are far
+//   commoner, as on a surface in crater equilibrium). Most are old and worn: shallow, soft-rimmed bowls. About one
+//   in ten is fresh, with steep walls, a sharp raised rim and a halo of brighter ejecta;
+// - gentle bumpiness at 0.3–2.4 m, under a degree of slope, so the ground between craters is not a flat sheet;
+// - faint light and dark patches (±4.5% albedo) at tens of metres.
+// The detail tilts the shading normal and tints the albedo only: the shape, the shadows and every number come from
+// the data alone. Each scale fades out once it would span fewer than a few pixels.
 // Positions are metres from the site in the stereographic plane, (st − 0.5) × stScale, the same for all four
-// meshes, so the relief runs on across their edges.
+// meshes, so the detail runs on across their edges.
 const SOURCE = /* glsl */ `
 vec2 detailHash2(vec2 p) {
   vec3 p3 = fract(vec3(p.xyx) * vec3(0.1031, 0.1030, 0.0973));
@@ -82,47 +86,83 @@ vec2 detailHash2(vec2 p) {
   return fract((p3.xx + p3.yz) * p3.zy);
 }
 
-// Slope of one scale of small craters, in about a third of the cells, smaller ones commoner. The profile, in
-// radii: a bowl 0.25 deep, height 0.25 (x² − 1) + 0.06, then a rim falling from 0.06 to nothing by 1.45 radii.
-// Older craters are shallower: each is scaled by 0.3–1.
-vec2 craterSlope(vec2 p, float cell) {
+// Value noise with its gradient (x: value in 0..1, yz: d/dp), smooth to the second derivative
+vec3 detailNoise(vec2 p) {
+  vec2 i = floor(p);
+  vec2 f = fract(p);
+  vec2 u = f * f * f * (f * (f * 6.0 - 15.0) + 10.0);
+  vec2 du = 30.0 * f * f * (f * (f - 2.0) + 1.0);
+  float a = detailHash2(i).x;
+  float b = detailHash2(i + vec2(1.0, 0.0)).x;
+  float c = detailHash2(i + vec2(0.0, 1.0)).x;
+  float d = detailHash2(i + vec2(1.0, 1.0)).x;
+  float k1 = b - a, k2 = c - a, k4 = a - b - c + d;
+  return vec3(a + k1 * u.x + k2 * u.y + k4 * u.x * u.y, du * (vec2(k1, k2) + k4 * u.yx));
+}
+
+// One scale of craters: slope (xy) and albedo change (z). Profile in radii x, for freshness f in 0..1:
+// a bowl of depth D = mix(0.025, 0.3, f), height D (x² − 1) + H, inside a rim of height H = mix(0.005, 0.07, f) that
+// falls smoothly to nothing over the next W = mix(1.2, 0.5, f) radii. Old rims are wide and low, fresh ones sharp.
+vec3 craterDetail(vec2 p, float cell) {
   vec2 q = p / cell;
   vec2 base = floor(q);
-  vec2 g = vec2(0.0);
+  vec3 g = vec3(0.0);
   for (int j = -1; j <= 1; j++) {
     for (int i = -1; i <= 1; i++) {
       vec2 c = base + vec2(float(i), float(j));
       vec2 h = detailHash2(c);
       if (h.x < 0.66) continue;
-      vec2 d = q - (c + 0.25 + 0.5 * detailHash2(c + 19.19));
+      vec2 d = q - (c + 0.2 + 0.6 * detailHash2(c + 19.19));
       float dist = length(d);
-      float x = dist / mix(0.1, 0.38, h.y * h.y);
-      float dp = x < 1.0 ? 0.5 * x : (x < 1.45 ? -0.267 * (1.0 - (x - 1.0) / 0.45) : 0.0);
-      g += dp * mix(0.3, 1.0, fract(h.x * 13.7)) * d / max(dist, 1e-4);
+      float r = mix(0.08, 0.34, h.y * h.y);
+      float x = dist / r;
+      float rnd = fract(h.x * 13.7);
+      float f = rnd * rnd * rnd;
+      float D = mix(0.025, 0.3, f);
+      float H = mix(0.005, 0.07, f);
+      float W = mix(1.2, 0.5, f);
+      float t = (x - 1.0) / W;
+      // Old bowls round over into their rims instead of meeting them at an edge
+      float dh = x < 1.0 ? 2.0 * D * x * (1.0 - (1.0 - f) * smoothstep(0.6, 1.0, x)) : (t < 1.0 ? -H * 6.0 * t * (1.0 - t) / W : 0.0);
+      g.xy += dh * d / max(dist, 1e-4);
+      // Fresh craters: brighter ejecta, fading out to 2.5 radii
+      g.z += 0.22 * f * f * (1.0 - smoothstep(0.85, 2.5, x));
     }
   }
   return g;
 }
 
-// Slope of the decorative relief along the stereographic x and y axes
-vec2 detailSlope(vec2 p) {
+// Shading-normal slope along the stereographic x and y axes (xy) and the albedo change (z)
+vec3 surfaceDetail(vec2 p) {
   vec2 fw = fwidth(p);
   // Between the widths along and across the view, so grazing views keep some texture without shimmering
   float footprint = max(sqrt(fw.x * fw.y), 1e-4);
-  vec2 g = vec2(0.0);
-  float cell = 0.5;
-  for (int k = 0; k < 3; k++) {
-    g += clamp((0.3 * cell / footprint - 3.0) / 3.0, 0.0, 1.0) * craterSlope(p + float(k) * 37.1, cell);
-    cell *= 3.6;
+  vec3 g = vec3(0.0);
+  float cell = 0.4;
+  for (int k = 0; k < 4; k++) {
+    g += clamp((0.3 * cell / footprint - 3.0) / 3.0, 0.0, 1.0) * craterDetail(p + float(k) * 37.1, cell);
+    cell *= 3.3;
   }
+  // Gentle bumpiness, rougher at smaller scales: slopes up to about 0.9° at 0.3 m, 0.2° at 2.4 m (with the Sun
+  // under a degree high, anything steeper at metre scales turns whole patches black)
+  float wave = 0.3;
+  float amp = 0.016;
+  for (int k = 0; k < 3; k++) {
+    vec3 nz = detailNoise(p / wave + float(k) * 11.3);
+    g.xy += clamp((0.4 * wave / footprint - 2.0) / 2.0, 0.0, 1.0) * amp * nz.yz;
+    wave *= 2.8;
+    amp *= 0.45;
+  }
+  // Light and dark patches
+  g.z += 0.06 * (detailNoise(p / 37.0 + 5.1).x - 0.5) + 0.03 * (detailNoise(p / 9.0 + 2.7).x - 0.5);
   return g;
 }
 
 czm_material czm_getMaterial(czm_materialInput materialInput) {
   czm_material m = czm_getDefaultMaterial(materialInput);
   vec3 n = normalize(materialInput.normalEC);
-  vec2 slope = detailSlope((materialInput.st - 0.5) * stScale);
-  n = normalize(n - slope.x * (czm_viewRotation * tangentU) - slope.y * (czm_viewRotation * tangentV));
+  vec3 detail = surfaceDetail((materialInput.st - 0.5) * stScale);
+  n = normalize(n - detail.x * (czm_viewRotation * tangentU) - detail.y * (czm_viewRotation * tangentV));
   vec3 v = normalize(materialInput.positionToEyeEC);
   vec3 l = czm_lightDirectionEC;
   float mu0 = dot(n, l);
@@ -136,7 +176,7 @@ czm_material czm_getMaterial(czm_materialInput materialInput) {
   float e = length(earthshine);
   float fill = e > 0.0 ? e * max(dot(n, normalize(czm_viewRotation * earthshine)), 0.0) : 0.0;
   m.diffuse = vec3(0.0);
-  m.emission = albedo.rgb * (1.6 * sunLight + fill + 0.022);
+  m.emission = albedo.rgb * (1.0 + detail.z) * (1.6 * sunLight + fill + 0.022);
   m.alpha = 1.0;
   return m;
 }
