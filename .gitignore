@@ -21,6 +21,9 @@ pipeline/kernels/*
 pipeline/raw/
 pipeline/validation/cache/
 
+# Source 3D models (13.8 MB); web/scripts/compress-moon-model.mjs writes web/public/data/moon.glb
+3d_models/
+
 # Local tool settings
 .claude/
 
