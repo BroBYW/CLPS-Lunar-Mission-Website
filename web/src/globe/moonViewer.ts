@@ -352,14 +352,26 @@ function addBodies(viewer: Cesium.Viewer, sunDir: Cesium.Cartesian3, sunDist: ()
   }
 }
 
-/** Our LOLA hillshade of 80 S to the pole, draped over the mosaic (which streaks near the pole). */
+/**
+ * Our LOLA hillshade of 80 S to the pole, draped over the mosaic (which streaks near the pole). It comes as a western
+ * and an eastern half, 4096 × 2048 each, as no texture may be wider than 4096 px on some phones.
+ */
 export async function addPolarCap(viewer: Cesium.Viewer): Promise<void> {
-  const provider = await Cesium.SingleTileImageryProvider.fromUrl(`${import.meta.env.BASE_URL}data/polar-cap-south.webp`, {
-    rectangle: Cesium.Rectangle.fromDegrees(-180, -90, 180, -80),
-    credit: new Cesium.Credit('South polar relief: LRO LOLA (NASA GSFC PGDA, Barker et al. 2023)'),
-  })
+  const credit = new Cesium.Credit('South polar relief: LRO LOLA (NASA GSFC PGDA, Barker et al. 2023)')
+  const halves = [
+    ['w', -180, 0],
+    ['e', 0, 180],
+  ] as const
+  const providers = await Promise.all(
+    halves.map(([half, west, east]) =>
+      Cesium.SingleTileImageryProvider.fromUrl(`${import.meta.env.BASE_URL}data/polar-cap-south-${half}.webp`, {
+        rectangle: Cesium.Rectangle.fromDegrees(west, -90, east, -80),
+        credit,
+      }),
+    ),
+  )
   if (!viewer.isDestroyed()) {
-    viewer.imageryLayers.add(new Cesium.ImageryLayer(provider))
+    for (const provider of providers) viewer.imageryLayers.add(new Cesium.ImageryLayer(provider))
     viewer.scene.requestRender()
   }
 }

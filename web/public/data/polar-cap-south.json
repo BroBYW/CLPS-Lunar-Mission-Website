@@ -1,12 +1,26 @@
 {
   "description": "LOLA hillshade (PGDA LDEM_80S_80MPP_ADJ) in equirectangular longitude/latitude, for the 3D globe",
-  "rectangle_deg": {
-    "west": -180,
-    "south": -90,
-    "east": 180,
-    "north": -80.0
-  },
+  "tiles": [
+    {
+      "file": "polar-cap-south-w.webp",
+      "rectangle_deg": {
+        "west": -180,
+        "south": -90,
+        "east": 0,
+        "north": -80.0
+      }
+    },
+    {
+      "file": "polar-cap-south-e.webp",
+      "rectangle_deg": {
+        "west": 0,
+        "south": -90,
+        "east": 180,
+        "north": -80.0
+      }
+    }
+  ],
   "width": 4096,
-  "height": 1024,
+  "height": 2048,
   "fade": "alpha fades from opaque at 81 S to transparent at 80 S"
 }

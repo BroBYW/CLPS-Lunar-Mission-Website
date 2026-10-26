@@ -1,7 +1,8 @@
 /**
- * LOLA terrain around a site for the 3D views: four nested meshes (7.5 m spacing to 1.5 km, 30 m to 6 km, 240 m to
- * 48 km and 1500 m to 300 km) lit by the Sun at the app's time. Shadows come from the terrain itself, computed per
- * node in a worker (lib/terrain.ts) and passed to the shader as one small texture per mesh.
+ * LOLA terrain around a site for the 3D views: six nested meshes (7.5 m spacing to 1.5 km, 30 m to 6 km, 120 m to
+ * 24 km, 240 m to 48 km, 600 m to 120 km and 1500 m to 300 km) lit by the Sun at the app's time. Shadows come from
+ * the terrain itself, computed per node in a worker (lib/terrain.ts) and passed to the shader as one small texture
+ * per mesh.
  */
 
 import { decodeGrid, gridNormals, gridPositions, stereoToMoonFixed, type GridSpec, type Patch } from '../lib/terrain.ts'
@@ -55,7 +56,7 @@ export function loadPatch(siteId: string): Promise<Patch> {
 }
 
 /** Where a coarser mesh overlaps a finer one, its vertices sink this far (m) so the finer mesh shows. */
-const TUCK_M = [0, 20, 60, 400]
+const TUCK_M = [0, 20, 40, 60, 200, 400]
 /** The two finest grids are drawn as squares, the coarser ones as discs, each around the grid before it. */
 const isDisc = (gi: number) => gi >= 2
 
@@ -77,7 +78,7 @@ function drawnBy(g: GridSpec, gi: number, dx: number, dy: number): boolean {
 // - faint light and dark patches (±4.5% albedo) at tens of metres.
 // The detail tilts the shading normal and tints the albedo only: the shape, the shadows and every number come from
 // the data alone. Each scale fades out once it would span fewer than a few pixels.
-// Positions are metres from the site in the stereographic plane, (st − 0.5) × stScale, the same for all four
+// Positions are metres from the site in the stereographic plane, (st − 0.5) × stScale, the same for all six
 // meshes, so the detail runs on across their edges.
 const SOURCE = /* glsl */ `
 vec2 detailHash2(vec2 p) {

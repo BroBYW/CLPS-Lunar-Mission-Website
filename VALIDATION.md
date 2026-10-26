@@ -206,7 +206,7 @@ Both are under the 3 s target. Cesium never loads for the Plan, Compare or Explo
 
 **Frame rate during playback** (Plan view, production build, 1 day per second): 571 frames in 4 s, a mean of 142 fps, which is the display's refresh limit. The 95th percentile is 7.0 ms per frame and the worst frame 13.9 ms; none took over 20 ms. The target was a steady 60 fps.
 
-**3D terrain** (dev build, this machine, 1.25× display, drawn at full resolution): a site's four terrain meshes build in 100–160 ms. Orbiting over them, or looking around while standing (decorative craters included), runs at 143 fps. During playback, the worker re-computes the terrain's sunlight about 17 times a second while drawing stays at 143 fps.
+**3D terrain** (dev build, this machine, 1.25× display, drawn at full resolution): a site's six terrain meshes build in 150–190 ms. One update of the terrain's sunlight takes 79 ms in Node on this machine, so during playback the worker refreshes it about 12 times a second. With the four meshes used until October 2026 these were 100–160 ms and 54 ms (about 17 a second), and orbiting or standing ran at 143 fps, the display's limit; the frame rate was not re-measured with six.
 
 ## 7. Accessibility
 
@@ -227,7 +227,7 @@ Beyond the automated check:
 
 ## 8. 3D terrain sunlight
 
-**What.** The 3D view draws LOLA terrain from four grids per site (7.5 m spacing to 1.5 km, 30 m to 6 km, 240 m to 48 km, 1.5 km to 300 km). It works out which ground the Sun reaches from those grids alone (`web/src/lib/terrain.ts`, run in a Web Worker). It was checked two ways.
+**What.** The 3D view draws LOLA terrain from six grids per site (7.5 m spacing to 1.5 km, 30 m to 6 km, 120 m to 24 km, 240 m to 48 km, 600 m to 120 km, 1.5 km to 300 km). It works out which ground the Sun reaches from those grids alone (`web/src/lib/terrain.ts`, run in a Web Worker). It was checked two ways.
 
 **Synthetic terrain** (`web/src/lib/terrain.test.ts`, part of `npm test`):
 - **Smooth Moon.** Every node is lit or dark exactly where the Sun's center is above or below its local horizon, within 2.5 grid steps. This holds for four Sun azimuths and elevations from −0.2° to 1.6°.
@@ -240,7 +240,7 @@ Beyond the automated check:
 | Site | Agree on "more than half the Sun visible" | Sunlight, masks | Sunlight, 3D terrain |
 |---|---|---|---|
 | Peak near Cabeus B | 100.0% | 68.0% | 68.6% |
-| Haworth | 99.1% | 84.8% | 87.2% |
+| Haworth | 99.7% | 84.8% | 86.2% |
 | Malapert Massif | 99.7% | 74.3% | 74.5% |
 | Mons Mouton Plateau | 100.0% | 56.4% | 56.5% |
 | Mons Mouton | 99.7% | 77.1% | 77.1% |
@@ -248,12 +248,12 @@ Beyond the automated check:
 | Nobile Rim 2 | 100.0% | 56.3% | 56.4% |
 | de Gerlache Rim 2 | 99.7% | 90.7% | 91.0% |
 | Connecting ridge | 100.0% | 100.0% | 100.0% |
-| Shackleton rim | 99.7% | 98.3% | 98.9% |
+| Shackleton rim | 100.0% | 98.3% | 98.8% |
 | IM-2 Athena landing site | 99.7% | 50.5% | 50.8% |
 | VIPER mission area | 99.7% | 65.0% | 66.0% |
 | Shackleton crater floor | 100.0% | 0.0% | 0.0% |
 
-**Result.** They agree 99.8% of the time. The 3D terrain comes out up to 2.4 points sunnier, because its grids beyond 1.5 km are coarser than the maps behind the masks and smooth away some peaks. The decorative craters near a standing observer only shape the shading, so they play no part here. The 3D view also lights the ground itself. On a high point with the Sun below the local horizontal, the ground within a few hundred meters hides the Sun from your feet, even while a 2 m observer still sees it. So the 3D view is a picture of the place, and every number in the app comes from the masks.
+**Result.** They agree 99.8% of the time. The 3D terrain comes out up to 1.4 points sunnier (Haworth), because its grids beyond 1.5 km are coarser than the maps behind the masks and smooth away some peaks. With the four grids used until October 2026 the gap was up to 2.4 points. The decorative craters near a standing observer only shape the shading, so they play no part here. The 3D view also lights the ground itself. On a high point with the Sun below the local horizontal, the ground within a few hundred meters hides the Sun from your feet, even while a 2 m observer still sees it. So the 3D view is a picture of the place, and every number in the app comes from the masks.
 
 **Earth's rotation.** The subsolar point was read back from the drawn Earth's orientation. The expected longitude is (12 h − UTC − equation of time) × 15°.
 

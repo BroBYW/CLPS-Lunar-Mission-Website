@@ -139,7 +139,7 @@ uv run python scripts/fetch_dems.py         # LOLA windows and far maps, about 1
 uv run python scripts/sites.py              # resolve site points
 uv run python scripts/fetch_dems.py         # top up 10 m coverage around moved points
 uv run python scripts/horizon.py            # horizons.bin, sites.json, mask plots
-uv run python scripts/basemap.py            # basemap-south.webp, polar-cap-south.webp
+uv run python scripts/basemap.py            # basemap-south.webp, polar-cap-south-[we].webp
 uv run python scripts/terrain_patches.py    # 3D terrain grids, terrain/*.bin.gz
 uv run python scripts/earth_texture.py      # earth.jpg (run npm install in web/ first)
 uv run python scripts/export_fixtures.py    # Vitest fixtures

@@ -17,10 +17,24 @@
    "unit_m": 0.25
   },
   {
+   "name": "mid",
+   "spacing_m": 120.0,
+   "half_m": 24000.0,
+   "samples": 9,
+   "unit_m": 0.5
+  },
+  {
    "name": "coarse",
    "spacing_m": 240.0,
    "half_m": 48000.0,
    "samples": 9,
+   "unit_m": 1.0
+  },
+  {
+   "name": "outer",
+   "spacing_m": 600.0,
+   "half_m": 120000.0,
+   "samples": 25,
    "unit_m": 1.0
   },
   {
@@ -32,7 +46,7 @@
   }
  ],
  "proj": "+proj=stere +lat_0=-90 +lat_ts=-90 +lon_0=0 +R=1737400 +units=m",
- "generated_utc": "2026-09-30T03:57:26Z",
+ "generated_utc": "2026-10-26T13:57:00Z",
  "sites": {
   "peak-near-cabeus-b": {
    "file": "peak-near-cabeus-b.bin.gz",

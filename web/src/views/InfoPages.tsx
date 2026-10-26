@@ -68,8 +68,9 @@ export function AboutPage() {
       <section>
         <h3>The 3D views</h3>
         <p>
-          Around each site, the 3D view draws LOLA terrain from four nested grids: 7.5 m spacing to 1.5 km (from the 10 m
-          map), 30 m to 6 km, 240 m to 48 km and 1.5 km to 300 km. It is lit by the Sun at the time shown. Shadows come from
+          Around each site, the 3D view draws LOLA terrain from six nested grids: 7.5 m spacing to 1.5 km (from the 10 m
+          map), 30 m to 6 km, 120 m to 24 km, 240 m to 48 km, 600 m to 120 km and 1.5 km to 300 km. It is lit by the Sun
+          at the time shown. Shadows come from
           the terrain itself: along lines toward the Sun, a point is lit when no terrain between it and the Sun rises past
           the line to the Sun's center, so a ridge 300 km away can shade the site, as in the horizon masks. The Earth is
           drawn at its true position and size, lit by the Sun and turned to the right time of day. The Sun is drawn in its
@@ -129,8 +130,8 @@ export function AboutPage() {
           </li>
           <li>
             <strong>3D terrain.</strong> Beyond 1.5 km the 3D view is coarser than the maps behind the horizon masks (grids of
-            30 m, 240 m and 1.5 km against maps of 10 m to 240 m), so its skyline can differ from the computed one by a
-            fraction of a degree.
+            30 m to 1.5 km against maps of 10 m to 240 m), so its skyline can differ from the computed one by a fraction of
+            a degree.
             The thin line in the standing view is the computed horizon that every number uses. Shadowed ground gets a faint
             fill light so its shape stays visible; in reality it is darker. The small craters and surface texture near your
             feet are decorative.

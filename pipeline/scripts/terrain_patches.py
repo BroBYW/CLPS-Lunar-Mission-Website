@@ -1,11 +1,14 @@
 """Terrain patches for the 3D standing and terrain views (web/public/data/terrain/).
 
-Each site gets four 401 x 401 height grids centred on it in the south polar stereographic plane:
+Each site gets six 401 x 401 height grids centred on it in the south polar stereographic plane:
   near    7.5 m spacing,  +-1.5 km  point samples of the 10 m map (the centre is the site's own height)
   fine    30 m spacing,   +-6 km    point samples
+  mid     120 m spacing,  +-24 km   mean of 3 x 3 samples per node
   coarse  240 m spacing,  +-48 km   mean of 3 x 3 samples per node
+  outer   600 m spacing,  +-120 km  mean of 5 x 5 samples per node
   far     1500 m spacing, +-300 km  mean of 5 x 5 samples per node (the horizon masks look 300 km out)
-Each grid's half-width is a whole number of the next grid's spacing, so their edges share vertices.
+Each grid's half-width is a whole number of the next grid's spacing, so their edges share vertices. The mid and
+outer grids keep the spacing from jumping more than 2.5 times between neighbours, so distant terrain stays sharp.
 Heights (metres above the 1737.4 km sphere) come from the same LOLA tiers as the horizon masks. Each grid is
 quantised to its unit relative to the site's rounded height (base_m), stored as int16 residuals of the planar
 predictor left + up - upleft, and the grids are concatenated and gzip-compressed into <site>.bin.gz.
@@ -27,7 +30,9 @@ N = 401
 GRIDS = [  # name, spacing (m), samples per side averaged into each node, stored unit (m)
     ("near", 7.5, 1, 0.1),
     ("fine", 30.0, 1, 0.25),
+    ("mid", 120.0, 3, 0.5),
     ("coarse", 240.0, 3, 1.0),
+    ("outer", 600.0, 5, 1.0),
     ("far", 1500.0, 5, 2.0),
 ]
 OUT = WEB_DATA_DIR / "terrain"
