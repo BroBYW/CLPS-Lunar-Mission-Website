@@ -197,7 +197,7 @@ const MODEL_RADIUS = 1.2719
  */
 const MODEL_ORIENTATION = new Cesium.Matrix3(0, 0, -1, -1, 0, 0, 0, 1, 0)
 
-/** The NASA SVS Moon model (public/data/moon.glb, from scripts/compress-moon-model.mjs), lunar-sized, at the center. */
+/** The NASA SVS Moon model with LOLA relief (public/data/moon.glb, from scripts/compress-moon-model.mjs), lunar-sized, at the center. */
 async function addMoonModel(viewer: Cesium.Viewer): Promise<void> {
   const r = Cesium.Ellipsoid.MOON.radii.x / MODEL_RADIUS
   const model = await Cesium.Model.fromGltfAsync({

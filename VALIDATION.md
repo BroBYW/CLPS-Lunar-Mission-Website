@@ -200,7 +200,7 @@ That is about 4× under the 500 ms target. Changing the darkness threshold or Ea
 | Page | What loads | Largest paint (local) | Estimated on broadband |
 |---|---|---|---|
 | Planner (shared link) | App JS 100 kB gzip, CSS 6 kB, fonts 59 kB, data 1.77 MB (ephemeris, horizons, basemap, sites). No Cesium. | 184 ms | 0.8–1.0 s |
-| Home page | The same first, then CesiumJS (1.36 MB gzip, lazy), 36 Cesium worker and asset files (0.75 MB) and Moon Trek tiles | 64 ms (headline) | Text in about 0.3 s, live Moon in about 1.5–2 s |
+| Home page | The same first, then CesiumJS (1.36 MB gzip, lazy), Cesium's worker and asset files, and the Moon model with its LOLA relief map (4.54 MB): 7.65 MB in all | 64 ms (headline); the Moon model is in by 0.5 s | Text in about 0.3 s, live Moon in about 2.5–3 s (a static Moon shows until then) |
 
 Both are under the 3 s target. Cesium never loads for the Plan, Compare or Explore views.
 

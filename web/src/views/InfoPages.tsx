@@ -165,7 +165,7 @@ export function CreditsPage() {
           <li>
             Home page Moon: <a href="https://svs.gsfc.nasa.gov/14959/">Moon 3D Models for Web, AR, and Animation</a> (NASA
             Scientific Visualization Studio, ID 14959), made from LRO imagery and topography. Credit: NASA&apos;s Goddard
-            Space Flight Center.
+            Space Flight Center. Its relief comes from the LOLA global elevation map (LDEM_16, PDS Geosciences Node).
           </li>
           <li>
             Earth texture: <a href="https://www.naturalearthdata.com/">Natural Earth</a> II by Tom Patterson (public domain),

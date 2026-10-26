@@ -151,6 +151,12 @@ uv run pytest
 
 Raw elevation maps and kernels are downloaded into `pipeline/raw/` and `pipeline/kernels/`; both are git-ignored. Downloads from NASA's servers can be slow (around 100 KB/s), and the windowed reads are resumable.
 
+The home page Moon is built from NASA's SVS `moon_small.glb` and the LOLA global map `LDEM_16.IMG` (both linked in DATA_SOURCES.md). Put them in `3d_models/` and `pipeline/raw/`, then from `web/`:
+
+```bash
+node scripts/compress-moon-model.mjs ../3d_models/moon_small.glb ../pipeline/raw/LDEM_16.IMG
+```
+
 ## Limitations
 
 In short:
