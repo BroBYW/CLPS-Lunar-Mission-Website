@@ -109,6 +109,13 @@ export function AboutPage() {
             <strong>3D print</strong> files are the 3D view's terrain grids, every second point, as a watertight solid in
             millimetres. Heights are measured from the reference sphere, so the Moon's curvature is taken out.
           </li>
+          <li>
+            <strong>Compare with an LRO photo</strong> sets a real photo of the 48 km around the site, from LRO's Wide Angle
+            Camera in 2009–2011, beside the app's own 120 m terrain lit by the Sun at that moment with the 3D view's shadow
+            code. Brightness follows the Lommel–Seeliger law for a camera looking straight down, with one scale fitted to the
+            photo; every shadow comes from the terrain and the Sun's position alone. Ground counts as sunlit, in both, where
+            its reflectance (I/F) is above 0.003, between the photos' shadow and sunlit peaks.
+          </li>
         </ul>
       </section>
       <section>
@@ -138,6 +145,11 @@ export function AboutPage() {
             1.5 percentage points, and the longest darkness to within about 2 hours.
           </li>
           <li>During the total lunar eclipse of 3 March 2026, the sites lose the Sun at times that fit NASA's eclipse contact times.</li>
+          <li>
+            In 1,022 photos of the south pole taken by LRO's Wide Angle Camera in 2009–2011, the horizons called the sites sunlit
+            or in shadow as photographed 99.3% of the time (2,281 site photos clear enough to tell). Over whole photos of the 48 km
+            around the sites, the app's lit terrain matches 98.3% of the ground.
+          </li>
         </ul>
         <p>
           The full validation, with every number and how to reproduce it, is in VALIDATION.md in the{' '}
@@ -208,6 +220,12 @@ export function CreditsPage() {
           <li>
             Imagery: <a href="https://trek.nasa.gov/moon/">NASA Moon Trek</a> (NASA/JPL-Caltech), LRO WAC global mosaic (LROC
             team, NASA/GSFC/Arizona State University).
+          </li>
+          <li>
+            LRO photos for the comparison: the LROC Wide Angle Camera south polar movie frames (NASA/GSFC/Arizona State
+            University; Speyerer and Robinson 2013), from the{' '}
+            <a href="https://pds.lroc.im-ldi.com/data/LRO-L-LROC-5-RDR-V1.0/LROLRC_2001/DATA/BDR/WAC_POLE/WAC_POLE_MOVIE_SOUTH/">LROC archive</a>,
+            found through the <a href="https://ode.rsl.wustl.edu/moon/">Lunar Orbital Data Explorer</a>.
           </li>
           <li>
             Home page Moon: <a href="https://svs.gsfc.nasa.gov/14959/">Moon 3D Models for Web, AR, and Animation</a> (NASA

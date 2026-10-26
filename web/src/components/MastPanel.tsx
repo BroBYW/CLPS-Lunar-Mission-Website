@@ -73,7 +73,7 @@ export function MastPanel({ site }: { site: Site }) {
       ) : maskIndex < 0 && mast ? (
         <p className="mt-3 text-sm text-dust">No mast horizons for this site.</p>
       ) : (
-        <div className="mt-3 grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,22rem)]">
+        <div className="mt-3 grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,22rem)]">
           <div>
             <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm">
               <label htmlFor={targetId} className="text-dust">

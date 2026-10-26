@@ -1,0 +1,694 @@
+{
+ "description": "LROC WAC south polar movie frames around each site, for the Plan view's photo comparison",
+ "credit": "NASA/GSFC/Arizona State University (LROC WAC polar movie frames, Speyerer & Robinson 2013)",
+ "size": 480,
+ "pixel_m": 100.0,
+ "encoding": "WebP; DN = 255\u00b7sqrt(I/F / 0.08); alpha 0 where the frame has no data. Pixel (i, j) is centred at origin_m + (100\u00b7i, -100\u00b7j), polar stereographic metres",
+ "stretch_iof": 0.08,
+ "iof_lit": 0.003,
+ "check": {
+  "frames": 1022,
+  "first": "WAC_MOVIE_S20090920T0850",
+  "last": "WAC_MOVIE_S20111211T0915",
+  "pixel_m": 400.0,
+  "all": {
+   "photos": 4431,
+   "not_called": 2150,
+   "lit_lit": 1599,
+   "lit_dark": 2,
+   "dark_dark": 667,
+   "dark_lit": 13,
+   "agree_pct": 99.3
+  },
+  "near_skyline": {
+   "photos": 1266,
+   "not_called": 791,
+   "lit_lit": 158,
+   "lit_dark": 0,
+   "dark_dark": 305,
+   "dark_lit": 12,
+   "agree_pct": 97.5
+  }
+ },
+ "sites": {
+  "peak-near-cabeus-b": {
+   "origin_m": [
+    -205150.0,
+    95450.0
+   ],
+   "photos": [
+    {
+     "frame": "WAC_MOVIE_S20110116T1136",
+     "file": "peak-near-cabeus-b-20110116t1136.webp",
+     "utc": "2011-01-16T11:40:04Z",
+     "sun_km": [
+      117250607.3,
+      89366814.4,
+      1539385.4
+     ],
+     "sun_el": -2.34,
+     "sun_az": 105.6,
+     "f": 0.0,
+     "photo_lit": false,
+     "url": "https://pds.lroc.im-ldi.com/data/LRO-L-LROC-5-RDR-V1.0/LROLRC_2001/EXTRAS/BROWSE/WAC_POLE/WAC_POLE_MOVIE_SOUTH/WAC_MOVIE_S20110116T1136.BROWSE.PNG"
+    },
+    {
+     "frame": "WAC_MOVIE_S20111124T1501",
+     "file": "peak-near-cabeus-b-20111124t1501.webp",
+     "utc": "2011-11-24T15:04:56Z",
+     "sun_km": [
+      -144854721.9,
+      -26978926.7,
+      -828419.3
+     ],
+     "sun_el": -0.9,
+     "sun_az": 259.0,
+     "f": 1.0,
+     "photo_lit": true,
+     "url": "https://pds.lroc.im-ldi.com/data/LRO-L-LROC-5-RDR-V1.0/LROLRC_2001/EXTRAS/BROWSE/WAC_POLE/WAC_POLE_MOVIE_SOUTH/WAC_MOVIE_S20111124T1501.BROWSE.PNG"
+    }
+   ],
+   "check": {
+    "photos": 127,
+    "not_called": 48,
+    "lit_lit": 53,
+    "lit_dark": 0,
+    "dark_dark": 26,
+    "dark_lit": 0,
+    "agree_pct": 100.0
+   }
+  },
+  "haworth": {
+   "origin_m": [
+    -67450.0,
+    125350.0
+   ],
+   "photos": [
+    {
+     "frame": "WAC_MOVIE_S20100304T2148",
+     "file": "haworth-20100304t2148.webp",
+     "utc": "2010-03-04T21:51:35Z",
+     "sun_km": [
+      95958081.4,
+      -113360407.0,
+      3348973.8
+     ],
+     "sun_el": 1.96,
+     "sun_az": 333.4,
+     "f": 1.0,
+     "photo_lit": true,
+     "url": "https://pds.lroc.im-ldi.com/data/LRO-L-LROC-5-RDR-V1.0/LROLRC_2001/EXTRAS/BROWSE/WAC_POLE/WAC_POLE_MOVIE_SOUTH/WAC_MOVIE_S20100304T2148.BROWSE.PNG"
+    },
+    {
+     "frame": "WAC_MOVIE_S20110530T0141",
+     "file": "haworth-20110530t0141.webp",
+     "utc": "2011-05-30T01:44:09Z",
+     "sun_km": [
+      -131462156.6,
+      -74885807.2,
+      1176083.6
+     ],
+     "sun_el": -2.64,
+     "sun_az": 233.0,
+     "f": 0.0,
+     "photo_lit": false,
+     "url": "https://pds.lroc.im-ldi.com/data/LRO-L-LROC-5-RDR-V1.0/LROLRC_2001/EXTRAS/BROWSE/WAC_POLE/WAC_POLE_MOVIE_SOUTH/WAC_MOVIE_S20110530T0141.BROWSE.PNG"
+    }
+   ],
+   "check": {
+    "photos": 300,
+    "not_called": 177,
+    "lit_lit": 75,
+    "lit_dark": 0,
+    "dark_dark": 48,
+    "dark_lit": 0,
+    "agree_pct": 100.0
+   }
+  },
+  "malapert-massif": {
+   "origin_m": [
+    -19650.0,
+    145650.0
+   ],
+   "photos": [
+    {
+     "frame": "WAC_MOVIE_S20110125T1028",
+     "file": "malapert-massif-20110125t1028.webp",
+     "utc": "2011-01-25T10:32:16Z",
+     "sun_km": [
+      47239203.6,
+      -139570675.2,
+      2230918.0
+     ],
+     "sun_el": 0.28,
+     "sun_az": 286.7,
+     "f": 1.0,
+     "photo_lit": true,
+     "url": "https://pds.lroc.im-ldi.com/data/LRO-L-LROC-5-RDR-V1.0/LROLRC_2001/EXTRAS/BROWSE/WAC_POLE/WAC_POLE_MOVIE_SOUTH/WAC_MOVIE_S20110125T1028.BROWSE.PNG"
+    },
+    {
+     "frame": "WAC_MOVIE_S20110830T1216",
+     "file": "malapert-massif-20110830t1216.webp",
+     "utc": "2011-08-30T12:19:26Z",
+     "sun_km": [
+      -141571092.6,
+      51569482.6,
+      -3841022.3
+     ],
+     "sun_el": -2.26,
+     "sun_az": 157.9,
+     "f": 0.0,
+     "photo_lit": false,
+     "url": "https://pds.lroc.im-ldi.com/data/LRO-L-LROC-5-RDR-V1.0/LROLRC_2001/EXTRAS/BROWSE/WAC_POLE/WAC_POLE_MOVIE_SOUTH/WAC_MOVIE_S20110830T1216.BROWSE.PNG"
+    }
+   ],
+   "check": {
+    "photos": 229,
+    "not_called": 109,
+    "lit_lit": 86,
+    "lit_dark": 0,
+    "dark_dark": 31,
+    "dark_lit": 3,
+    "agree_pct": 97.5
+   }
+  },
+  "mons-mouton-plateau": {
+   "origin_m": [
+    66450.0,
+    168750.0
+   ],
+   "photos": [
+    {
+     "frame": "WAC_MOVIE_S20101128T0814",
+     "file": "mons-mouton-plateau-20101128t0814.webp",
+     "utc": "2010-11-28T08:18:13Z",
+     "sun_km": [
+      13087509.7,
+      -147045638.6,
+      -1833045.7
+     ],
+     "sun_el": -1.84,
+     "sun_az": 243.1,
+     "f": 0.0,
+     "photo_lit": false,
+     "url": "https://pds.lroc.im-ldi.com/data/LRO-L-LROC-5-RDR-V1.0/LROLRC_2001/EXTRAS/BROWSE/WAC_POLE/WAC_POLE_MOVIE_SOUTH/WAC_MOVIE_S20101128T0814.BROWSE.PNG"
+    },
+    {
+     "frame": "WAC_MOVIE_S20111202T1052",
+     "file": "mons-mouton-plateau-20111202t1052.webp",
+     "utc": "2011-12-02T10:55:43Z",
+     "sun_km": [
+      -13287944.5,
+      146899919.0,
+      -321262.2
+     ],
+     "sun_el": 2.66,
+     "sun_az": 63.3,
+     "f": 1.0,
+     "photo_lit": true,
+     "url": "https://pds.lroc.im-ldi.com/data/LRO-L-LROC-5-RDR-V1.0/LROLRC_2001/EXTRAS/BROWSE/WAC_POLE/WAC_POLE_MOVIE_SOUTH/WAC_MOVIE_S20111202T1052.BROWSE.PNG"
+    }
+   ],
+   "check": {
+    "photos": 121,
+    "not_called": 46,
+    "lit_lit": 49,
+    "lit_dark": 0,
+    "dark_dark": 26,
+    "dark_lit": 0,
+    "agree_pct": 100.0
+   }
+  },
+  "mons-mouton": {
+   "origin_m": [
+    49250.0,
+    142650.0
+   ],
+   "photos": [
+    {
+     "frame": "WAC_MOVIE_S20100908T1447",
+     "file": "mons-mouton-20100908t1447.webp",
+     "utc": "2010-09-08T14:50:18Z",
+     "sun_km": [
+      -150262480.7,
+      3933984.9,
+      -3633404.6
+     ],
+     "sun_el": -2.46,
+     "sun_az": 146.8,
+     "f": 0.0,
+     "photo_lit": false,
+     "url": "https://pds.lroc.im-ldi.com/data/LRO-L-LROC-5-RDR-V1.0/LROLRC_2001/EXTRAS/BROWSE/WAC_POLE/WAC_POLE_MOVIE_SOUTH/WAC_MOVIE_S20100908T1447.BROWSE.PNG"
+    },
+    {
+     "frame": "WAC_MOVIE_S20101225T1742",
+     "file": "mons-mouton-20101225t1742.webp",
+     "utc": "2010-12-25T17:46:12Z",
+     "sun_km": [
+      77910200.5,
+      -125042039.6,
+      80164.4
+     ],
+     "sun_el": -0.01,
+     "sun_az": 270.2,
+     "f": 1.0,
+     "photo_lit": true,
+     "url": "https://pds.lroc.im-ldi.com/data/LRO-L-LROC-5-RDR-V1.0/LROLRC_2001/EXTRAS/BROWSE/WAC_POLE/WAC_POLE_MOVIE_SOUTH/WAC_MOVIE_S20101225T1742.BROWSE.PNG"
+    }
+   ],
+   "check": {
+    "photos": 199,
+    "not_called": 93,
+    "lit_lit": 76,
+    "lit_dark": 0,
+    "dark_dark": 30,
+    "dark_lit": 0,
+    "agree_pct": 100.0
+   }
+  },
+  "nobile-rim-1": {
+   "origin_m": [
+    62250.0,
+    140150.0
+   ],
+   "photos": [
+    {
+     "frame": "WAC_MOVIE_S20110413T1158",
+     "file": "nobile-rim-1-20110413t1158.webp",
+     "utc": "2011-04-13T12:01:20Z",
+     "sun_km": [
+      79594305.9,
+      127263936.9,
+      3611979.7
+     ],
+     "sun_el": 3.06,
+     "sun_az": 21.4,
+     "f": 1.0,
+     "photo_lit": true,
+     "url": "https://pds.lroc.im-ldi.com/data/LRO-L-LROC-5-RDR-V1.0/LROLRC_2001/EXTRAS/BROWSE/WAC_POLE/WAC_POLE_MOVIE_SOUTH/WAC_MOVIE_S20110413T1158.BROWSE.PNG"
+    },
+    {
+     "frame": "WAC_MOVIE_S20110703T1116",
+     "file": "nobile-rim-1-20110703t1116.webp",
+     "utc": "2011-07-03T11:20:02Z",
+     "sun_km": [
+      -130260053.6,
+      77873116.6,
+      -1191843.4
+     ],
+     "sun_el": -1.38,
+     "sun_az": 112.5,
+     "f": 0.0,
+     "photo_lit": false,
+     "url": "https://pds.lroc.im-ldi.com/data/LRO-L-LROC-5-RDR-V1.0/LROLRC_2001/EXTRAS/BROWSE/WAC_POLE/WAC_POLE_MOVIE_SOUTH/WAC_MOVIE_S20110703T1116.BROWSE.PNG"
+    }
+   ],
+   "check": {
+    "photos": 187,
+    "not_called": 94,
+    "lit_lit": 62,
+    "lit_dark": 0,
+    "dark_dark": 30,
+    "dark_lit": 1,
+    "agree_pct": 98.9
+   }
+  },
+  "nobile-rim-2": {
+   "origin_m": [
+    123050.0,
+    127350.0
+   ],
+   "photos": [
+    {
+     "frame": "WAC_MOVIE_S20091221T0927",
+     "file": "nobile-rim-2-20091221t0927.webp",
+     "utc": "2009-12-21T09:30:22Z",
+     "sun_km": [
+      -82454093.5,
+      121603593.7,
+      -1568794.9
+     ],
+     "sun_el": 2.7,
+     "sun_az": 69.4,
+     "f": 1.0,
+     "photo_lit": true,
+     "url": "https://pds.lroc.im-ldi.com/data/LRO-L-LROC-5-RDR-V1.0/LROLRC_2001/EXTRAS/BROWSE/WAC_POLE/WAC_POLE_MOVIE_SOUTH/WAC_MOVIE_S20091221T0927.BROWSE.PNG"
+    },
+    {
+     "frame": "WAC_MOVIE_S20110717T2207",
+     "file": "nobile-rim-2-20110717t2207.webp",
+     "utc": "2011-07-17T22:10:58Z",
+     "sun_km": [
+      135302854.3,
+      -70046613.4,
+      -2367949.9
+     ],
+     "sun_el": 1.68,
+     "sun_az": 277.6,
+     "f": 0.0,
+     "photo_lit": false,
+     "url": "https://pds.lroc.im-ldi.com/data/LRO-L-LROC-5-RDR-V1.0/LROLRC_2001/EXTRAS/BROWSE/WAC_POLE/WAC_POLE_MOVIE_SOUTH/WAC_MOVIE_S20110717T2207.BROWSE.PNG"
+    }
+   ],
+   "check": {
+    "photos": 128,
+    "not_called": 19,
+    "lit_lit": 80,
+    "lit_dark": 0,
+    "dark_dark": 29,
+    "dark_lit": 0,
+    "agree_pct": 100.0
+   }
+  },
+  "de-gerlache-rim-2": {
+   "origin_m": [
+    -63650.0,
+    40150.0
+   ],
+   "photos": [
+    {
+     "frame": "WAC_MOVIE_S20091002T0747",
+     "file": "de-gerlache-rim-2-20091002t0747.webp",
+     "utc": "2009-10-02T07:51:36Z",
+     "sun_km": [
+      142000380.4,
+      48436820.9,
+      -3909990.0
+     ],
+     "sun_el": 1.57,
+     "sun_az": 86.8,
+     "f": 1.0,
+     "photo_lit": true,
+     "url": "https://pds.lroc.im-ldi.com/data/LRO-L-LROC-5-RDR-V1.0/LROLRC_2001/EXTRAS/BROWSE/WAC_POLE/WAC_POLE_MOVIE_SOUTH/WAC_MOVIE_S20091002T0747.BROWSE.PNG"
+    },
+    {
+     "frame": "WAC_MOVIE_S20110903T0642",
+     "file": "de-gerlache-rim-2-20110903t0642.webp",
+     "utc": "2011-09-03T06:45:40Z",
+     "sun_km": [
+      -61074388.3,
+      137827540.4,
+      -3923571.1
+     ],
+     "sun_el": 0.08,
+     "sun_az": 181.8,
+     "f": 0.0,
+     "photo_lit": false,
+     "url": "https://pds.lroc.im-ldi.com/data/LRO-L-LROC-5-RDR-V1.0/LROLRC_2001/EXTRAS/BROWSE/WAC_POLE/WAC_POLE_MOVIE_SOUTH/WAC_MOVIE_S20110903T0642.BROWSE.PNG"
+    }
+   ],
+   "check": {
+    "photos": 845,
+    "not_called": 322,
+    "lit_lit": 366,
+    "lit_dark": 0,
+    "dark_dark": 157,
+    "dark_lit": 0,
+    "agree_pct": 100.0
+   }
+  },
+  "connecting-ridge": {
+   "origin_m": [
+    -35550.0,
+    11550.0
+   ],
+   "photos": [
+    {
+     "frame": "WAC_MOVIE_S20091211T2313",
+     "file": "connecting-ridge-20091211t2313.webp",
+     "utc": "2009-12-11T23:16:22Z",
+     "sun_km": [
+      -75719286.6,
+      -126061390.5,
+      -2052020.6
+     ],
+     "sun_el": 1.34,
+     "sun_az": 16.2,
+     "f": 1.0,
+     "photo_lit": true,
+     "url": "https://pds.lroc.im-ldi.com/data/LRO-L-LROC-5-RDR-V1.0/LROLRC_2001/EXTRAS/BROWSE/WAC_POLE/WAC_POLE_MOVIE_SOUTH/WAC_MOVIE_S20091211T2313.BROWSE.PNG"
+    },
+    {
+     "frame": "WAC_MOVIE_S20100623T0039",
+     "file": "connecting-ridge-20100623t0039.webp",
+     "utc": "2010-06-23T00:42:34Z",
+     "sun_km": [
+      105109743.2,
+      110249265.0,
+      760664.5
+     ],
+     "sun_el": -0.85,
+     "sun_az": 183.5,
+     "f": 0.0,
+     "photo_lit": false,
+     "url": "https://pds.lroc.im-ldi.com/data/LRO-L-LROC-5-RDR-V1.0/LROLRC_2001/EXTRAS/BROWSE/WAC_POLE/WAC_POLE_MOVIE_SOUTH/WAC_MOVIE_S20100623T0039.BROWSE.PNG"
+    }
+   ],
+   "check": {
+    "photos": 941,
+    "not_called": 642,
+    "lit_lit": 232,
+    "lit_dark": 0,
+    "dark_dark": 64,
+    "dark_lit": 3,
+    "agree_pct": 99.0
+   }
+  },
+  "shackleton-rim": {
+   "origin_m": [
+    -26850.0,
+    14950.0
+   ],
+   "photos": [
+    {
+     "frame": "WAC_MOVIE_S20100626T1906",
+     "file": "shackleton-rim-20100626t1906.webp",
+     "utc": "2010-06-26T19:09:59Z",
+     "sun_km": [
+      152455863.5,
+      1068559.0,
+      455715.6
+     ],
+     "sun_el": -0.47,
+     "sun_az": 163.2,
+     "f": 0.0,
+     "photo_lit": false,
+     "url": "https://pds.lroc.im-ldi.com/data/LRO-L-LROC-5-RDR-V1.0/LROLRC_2001/EXTRAS/BROWSE/WAC_POLE/WAC_POLE_MOVIE_SOUTH/WAC_MOVIE_S20100626T1906.BROWSE.PNG"
+    },
+    {
+     "frame": "WAC_MOVIE_S20101004T0127",
+     "file": "shackleton-rim-20101004t0127.webp",
+     "utc": "2010-10-04T01:30:39Z",
+     "sun_km": [
+      -99516726.7,
+      -111417314.6,
+      -3921774.7
+     ],
+     "sun_el": 1.77,
+     "sun_az": 31.0,
+     "f": 1.0,
+     "photo_lit": true,
+     "url": "https://pds.lroc.im-ldi.com/data/LRO-L-LROC-5-RDR-V1.0/LROLRC_2001/EXTRAS/BROWSE/WAC_POLE/WAC_POLE_MOVIE_SOUTH/WAC_MOVIE_S20101004T0127.BROWSE.PNG"
+    }
+   ],
+   "check": {
+    "photos": 969,
+    "not_called": 505,
+    "lit_lit": 359,
+    "lit_dark": 2,
+    "dark_dark": 99,
+    "dark_lit": 4,
+    "agree_pct": 98.7
+   }
+  },
+  "im1-odysseus": {
+   "origin_m": [
+    -16450.0,
+    323950.0
+   ],
+   "photos": [
+    {
+     "frame": "WAC_MOVIE_S20100703T1505",
+     "file": "im1-odysseus-20100703t1505.webp",
+     "utc": "2010-07-03T15:09:02Z",
+     "sun_km": [
+      18593376.8,
+      -151029341.4,
+      6460.1
+     ],
+     "sun_el": 0.95,
+     "sun_az": 275.5,
+     "f": 0.0,
+     "photo_lit": false,
+     "url": "https://pds.lroc.im-ldi.com/data/LRO-L-LROC-5-RDR-V1.0/LROLRC_2001/EXTRAS/BROWSE/WAC_POLE/WAC_POLE_MOVIE_SOUTH/WAC_MOVIE_S20100703T1505.BROWSE.PNG"
+    },
+    {
+     "frame": "WAC_MOVIE_S20110513T1735",
+     "file": "im1-odysseus-20110513t1735.webp",
+     "utc": "2011-05-13T17:39:15Z",
+     "sun_km": [
+      99260595.9,
+      114276162.1,
+      2200348.8
+     ],
+     "sun_el": 5.81,
+     "sun_az": 47.9,
+     "f": 1.0,
+     "photo_lit": true,
+     "url": "https://pds.lroc.im-ldi.com/data/LRO-L-LROC-5-RDR-V1.0/LROLRC_2001/EXTRAS/BROWSE/WAC_POLE/WAC_POLE_MOVIE_SOUTH/WAC_MOVIE_S20110513T1735.BROWSE.PNG"
+    }
+   ],
+   "check": {
+    "photos": 49,
+    "not_called": 1,
+    "lit_lit": 35,
+    "lit_dark": 0,
+    "dark_dark": 11,
+    "dark_lit": 2,
+    "agree_pct": 95.8
+   }
+  },
+  "im2-athena": {
+   "origin_m": [
+    53150.0,
+    161950.0
+   ],
+   "photos": [
+    {
+     "frame": "WAC_MOVIE_S20100424T1158",
+     "file": "im2-athena-20100424t1158.webp",
+     "utc": "2010-04-24T12:01:25Z",
+     "sun_km": [
+      89754623.7,
+      120962031.1,
+      3812128.8
+     ],
+     "sun_el": 3.3,
+     "sun_az": 24.3,
+     "f": 1.0,
+     "photo_lit": true,
+     "url": "https://pds.lroc.im-ldi.com/data/LRO-L-LROC-5-RDR-V1.0/LROLRC_2001/EXTRAS/BROWSE/WAC_POLE/WAC_POLE_MOVIE_SOUTH/WAC_MOVIE_S20100424T1158.BROWSE.PNG"
+    },
+    {
+     "frame": "WAC_MOVIE_S20110622T0004",
+     "file": "im2-athena-20110622t0004.webp",
+     "utc": "2011-06-22T00:08:08Z",
+     "sun_km": [
+      50756278.1,
+      -143427814.7,
+      -597318.2
+     ],
+     "sun_el": -0.65,
+     "sun_az": 260.3,
+     "f": 0.0,
+     "photo_lit": false,
+     "url": "https://pds.lroc.im-ldi.com/data/LRO-L-LROC-5-RDR-V1.0/LROLRC_2001/EXTRAS/BROWSE/WAC_POLE/WAC_POLE_MOVIE_SOUTH/WAC_MOVIE_S20110622T0004.BROWSE.PNG"
+    }
+   ],
+   "check": {
+    "photos": 127,
+    "not_called": 17,
+    "lit_lit": 78,
+    "lit_dark": 0,
+    "dark_dark": 32,
+    "dark_lit": 0,
+    "agree_pct": 100.0
+   }
+  },
+  "viper": {
+   "origin_m": [
+    48850.0,
+    142350.0
+   ],
+   "photos": [
+    {
+     "frame": "WAC_MOVIE_S20101114T1809",
+     "file": "viper-20101114t1809.webp",
+     "utc": "2010-11-14T18:12:33Z",
+     "sun_km": [
+      25416820.5,
+      145856600.5,
+      -2760506.2
+     ],
+     "sun_el": 4.1,
+     "sun_az": 48.6,
+     "f": 0.0,
+     "photo_lit": false,
+     "url": "https://pds.lroc.im-ldi.com/data/LRO-L-LROC-5-RDR-V1.0/LROLRC_2001/EXTRAS/BROWSE/WAC_POLE/WAC_POLE_MOVIE_SOUTH/WAC_MOVIE_S20101114T1809.BROWSE.PNG"
+    },
+    {
+     "frame": "WAC_MOVIE_S20110911T0122",
+     "file": "viper-20110911t0122.webp",
+     "utc": "2011-09-11T01:25:25Z",
+     "sun_km": [
+      142676137.6,
+      49294362.1,
+      -4165187.3
+     ],
+     "sun_el": 6.05,
+     "sun_az": 347.4,
+     "f": 1.0,
+     "photo_lit": true,
+     "url": "https://pds.lroc.im-ldi.com/data/LRO-L-LROC-5-RDR-V1.0/LROLRC_2001/EXTRAS/BROWSE/WAC_POLE/WAC_POLE_MOVIE_SOUTH/WAC_MOVIE_S20110911T0122.BROWSE.PNG"
+    }
+   ],
+   "check": {
+    "photos": 209,
+    "not_called": 77,
+    "lit_lit": 48,
+    "lit_dark": 0,
+    "dark_dark": 84,
+    "dark_lit": 0,
+    "agree_pct": 100.0
+   }
+  },
+  "shackleton-floor": {
+   "origin_m": [
+    -14050.0,
+    18550.0
+   ],
+   "photos": [
+    {
+     "frame": "WAC_MOVIE_S20091022T0652",
+     "file": "shackleton-floor-20091022t0652.webp",
+     "utc": "2009-10-22T06:56:07Z",
+     "sun_km": [
+      -106008592.7,
+      104088104.0,
+      -3997163.4
+     ],
+     "sun_el": 1.9,
+     "sun_az": 16.9,
+     "f": 0.0,
+     "photo_lit": false,
+     "url": "https://pds.lroc.im-ldi.com/data/LRO-L-LROC-5-RDR-V1.0/LROLRC_2001/EXTRAS/BROWSE/WAC_POLE/WAC_POLE_MOVIE_SOUTH/WAC_MOVIE_S20091022T0652.BROWSE.PNG"
+    },
+    {
+     "frame": "WAC_MOVIE_S20091023T0144",
+     "file": "shackleton-floor-20091023t0144.webp",
+     "utc": "2009-10-23T01:48:11Z",
+     "sun_km": [
+      -87191901.6,
+      120307833.7,
+      -4002605.1
+     ],
+     "sun_el": 1.91,
+     "sun_az": 7.3,
+     "f": 0.0,
+     "photo_lit": false,
+     "url": "https://pds.lroc.im-ldi.com/data/LRO-L-LROC-5-RDR-V1.0/LROLRC_2001/EXTRAS/BROWSE/WAC_POLE/WAC_POLE_MOVIE_SOUTH/WAC_MOVIE_S20091023T0144.BROWSE.PNG"
+    }
+   ],
+   "check": {
+    "photos": 0,
+    "not_called": 0,
+    "lit_lit": 0,
+    "lit_dark": 0,
+    "dark_dark": 0,
+    "dark_lit": 0,
+    "agree_pct": null
+   }
+  }
+ },
+ "generated_utc": "2026-10-26T17:55:13Z"
+}

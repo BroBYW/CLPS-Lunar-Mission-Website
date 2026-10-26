@@ -1,6 +1,7 @@
 import { lazy, Suspense, useEffect, useMemo, useState } from 'react'
 import { CompareView } from './components/CompareView.tsx'
 import { DsnPanel } from './components/DsnPanel.tsx'
+import { LroPanel } from './components/LroPanel.tsx'
 import { MastPanel } from './components/MastPanel.tsx'
 import { MissionReplays } from './components/MissionReplays.tsx'
 import { MetricsPanel } from './components/MetricsPanel.tsx'
@@ -217,6 +218,7 @@ function Planner({ data }: { data: AppData }) {
           <PowerPanel series={series} metrics={metrics} />
         </div>
         <MastPanel site={site} />
+        <LroPanel site={site} />
       </main>
     </div>
   )

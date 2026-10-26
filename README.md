@@ -19,7 +19,7 @@ Tools that give the Sun's and Earth's positions exist, but they are hard to use 
 | View | What you get |
 |---|---|
 | **Home** | A live 3D Moon lit by the Sun as it is right now. "Let's start" flies you down to the south pole. |
-| **Plan** | Pick one of 14 cited sites on a list or a polar map, or **drop a pin** anywhere south of 82°S for a rough horizon there. **Replay a real landing**: IM-1 Odysseus (2024) and IM-2 Athena (2025) at their real sites and times. The horizon panorama shows the terrain skyline with the Sun's and Earth's paths over your dates and their true-size disks at the chosen moment; press **Listen** to hear the skyline as a sound sweep. Time controls are in UTC, 2024–2030. Below it: metrics, a sunlit / Earth / both timeline, **Deep Space Network contact** (when a dish on Earth can see the Moon too), overlap windows as CSV, a power and battery calculator, and a **mast planner** that shows how much a 2–50 m mast adds. |
+| **Plan** | Pick one of 14 cited sites on a list or a polar map, or **drop a pin** anywhere south of 82°S for a rough horizon there. **Replay a real landing**: IM-1 Odysseus (2024) and IM-2 Athena (2025) at their real sites and times. The horizon panorama shows the terrain skyline with the Sun's and Earth's paths over your dates and their true-size disks at the chosen moment; press **Listen** to hear the skyline as a sound sweep. Time controls are in UTC, 2024–2030. Below it: metrics, a sunlit / Earth / both timeline, **Deep Space Network contact** (when a dish on Earth can see the Moon too), overlap windows as CSV, a power and battery calculator, a **mast planner** that shows how much a 2–50 m mast adds, and **a real LRO photo** of the 48 km around the site beside the app's own terrain lit for that same moment. |
 | **Compare** | Two or three sites side by side, with the best value in each row marked and the timelines aligned. |
 | **Find dates** | Every site and every start date in a year, scored for a 3- to 28-day mission. Set limits for sunlight, darkness and Earth contact; a heatmap shows which windows meet them and a table lists the best. |
 | **3D** | Fly to any site to see the LOLA terrain around it (7.5 m detail near the site, out to 300 km), lit by the Sun at the chosen time with shadows cast by the terrain itself. Then stand on it: the Sun, and a textured Earth lit and turned for that moment, sit over the computed skyline. Plan a **rover drive** by clicking waypoints and see where it keeps the Sun and Earth, and download the terrain as a **3D-print file** (STL). |
@@ -107,6 +107,8 @@ Full details and reproduction steps are in [VALIDATION.md](VALIDATION.md).
 | Accessibility (axe-core, WCAG 2.1 AA) | 0 violations on every view |
 | Performance | first load about 1 s on broadband; 60+ fps playback |
 | 3D terrain sunlight vs the horizon masks, 14 sites × 28 days | agree 99.8% of the time |
+| Sites sunlit or in shadow vs 1,022 LRO Wide Angle Camera photos (2009–2011) | agree in 99.3% of 2,281 photos that can tell |
+| The app's lit terrain vs 28 full-resolution LRO photos | 98.3% of 62,221 km² agree |
 
 ## Run it locally
 
@@ -136,12 +138,16 @@ From `pipeline/`:
 uv sync
 uv run python scripts/fetch_kernels.py      # SPICE kernels, 46 MB
 uv run python scripts/ephemeris.py          # ephemeris.bin
+uv run python scripts/dsn.py                # dsn.bin, Moon elevation at the Deep Space Network dishes
 uv run python scripts/fetch_dems.py         # LOLA windows and far maps, about 1.3 GB (see --dry-run)
 uv run python scripts/sites.py              # resolve site points
 uv run python scripts/fetch_dems.py         # top up 10 m coverage around moved points
 uv run python scripts/horizon.py            # horizons.bin, sites.json, mask plots
+uv run python scripts/mast_horizons.py      # horizons-mast.bin, for the mast planner
 uv run python scripts/basemap.py            # basemap-south.webp, polar-cap-south-[we].webp
 uv run python scripts/terrain_patches.py    # 3D terrain grids, terrain/*.bin.gz
+uv run python scripts/pin_dem.py            # pin-dem.bin.gz, the 480 m grid for dropped pins
+uv run python scripts/lro_photos.py         # LRO photo check and lro/*.webp, about 450 MB at one request per 4 s
 uv run python scripts/earth_texture.py      # earth.jpg (run npm install in web/ first)
 uv run python scripts/export_fixtures.py    # Vitest fixtures
 uv run python scripts/validate_horizons.py  # JPL Horizons comparison

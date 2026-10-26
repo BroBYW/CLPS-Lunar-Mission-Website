@@ -1,5 +1,6 @@
 import { useId, useState } from 'react'
 import type { Site } from '../data/load.ts'
+import { loadPatch } from '../data/patches.ts'
 import { terrainStl } from '../lib/stl.ts'
 
 /** Grids of the site's terrain patch that make good prints, by name (pipeline/scripts/terrain_patches.py). */
@@ -22,7 +23,6 @@ export function PrintPanel({ site }: { site: Site }) {
   const download = async () => {
     setState('busy')
     try {
-      const { loadPatch } = await import('../globe/terrainPatch.ts')
       const patch = await loadPatch(site.id)
       const g = patch.grids.find((x) => x.name === area)
       if (!g) throw new Error(`no ${area} grid`)

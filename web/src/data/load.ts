@@ -114,6 +114,54 @@ export function loadDsn(): Promise<Dsn> {
   return dsnCache
 }
 
+/** How often the photos and the 2 m horizon masks agreed on whether a site was sunlit (scripts/lro_photos.py). */
+export interface LroTally {
+  photos: number
+  /** Photos that can't tell: part of the Sun visible, or light too grazing to tell sunlit ground from shadow */
+  not_called: number
+  lit_lit: number
+  lit_dark: number
+  dark_dark: number
+  dark_lit: number
+  agree_pct: number | null
+}
+
+export interface LroPhoto {
+  frame: string
+  file: string
+  utc: string
+  /** Toward the Sun from the Moon's centre, Moon-fixed, km */
+  sun_km: [number, number, number]
+  sun_el: number
+  sun_az: number
+  /** Visible fraction of the Sun at the site from its 2 m horizon mask, and whether the photo shows it sunlit */
+  f: number
+  photo_lit: boolean
+  url: string
+}
+
+/** LROC Wide Angle Camera photos around each site (scripts/lro_photos.py), for the photo comparison. */
+export interface LroPhotos {
+  credit: string
+  size: number
+  pixel_m: number
+  /** Photos store DN = 255·sqrt(I/F / stretch_iof) */
+  stretch_iof: number
+  iof_lit: number
+  check: { frames: number; first: string; last: string; pixel_m: number; all: LroTally; near_skyline: LroTally }
+  sites: Record<string, { origin_m: [number, number]; photos: LroPhoto[]; check: LroTally }>
+}
+
+let lroCache: Promise<LroPhotos> | null = null
+
+export function loadLroPhotos(): Promise<LroPhotos> {
+  lroCache ??= getJson<LroPhotos>('lro/photos.json')
+  lroCache.catch(() => (lroCache = null))
+  return lroCache
+}
+
+export const lroPhotoUrl = (file: string) => `${base}lro/${file}`
+
 /** Horizon masks for observers from 2 m to 50 m (scripts/mast_horizons.py), for the mast planner only. */
 export interface MastHorizons {
   heightsM: number[]

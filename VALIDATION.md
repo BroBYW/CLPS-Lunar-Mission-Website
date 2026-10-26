@@ -13,6 +13,7 @@ This file records how we checked the numbers the app shows. Each section says wh
 | 7. Accessibility | WCAG 2.1 AA | axe-core: 0 violations on every view | Pass |
 | 8. 3D terrain sunlight | Matches the horizon masks | Synthetic shadows exact; agrees with the masks 99.8% of the time, sunlight within 1.4 points at every site | Pass |
 | 9. Planning tools | Same numbers as the Plan view | Window finder equals the metrics on every window; mast masks match the Plan view's at 2 m; 3D-print files are watertight; DSN contact rule tested; pins within 5 points of the sites' sunlight at 12 of 13; rover rays agree with the masks 99.8% | Pass |
+| 10. LRO photos (2009–2011) | Sunlit or in shadow as photographed | Sites: 99.3% of 2,281 photos that can tell (115 of 117 terrain shadows confirmed); whole photos: 98.3% of 62,221 km² agree | Pass |
 
 ## 1. Browser vs Python
 
@@ -300,3 +301,66 @@ Sunlight agrees within 5 points at 12 of the 13 sites. Malapert Massif is the ex
 **Past landings.** The replays use the published landing points and times. For IM-2 Athena, the time from landing to NASA's end-of-mission time is 12.7 h, matching the "about 13 hours" reported. At touchdown the Sun was 2.5° above the horizontal on the plateau: a low Sun that a lander lying on its side in a crater could hardly use.
 
 **Rover drive** (`web/src/lib/rover.test.ts` and `web/scripts/rover-vs-masks.ts`). The rover looks at the skyline with just two rays over the site's 3D terrain grids, toward the Sun and toward Earth. The tests check routes, heights from the finest grid, a smooth sphere's dip and a wall at a known distance. Standing a rover at each site's own point every 6 hours through 2027, its rays agree with the horizon masks on whether more than half the Sun is visible 99.8% of the time, and on whether Earth is in view 99.9% (20,440 samples, 14 sites). Away from the site, the grids coarsen with distance from the site, as in the 3D view.
+
+## 10. LRO photos
+
+Sections 1–9 compare the app with other models and with NASA's ephemerides. This one compares it with photos of the place itself. LRO's Wide Angle Camera photographed the south pole about every two hours from September 2009 to December 2011, and LROC published 8,170 of those photos as map-projected frames: polar stereographic, 100 m per pixel, 80–90°S, in I/F (the WAC polar movie frames of Speyerer and Robinson 2013). A photo shows where the Sun was shining at one moment. The app knows nothing about the photos: its horizons and terrain come from LOLA altimetry and its Sun from SPICE.
+
+**Brightness threshold.** In the photos, shadowed ground has I/F below about 0.0002 (light scattered off nearby slopes) and sunlit ground peaks near 0.024, with a broad, flat valley between about 0.002 and 0.007. Ground counts as sunlit above I/F 0.003, a value read off one frame's full-resolution histogram before any comparison with the app. LROC's 400 m browse images are a fixed linear stretch of I/F: against the full-resolution I/F of frames from April 2010, December 2010 and July 2011, DN = 4,235 · I/F + 0.5 (±0.3), saturating at I/F 0.06.
+
+**Sites, sunlit or not** (`pipeline/scripts/lro_photos.py`). Every eighth frame, 1,022 from 20 September 2009 to 11 December 2011, read through its 400 m browse image (0 marks no data). For each site a frame covers, the app's prediction is the visible fraction of the Sun from the site's 2 m horizon mask at the frame's time (Sun from SPICE at the middle of the 6-minute pass). Only photos where the terrain decides count: some of the Sun must clear the lowest point of the site's skyline. The Sun never does at Shackleton's floor, so it has no row.
+
+The first rule tried was "the mask gives the whole Sun, so the site is sunlit". It agreed with the photos 80.1% of the time (4,082 photos), and all 801 misses were photos showing dark ground where the whole Sun was expected. Every one had grazing light. From peaks and plateaus the Sun can be visible below the level horizon, and at the pole it never rises far above it, while a photo shows the ground, not a mast. So the rule now also asks how bright the ground would be in full sunlight: the Lommel–Seeliger brightness, μ0/(μ0 + μ), of the 30 m terrain facets inside the photo's 400 m pixel, times 0.14 (the median brightness scale fitted to the full-resolution photos below). A site is expected sunlit when its mask gives the whole Sun and that I/F is at least twice the threshold; expected in shadow when the mask gives no Sun; and not called otherwise (part of the Sun visible, or light too faint to tell from shadow).
+
+| Site | Photos | Called | Agree | Sun expected, photo dark | Shadow expected, photo lit |
+|---|---|---|---|---|---|
+| Peak near Cabeus B | 127 | 79 | 100.0% | 0 | 0 |
+| Haworth | 300 | 123 | 100.0% | 0 | 0 |
+| Malapert Massif | 229 | 120 | 97.5% | 0 | 3 |
+| Mons Mouton Plateau | 121 | 75 | 100.0% | 0 | 0 |
+| Mons Mouton | 199 | 106 | 100.0% | 0 | 0 |
+| Nobile Rim 1 | 187 | 93 | 98.9% | 0 | 1 |
+| Nobile Rim 2 | 128 | 109 | 100.0% | 0 | 0 |
+| de Gerlache Rim 2 | 845 | 523 | 100.0% | 0 | 0 |
+| Connecting ridge | 941 | 299 | 99.0% | 0 | 3 |
+| Shackleton rim | 969 | 464 | 98.7% | 2 | 4 |
+| IM-1 Odysseus landing site | 49 | 48 | 95.8% | 0 | 2 |
+| IM-2 Athena landing site | 127 | 110 | 100.0% | 0 | 0 |
+| VIPER mission area | 209 | 132 | 100.0% | 0 | 0 |
+
+2,281 of 4,431 photos could be called, and 99.3% of them agree. The hardest calls, 117 photos where the Sun stood above the level horizon but the mask said terrain hid it, show dark ground in 115. With the Sun within 1° of the skyline, 97.5% agree (475 photos). The threshold hardly matters: 99.2% agree at I/F 0.002 (2,722 photos called) and 99.2% at 0.005 (1,425). Every one of the 15 misses is within 4 DN of the threshold, or has the Sun within 0.6° of the skyline, where part of a 400 m pixel can see a Sun that the site's own point cannot (as on Malapert Massif's sharp summit).
+
+**Whole photos against the lit terrain** (`web/scripts/lro-vs-model.ts`, the Plan view's photo comparison). Two frames per site, never chosen by whether photo and app agree: one where the site's mask gives the whole Sun and one where it gives none, the Sun from directions at least 60° apart when possible, the 48 km showing both light and shadow, and the crop as fully covered as the frames allow (IM-1 lies at their edge, so its photos cover 57%). For each, the 48 km around the site at full resolution (one byte range of the I/F image) against the site's 120 m terrain grid, lit for the photo's moment by the 3D view's shadow code (`web/src/lib/terrain.ts`). Brightness follows the Lommel–Seeliger law for a camera looking straight down, with one scale fitted to each photo where both show sunlit ground (median 0.142, range 0.107–0.183); the shadows are not fitted. Ground counts as sunlit in either picture above I/F 0.003.
+
+| Site | Photo (UTC) | Sun elevation, azimuth | Photo covers | Agree | Sunlit in the app only | Sunlit in the photo only | Sunlit in both, of sunlit in either |
+|---|---|---|---|---|---|---|---|
+| Peak near Cabeus B | 2011-01-16 11:40 | −2.3°, 106° | 2,304 km² | 99.9% | 0.0% | 0.0% | 66.3% |
+| Peak near Cabeus B | 2011-11-24 15:04 | −0.9°, 259° | 2,257 km² | 99.3% | 0.2% | 0.5% | 96.6% |
+| Haworth | 2010-03-04 21:51 | 2.0°, 333° | 2,304 km² | 98.5% | 0.6% | 0.9% | 95.7% |
+| Haworth | 2011-05-30 01:44 | −2.6°, 233° | 2,294 km² | 98.7% | 1.2% | 0.1% | 84.1% |
+| Malapert Massif | 2011-01-25 10:32 | 0.3°, 287° | 2,269 km² | 98.5% | 0.6% | 1.0% | 94.5% |
+| Malapert Massif | 2011-08-30 12:19 | −2.3°, 158° | 2,294 km² | 99.1% | 0.5% | 0.4% | 96.8% |
+| Mons Mouton Plateau | 2010-11-28 08:18 | −1.8°, 243° | 2,299 km² | 99.1% | 0.7% | 0.2% | 85.3% |
+| Mons Mouton Plateau | 2011-12-02 10:55 | 2.7°, 63° | 2,299 km² | 97.8% | 1.1% | 1.0% | 93.5% |
+| Mons Mouton | 2010-09-08 14:50 | −2.5°, 147° | 2,257 km² | 98.8% | 0.7% | 0.5% | 95.8% |
+| Mons Mouton | 2010-12-25 17:46 | −0.0°, 270° | 2,294 km² | 98.3% | 1.1% | 0.6% | 95.6% |
+| Nobile Rim 1 | 2011-04-13 12:01 | 3.1°, 21° | 2,283 km² | 98.6% | 0.8% | 0.7% | 95.3% |
+| Nobile Rim 1 | 2011-07-03 11:20 | −1.4°, 113° | 2,299 km² | 99.5% | 0.2% | 0.3% | 98.4% |
+| Nobile Rim 2 | 2009-12-21 09:30 | 2.7°, 69° | 2,290 km² | 97.7% | 0.3% | 2.0% | 96.0% |
+| Nobile Rim 2 | 2011-07-17 22:10 | 1.7°, 278° | 2,299 km² | 99.0% | 0.4% | 0.6% | 93.1% |
+| de Gerlache Rim 2 | 2009-10-02 07:51 | 1.6°, 87° | 2,287 km² | 92.1% | 0.3% | 7.6% | 83.5% |
+| de Gerlache Rim 2 | 2011-09-03 06:45 | 0.1°, 182° | 2,299 km² | 99.7% | 0.2% | 0.1% | 94.2% |
+| Connecting ridge | 2009-12-11 23:16 | 1.3°, 16° | 2,294 km² | 98.0% | 0.2% | 1.8% | 94.4% |
+| Connecting ridge | 2010-06-23 00:42 | −0.8°, 184° | 2,294 km² | 99.4% | 0.3% | 0.2% | 93.5% |
+| Shackleton rim | 2010-06-26 19:09 | −0.5°, 163° | 2,294 km² | 99.1% | 0.6% | 0.3% | 94.3% |
+| Shackleton rim | 2010-10-04 01:30 | 1.8°, 31° | 2,259 km² | 98.6% | 0.3% | 1.1% | 96.1% |
+| IM-1 Odysseus landing site | 2010-07-03 15:09 | 0.9°, 276° | 1,325 km² | 97.8% | 1.5% | 0.7% | 92.2% |
+| IM-1 Odysseus landing site | 2011-05-13 17:39 | 5.8°, 48° | 1,325 km² | 97.9% | 0.9% | 1.2% | 96.1% |
+| IM-2 Athena landing site | 2010-04-24 12:01 | 3.3°, 24° | 2,298 km² | 97.5% | 1.1% | 1.4% | 94.7% |
+| IM-2 Athena landing site | 2011-06-22 00:08 | −0.7°, 260° | 2,304 km² | 97.9% | 1.3% | 0.8% | 93.4% |
+| VIPER mission area | 2010-11-14 18:12 | 4.1°, 49° | 2,299 km² | 98.6% | 0.3% | 1.1% | 95.9% |
+| VIPER mission area | 2011-09-11 01:25 | 6.0°, 347° | 2,299 km² | 98.6% | 0.2% | 1.2% | 96.6% |
+| Shackleton crater floor | 2009-10-22 06:56 | 1.9°, 17° | 2,299 km² | 96.7% | 0.6% | 2.7% | 90.7% |
+| Shackleton crater floor | 2009-10-23 01:48 | 1.9°, 7° | 2,299 km² | 96.4% | 0.6% | 3.0% | 90.7% |
+
+Over the 62,221 km² in all, 98.3% of the ground is sunlit in both or in shadow in both: 0.6% is sunlit in the app only and 1.2% in the photo only. Of the ground sunlit in either picture, 94.0% is sunlit in both; that share means little in Peak near Cabeus B's first photo, where almost nothing is lit. The differences are mostly thin strips along shadow edges, where the Sun is so low that a few metres of height move an edge by hundreds of metres, where the photo's 100 m pixels meet the terrain's 120 m grid, and where light scattered off bright slopes lifts the photo's shadows. The weakest photo, de Gerlache Rim 2 on 2 October 2009 (92.1%), comes from early in the mission and has stray-light haze in the shadow of de Gerlache crater and seam-like stripes in one corner; the haze lifts 7.6% of its shadowed ground above the threshold.
