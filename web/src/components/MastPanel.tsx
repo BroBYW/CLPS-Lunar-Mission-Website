@@ -66,7 +66,9 @@ export function MastPanel({ site }: { site: Site }) {
         Technology project is building solar arrays on masts about 10 m tall for the south pole, and larger designs reach over
         30 m. These are the selected dates at this site, from horizons computed for each height.
       </p>
-      {failed ? (
+      {site.mask_index < 0 ? (
+        <p className="mt-3 text-sm text-dust">Mast heights are computed for the listed sites only, not for a dropped pin.</p>
+      ) : failed ? (
         <p className="mt-3 text-sm text-alert">The mast horizons didn't load. Check your connection and reload the page.</p>
       ) : maskIndex < 0 && mast ? (
         <p className="mt-3 text-sm text-dust">No mast horizons for this site.</p>

@@ -1,8 +1,11 @@
 import { Ephemeris, type EphemerisMeta } from '../lib/astro.ts'
 import type { Dsn } from '../lib/dsn.ts'
+import { gunzip } from '../lib/gunzip.ts'
+import type { HeightGrid } from '../lib/pinHorizon.ts'
+import { decodeGrid } from '../lib/terrain.ts'
 import { HorizonSet, type HorizonMeta } from '../lib/horizon.ts'
 
-export type SiteGroup = 'artemis' | 'illumination' | 'clps' | 'contrast'
+export type SiteGroup = 'artemis' | 'illumination' | 'clps' | 'contrast' | 'pin'
 
 export interface Site {
   id: string
@@ -79,6 +82,21 @@ let cache: Promise<AppData> | null = null
 export function loadAppData(): Promise<AppData> {
   cache ??= load()
   return cache
+}
+
+let pinCache: Promise<HeightGrid> | null = null
+
+/** The 480 m height grid that dropped pins cast their horizons from (scripts/pin_dem.py), 4.6 MB, on demand. */
+export function loadPinGrid(): Promise<HeightGrid> {
+  pinCache ??= (async () => {
+    const meta = await getJson<{ n: number; spacing_m: number; half_m: number; unit_m: number; base_m: number }>('pin-dem.json')
+    const r = await fetch(`${base}pin-dem.bin.gz`)
+    if (!r.ok) throw new Error(`Could not load pin-dem.bin.gz (HTTP ${r.status})`)
+    const raw = new Int16Array(await gunzip(r))
+    return { n: meta.n, spacing: meta.spacing_m, half: meta.half_m, heights: decodeGrid(raw, 0, meta.n, meta.unit_m, meta.base_m) }
+  })()
+  pinCache.catch(() => (pinCache = null))
+  return pinCache
 }
 
 let dsnCache: Promise<Dsn> | null = null

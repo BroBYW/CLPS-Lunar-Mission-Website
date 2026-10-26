@@ -2,6 +2,7 @@ import * as Comlink from 'comlink'
 import { useEffect, useRef, useState } from 'react'
 import type { AppData, MastHorizons, Site } from '../data/load.ts'
 import type { WindowScores } from '../lib/finder.ts'
+import type { HeightGrid } from '../lib/pinHorizon.ts'
 import { STEP_MS } from '../state/store.ts'
 import type { MetricsWorkerApi, ScanRequest, SeriesRequest, TimedSeries } from './metrics.worker.ts'
 
@@ -29,6 +30,24 @@ export function initMastWorker(m: MastHorizons): Promise<void> {
     return r.initMast(Comlink.transfer(buf, [buf]), m.meta)
   })
   return mastReady
+}
+
+let pinReady: Promise<void> | null = null
+
+/** Hands the pin height grid to the worker, once (its buffer moves there). */
+export function initPinWorker(g: HeightGrid): Promise<void> {
+  if (!remote || !ready) return Promise.reject(new Error('worker not started'))
+  const r = remote
+  pinReady ??= ready.then(() => r.initPin(Comlink.transfer(g.heights, [g.heights.buffer]), g.n, g.spacing, g.half))
+  pinReady.catch(() => (pinReady = null))
+  return pinReady
+}
+
+/** Rough horizons at a dropped pin, computed in the worker, which keeps them for that pin's series. */
+export function requestPinMasks(lat: number, lon: number, heightsM: number[]): Promise<{ groundM: number; masks: Float32Array[]; computeMs: number }> {
+  if (!remote || !pinReady) return Promise.reject(new Error('pin grid not loaded'))
+  const r = remote
+  return pinReady.then(() => r.pinMasks(lat, lon, heightsM))
 }
 
 const cache = new Map<string, Promise<TimedSeries>>()
@@ -64,11 +83,13 @@ export function seriesRequest(site: Site, heightIndex: number, heightsM: number[
     lat: site.lat,
     lon: site.lon,
     heightM: site.height_m + heightsM[heightIndex],
-    maskIndex: site.mask_index,
+    // A dropped pin (mask_index -1) uses the masks the worker cast for it
+    maskIndex: Math.max(0, site.mask_index),
     heightIndex,
     startMs,
     endMs,
     stepMs: STEP_MS,
+    ...(site.mask_index < 0 ? { maskSet: 'pin' as const } : {}),
   }
 }
 

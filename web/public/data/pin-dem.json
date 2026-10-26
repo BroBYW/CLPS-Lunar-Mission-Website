@@ -1,0 +1,16 @@
+{
+  "description": "South polar heights (m above the 1737.4 km sphere) for rough horizons at any point",
+  "format": "gzip of int16 residuals of the predictor left + up - upleft, in unit_m, row 0 at +Y",
+  "n": 2335,
+  "spacing_m": 480.0,
+  "half_m": 560160.0,
+  "unit_m": 2.0,
+  "base_m": 0.0,
+  "samples": 9,
+  "proj": "+proj=stere +lat_0=-90 +lat_ts=-90 +lon_0=0 +R=1737400 +units=m",
+  "dems": [
+    "PGDA LDEM_80S_80MPP_ADJ (80 m)",
+    "PGDA LDEM_60S_240MPP_ADJ (240 m)"
+  ],
+  "generated_utc": "2026-10-26T15:40:36Z"
+}

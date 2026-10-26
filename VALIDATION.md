@@ -12,7 +12,7 @@ This file records how we checked the numbers the app shows. Each section says wh
 | 6. Performance | < 500 ms per site-range; first load < 3 s; 60 fps | 5 years in 104–148 ms; first load about 1 s; 142 fps playback | Pass |
 | 7. Accessibility | WCAG 2.1 AA | axe-core: 0 violations on every view | Pass |
 | 8. 3D terrain sunlight | Matches the horizon masks | Synthetic shadows exact; agrees with the masks 99.8% of the time, sunlight within 1.4 points at every site | Pass |
-| 9. Planning tools | Same numbers as the Plan view | Window finder equals the metrics on every window; mast masks match the Plan view's at 2 m; 3D-print files are watertight | Pass |
+| 9. Planning tools | Same numbers as the Plan view | Window finder equals the metrics on every window; mast masks match the Plan view's at 2 m; 3D-print files are watertight; DSN contact rule tested; pins within 5 points of the sites' sunlight at 12 of 13; rover rays agree with the masks 99.8% | Pass |
 
 ## 1. Browser vs Python
 
@@ -90,7 +90,7 @@ The 2026-03-03 11:30 epoch falls during the total lunar eclipse. From these site
 - **Smooth sphere.** The computed horizon equals the exact dip, −acos(R/(R + h)): −0.0869° at 2 m and −0.1944° at 10 m, to within 2e-4° at every one of the 3,600 azimuths.
 - **A 1,000 m mesa 20 km away.** The computed elevation angle is within 0.02° of the exact spherical value. The small residual comes from the test grid's 25 m pixels softening the mesa's edge.
 
-**Physical consistency.** Raising the observer can only lower the horizon. Across all 13 sites and 3,600 azimuths (46,800 values), the 10 m horizon is below the 2 m horizon everywhere: by 0.42° on average, and never by less than 0.0018°.
+**Physical consistency.** Raising the observer can only lower the horizon. Across all 14 sites and 3,600 azimuths (50,400 values), the 10 m horizon is below the 2 m horizon everywhere: by 0.44° on average, and never by less than 0.0018°.
 
 **Coverage.** Every ray reaches 300 km on real data; the script stops if any sample falls outside all four maps. Every site has 10 m data to at least 20 km in every direction.
 
@@ -116,7 +116,7 @@ Peak near Cabeus B shows why this matters. Moving 1.2 km from the mosaic center 
 
 ## 4. Illumination and Earth visibility against literature
 
-**How.** `pipeline/scripts/validate_literature.py` runs each published point over its study's own period, hourly from 2017 to 2037 with exact SPICE positions (not the shipped 2026–2030 file), at the study's observer height. It reports every definition the studies use:
+**How.** `pipeline/scripts/validate_literature.py` runs each published point over its study's own period, hourly from 2017 to 2037 with exact SPICE positions (not the shipped 2024–2030 file), at the study's observer height. It reports every definition the studies use:
 - mean visible fraction of the solar disk
 - % of time any part of the Sun is visible
 - % of time the whole disk is visible
@@ -237,7 +237,7 @@ Beyond the automated check:
 - **Distant massif.** A 4 km massif 100 km away hides the Sun from the site when it is 0.3° up. Without the massif, the site is lit.
 - **Partial Sun.** A ridge top in line with the Sun's center gives a partly visible disk.
 
-**Against the horizon masks** (`web/src/lib/terrain.validation.test.ts`; run with `CLPS_VALIDATE=1 npx vitest run src/lib/terrain.validation.test.ts` from `web/`). Every 2 hours for 28 days from 1 Jan 2027, the test compares two things 2 m above each site: the Sun as the 3D terrain sees it, and the share of the Sun visible over the mask. That is 4,368 samples across all 13 sites.
+**Against the horizon masks** (`web/src/lib/terrain.validation.test.ts`; run with `CLPS_VALIDATE=1 npx vitest run src/lib/terrain.validation.test.ts` from `web/`). Every 2 hours for 28 days from 1 Jan 2027, the test compares two things 2 m above each site: the Sun as the 3D terrain sees it, and the share of the Sun visible over the mask. That is 4,704 samples across all 14 sites.
 
 | Site | Agree on "more than half the Sun visible" | Sunlight, masks | Sunlight, 3D terrain |
 |---|---|---|---|
@@ -251,6 +251,7 @@ Beyond the automated check:
 | de Gerlache Rim 2 | 99.7% | 90.7% | 91.0% |
 | Connecting ridge | 100.0% | 100.0% | 100.0% |
 | Shackleton rim | 100.0% | 98.3% | 98.8% |
+| IM-1 Odysseus landing site | 99.7% | 40.9% | 41.0% |
 | IM-2 Athena landing site | 99.7% | 50.5% | 50.8% |
 | VIPER mission area | 99.7% | 65.0% | 66.0% |
 | Shackleton crater floor | 100.0% | 0.0% | 0.0% |
@@ -273,3 +274,29 @@ Beyond the automated check:
 **Mast height.** The mast masks (2–50 m) come from the same ray casting as the app's 2 m and 10 m masks, stored to 0.01°. At the VIPER mission area for June 2027, the mast planner's 2 m row gives 28.0% sunlight and at least 393 h of darkness, exactly as the Plan view, and 65.7% Earth in view against 65.8%: the 0.01° rounding moves the Earth's center across the skyline for one more 10-minute sample. The interpolated height for a target is checked in `web/src/lib/mast.test.ts`.
 
 **3D print** (`web/src/lib/stl.test.ts`). The STL is a closed solid: every edge belongs to exactly two triangles, running in opposite directions, so slicers read it as watertight. It spans the requested width and sits on a flat base. Real files are 82,400 triangles (4.1 MB) and build in under 50 ms.
+
+**Deep Space Network contact** (`web/src/lib/dsn.test.ts`). The interpolation of the hourly elevations and the rule for contact (Earth above the site's skyline and at least one complex with the Moon 10° up) are checked on a hand-made table. Across 2024–2030 each complex has the Moon above 10° for 41–42% of the time, as expected for stations at about 35–40° latitude, and at least one of them for 98.2%.
+
+**Dropped pins** (`web/scripts/pin-vs-sites.ts`). A pin's horizon comes from the 480 m pin grid instead of the 10 m maps. Dropping one exactly on each listed site south of 82°S and comparing 2027 at 2 m:
+
+| Site | Sunlight, site / pin | Longest darkness, site / pin | Earth in view, site / pin | Mean horizon difference |
+|---|---|---|---|---|
+| Peak near Cabeus B | 65.1% / 63.6% | 297 / 307 h | 78.9% / 82.4% | 0.68° |
+| Haworth | 69.3% / 72.3% | 373 / 337 h | 73.7% / 73.6% | 0.34° |
+| Malapert Massif | 64.5% / 79.1% | 339 / 332 h | 79.1% / 80.1% | 0.61° |
+| Mons Mouton Plateau | 50.1% / 51.3% | 384 / 373 h | 99.4% / 88.7% | 0.19° |
+| Mons Mouton | 65.2% / 65.2% | 298 / 295 h | 97.8% / 99.1% | 0.30° |
+| Nobile Rim 1 | 64.8% / 65.4% | 298 / 303 h | 75.7% / 72.0% | 0.38° |
+| Nobile Rim 2 | 49.9% / 49.7% | 383 / 385 h | 71.9% / 78.0% | 0.11° |
+| de Gerlache Rim 2 | 80.5% / 78.8% | 144 / 162 h | 54.3% / 54.2% | 0.23° |
+| Connecting ridge | 87.7% / 92.3% | 111 / 86 h | 51.1% / 51.1% | 0.53° |
+| Shackleton rim | 84.4% / 83.8% | 65 / 73 h | 46.0% / 45.1% | 0.18° |
+| IM-2 Athena | 43.7% / 44.3% | 412 / 407 h | 80.4% / 80.7% | 0.15° |
+| VIPER mission area | 48.8% / 51.2% | 521 / 496 h | 62.2% / 68.7% | 0.58° |
+| Shackleton crater floor | 0.0% / 0.0% | all year / all year | 0.0% / 0.0% | 0.35° |
+
+Sunlight agrees within 5 points at 12 of the 13 sites. Malapert Massif is the exception: its summit is a sharp peak that the 480 m grid rounds off, so the pin sees 15 points more sunlight. That is why pins are labelled as a first look. The ray caster itself is checked on a smooth sphere (the 2 m and 10 m dips within 0.005°) and on a wall at a known distance (`web/src/lib/pinHorizon.test.ts`). A pin takes about 150 ms to cast.
+
+**Past landings.** The replays use the published landing points and times. For IM-2 Athena, the time from landing to NASA's end-of-mission time is 12.7 h, matching the "about 13 hours" reported. At touchdown the Sun was 2.5° above the horizontal on the plateau: a low Sun that a lander lying on its side in a crater could hardly use.
+
+**Rover drive** (`web/src/lib/rover.test.ts` and `web/scripts/rover-vs-masks.ts`). The rover looks at the skyline with just two rays over the site's 3D terrain grids, toward the Sun and toward Earth. The tests check routes, heights from the finest grid, a smooth sphere's dip and a wall at a known distance. Standing a rover at each site's own point every 6 hours through 2027, its rays agree with the horizon masks on whether more than half the Sun is visible 99.8% of the time, and on whether Earth is in view 99.9% (20,440 samples, 14 sites). Away from the site, the grids coarsen with distance from the site, as in the 3D view.

@@ -11,7 +11,23 @@ const START_DISTANCE_M = 720_000
  * The site picker as a 3D Moon: every site on the surface, lit by the Sun at the time shown. Drag to turn,
  * scroll to zoom, click a site to select it. Loads CesiumJS lazily; calls onFail if WebGL isn't available.
  */
-export function SiteGlobe({ data, selected, onSelect, onFail }: { data: AppData; selected: string; onSelect: (id: string) => void; onFail: () => void }) {
+export function SiteGlobe({
+  data,
+  selected,
+  onSelect,
+  onFail,
+  pin,
+  onPick,
+}: {
+  data: AppData
+  selected: string
+  onSelect: (id: string) => void
+  onFail: () => void
+  /** A dropped pin to mark */
+  pin?: { lat: number; lon: number } | null
+  /** When set, a click on the Moon picks that point instead of selecting a site */
+  onPick?: (lat: number, lon: number) => void
+}) {
   const container = useRef<HTMLDivElement>(null)
   const inst = useRef<{ mod: MoonMod; mv: ReturnType<MoonMod['createMoonViewer']>; layer: ReturnType<LayerMod['addSiteLayer']> } | null>(null)
   const [ready, setReady] = useState(false)
@@ -19,6 +35,9 @@ export function SiteGlobe({ data, selected, onSelect, onFail }: { data: AppData;
   const v = useRef(new Float64Array(6))
   const selectRef = useRef(onSelect)
   selectRef.current = onSelect
+  const pickRef = useRef(onPick)
+  pickRef.current = onPick
+  const pickerRef = useRef<{ destroy: () => void } | null>(null)
 
   useEffect(() => {
     let cancelled = false
@@ -31,14 +50,27 @@ export function SiteGlobe({ data, selected, onSelect, onFail }: { data: AppData;
         cam.minimumZoomDistance = 25_000
         cam.maximumZoomDistance = 5_000_000
         void mod.addPolarCap(mv.viewer)
-        const layer = sl.addSiteLayer(mv.viewer, data.sites, { onSelect: (id) => selectRef.current(id), selected })
+        // While a pin is being dropped, clicks pick a point on the Moon instead of selecting sites
+        const layer = sl.addSiteLayer(mv.viewer, data.sites, { onSelect: (id) => !pickRef.current && selectRef.current(id), selected })
+        const C = mod.Cesium
+        const picker = new C.ScreenSpaceEventHandler(mv.viewer.scene.canvas)
+        picker.setInputAction((e: { position: InstanceType<typeof C.Cartesian2> }) => {
+          if (!pickRef.current) return
+          const p = mv.viewer.camera.pickEllipsoid(e.position, C.Ellipsoid.MOON)
+          if (!p) return
+          const c = C.Cartographic.fromCartesian(p, C.Ellipsoid.MOON)
+          pickRef.current(C.Math.toDegrees(c.latitude), C.Math.toDegrees(c.longitude))
+        }, C.ScreenSpaceEventType.LEFT_CLICK)
         mod.viewSouthPole(mv.viewer, START_DISTANCE_M)
         inst.current = { mod, mv, layer }
+        pickerRef.current = picker
         setReady(true)
       })
       .catch(onFail)
     return () => {
       cancelled = true
+      pickerRef.current?.destroy()
+      pickerRef.current = null
       inst.current?.layer.destroy()
       inst.current?.mv.destroy()
       inst.current = null
@@ -49,6 +81,35 @@ export function SiteGlobe({ data, selected, onSelect, onFail }: { data: AppData;
   useEffect(() => {
     inst.current?.layer.select(selected)
   }, [selected, ready])
+
+  // The dropped pin, as a marker on the surface
+  useEffect(() => {
+    const i = inst.current
+    if (!i || !pin) return
+    const C = i.mod.Cesium
+    const marker = i.mv.viewer.entities.add({
+      position: C.Cartesian3.fromDegrees(pin.lon, pin.lat, 0, C.Ellipsoid.MOON),
+      point: { pixelSize: 11, color: C.Color.fromCssColorString('#ffc53d'), outlineColor: C.Color.BLACK, outlineWidth: 2, disableDepthTestDistance: Number.POSITIVE_INFINITY },
+      label: {
+        text: 'Pin',
+        font: '14px "Atkinson Hyperlegible Next Variable", sans-serif',
+        fillColor: C.Color.fromCssColorString('#ffc53d'),
+        outlineColor: C.Color.BLACK,
+        outlineWidth: 3,
+        style: C.LabelStyle.FILL_AND_OUTLINE,
+        pixelOffset: new C.Cartesian2(10, -10),
+        horizontalOrigin: C.HorizontalOrigin.LEFT,
+        disableDepthTestDistance: Number.POSITIVE_INFINITY,
+      },
+    })
+    i.mv.viewer.scene.requestRender()
+    return () => {
+      if (!i.mv.viewer.isDestroyed()) {
+        i.mv.viewer.entities.remove(marker)
+        i.mv.viewer.scene.requestRender()
+      }
+    }
+  }, [pin, ready])
 
   useEffect(() => {
     const i = inst.current

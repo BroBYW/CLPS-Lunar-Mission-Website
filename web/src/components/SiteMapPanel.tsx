@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import type { AppData } from '../data/load.ts'
+import { usePin } from '../state/pin.ts'
 import { SiteGlobe } from './SiteGlobe.tsx'
 import { SiteMap } from './SiteMap.tsx'
 
@@ -27,6 +28,13 @@ export function SiteMapPanel({ data, selected, onSelect }: { data: AppData; sele
       /* private mode: the choice just isn't remembered */
     }
   }
+  const pin = usePin((s) => s.pin)
+  const armed = usePin((s) => s.armed)
+  const status = usePin((s) => s.status)
+  const pinError = usePin((s) => s.error)
+  const arm = usePin((s) => s.arm)
+  const drop = usePin((s) => s.drop)
+  const onPick = armed ? (lat: number, lon: number) => void drop(lat, lon, data.horizons.heightsM) : undefined
   const btn = (m: Mode, label: string) => (
     <button
       type="button"
@@ -48,16 +56,36 @@ export function SiteMapPanel({ data, selected, onSelect }: { data: AppData; sele
           {btn('flat', 'Flat map')}
         </div>
       </div>
+      <div className="mb-2 flex flex-wrap items-center gap-x-3 gap-y-1">
+        <button
+          type="button"
+          aria-pressed={armed}
+          onClick={() => arm(!armed)}
+          disabled={status === 'loading'}
+          className="rounded-sm border border-regolith px-2 py-1 text-xs text-dust hover:border-dust hover:text-bright aria-pressed:border-sun aria-pressed:text-sun disabled:opacity-50"
+        >
+          {armed ? 'Cancel pin' : pin ? 'Move the pin' : 'Drop a pin'}
+        </button>
+        <p className={`text-xs ${status === 'failed' ? 'text-alert' : 'text-dust'}`} aria-live="polite">
+          {status === 'loading'
+            ? 'Casting the horizon from a 480 m map…'
+            : status === 'failed'
+              ? pinError
+              : armed
+                ? 'Click anywhere south of 82°S for a rough horizon there.'
+                : ''}
+        </p>
+      </div>
       {shown === 'globe' ? (
         <>
-          <SiteGlobe data={data} selected={selected} onSelect={onSelect} onFail={() => setFailed(true)} />
+          <SiteGlobe data={data} selected={selected} onSelect={onSelect} onFail={() => setFailed(true)} pin={pin} onPick={onPick} />
           <p className="mt-2 text-xs text-dust">
             Drag to turn, scroll to zoom, click a site to select it. Lit by the Sun at the time shown. Relief: LRO LOLA;
             imagery: NASA Moon Trek, LRO WAC. Dashed squares are Artemis region footprints (2022 list).
           </p>
         </>
       ) : (
-        <SiteMap sites={data.sites} selected={selected} onSelect={onSelect} basemap={data.basemap} basemapUrl={data.basemapUrl} />
+        <SiteMap sites={data.sites} selected={selected} onSelect={onSelect} basemap={data.basemap} basemapUrl={data.basemapUrl} pin={pin} onPick={onPick} />
       )}
       {failed && <p className="mt-2 text-xs text-dust">The 3D Moon needs WebGL, which this browser didn't provide, so the flat map is shown.</p>}
     </section>

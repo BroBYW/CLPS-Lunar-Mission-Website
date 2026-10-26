@@ -1,5 +1,7 @@
+import type { MouseEvent } from 'react'
 import type { BasemapMeta, Site } from '../data/load.ts'
 import { R_MOON_KM } from '../lib/astro.ts'
+import { fromStereo } from '../lib/pinHorizon.ts'
 
 /** South polar stereographic on the 1737.4 km sphere (same grid as the LOLA maps and the basemap). */
 function polarStereo(lat: number, lon: number): [number, number] {
@@ -17,17 +19,30 @@ export function SiteMap({
   onSelect,
   basemap,
   basemapUrl,
+  pin,
+  onPick,
 }: {
   sites: Site[]
   selected: string
   onSelect: (id: string) => void
   basemap: BasemapMeta
   basemapUrl: string
+  /** A dropped pin to mark */
+  pin?: { lat: number; lon: number } | null
+  /** When set, a click anywhere picks that point instead of selecting a site */
+  onPick?: (lat: number, lon: number) => void
 }) {
   const [x0, y0, x1, y1] = basemap.extent_m
   const px = (lat: number, lon: number): [number, number] => {
     const [x, y] = polarStereo(lat, lon)
     return [((x - x0) / (x1 - x0)) * SIZE, ((y1 - y) / (y1 - y0)) * SIZE]
+  }
+  const pick = (e: MouseEvent<SVGSVGElement>) => {
+    if (!onPick) return
+    const r = e.currentTarget.getBoundingClientRect()
+    const x = x0 + ((e.clientX - r.left) / r.width) * (x1 - x0)
+    const y = y1 - ((e.clientY - r.top) / r.height) * (y1 - y0)
+    onPick(...fromStereo(x, y))
   }
   const ring = (lat: number) => {
     const [x] = polarStereo(lat, 90)
@@ -39,7 +54,8 @@ export function SiteMap({
     <figure>
       <svg
         viewBox={`0 0 ${SIZE} ${SIZE}`}
-        className="block w-full rounded-sm"
+        className={`block w-full rounded-sm ${onPick ? 'cursor-crosshair' : ''}`}
+        onClick={pick}
         role="img"
         aria-label={`Map of the lunar south pole to about 83° south, with ${sites.length} sites. ${sel ? `Selected: ${sel.name}.` : ''}`}
       >
@@ -77,7 +93,7 @@ export function SiteMap({
           const [cx, cy] = px(s.lat, s.lon)
           const isSel = s.id === selected
           return (
-            <g key={s.id} onClick={() => onSelect(s.id)} className="cursor-pointer" aria-hidden="true">
+            <g key={s.id} onClick={() => !onPick && onSelect(s.id)} className={onPick ? '' : 'cursor-pointer'} aria-hidden="true">
               <title>{s.name}</title>
               <circle cx={cx} cy={cy} r={18} fill="transparent" />
               <circle
@@ -92,6 +108,16 @@ export function SiteMap({
             </g>
           )
         })}
+
+        {pin &&
+          (() => {
+            const [cx, cy] = px(pin.lat, pin.lon)
+            return (
+              <g aria-hidden="true">
+                <path d={`M${cx},${cy - 16}L${cx + 10},${cy}L${cx},${cy + 16}L${cx - 10},${cy}Z`} fill="var(--color-sun)" stroke="var(--color-sky)" strokeWidth={3} />
+              </g>
+            )
+          })()}
 
         {sel &&
           (() => {

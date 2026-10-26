@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, type KeyboardEvent, type PointerEvent } from 'react'
+import { DrivePanel } from '../components/DrivePanel.tsx'
 import { EarthGlyph, SunGlyph } from '../components/Glyphs.tsx'
 import { PrintPanel } from '../components/PrintPanel.tsx'
 import { SitePicker } from '../components/SitePicker.tsx'
@@ -582,6 +583,15 @@ export default function Globe3D({ data }: { data: AppData }) {
         Earth {earthUp ? 'in view' : 'hidden'}, azimuth {fmtDeg(b.earthAz)}, elevation {fmtDeg(b.earthEl, 2)}.
       </p>
       <TimeControls />
+      {ready && api.current && (
+        <DrivePanel
+          Cesium={api.current.mod.Cesium}
+          viewer={api.current.mv.viewer}
+          site={site}
+          patch={terrain.current?.siteId === site.id ? terrain.current.patch : null}
+          ephemeris={data.ephemeris}
+        />
+      )}
       <PrintPanel site={site} />
     </main>
   )

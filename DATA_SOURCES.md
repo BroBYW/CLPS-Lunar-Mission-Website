@@ -43,6 +43,10 @@ All of these maps are LOLA heights in metres above the 1737.4 km sphere, in a so
 
 **Mast horizons** (`pipeline/scripts/mast_horizons.py`, `web/public/data/horizons-mast.bin`): horizon masks for observers 2, 5, 10, 20, 30 and 50 m above each site, from the same LOLA tiers and ray casting as the 2 m and 10 m masks, stored as int16 hundredths of a degree (562 kB). Only the mast planner loads them.
 
+**Pin grid** (`pipeline/scripts/pin_dem.py`, `web/public/data/pin-dem.bin.gz`): heights on a 480 m grid to ±560 km from the pole, each the mean of 3 × 3 samples of the 80 m and 240 m maps, stored like the terrain patches in 2 m steps (4.6 MB). The browser casts a dropped pin's horizon from it.
+
+**Deep Space Network** (`pipeline/scripts/dsn.py`, `web/public/data/dsn.bin`): the Moon's elevation at the 70 m antennas of the three [DSN complexes](https://www.nasa.gov/communicating-with-missions/dsn/) (Goldstone 35.43°N 116.89°W, Madrid 40.43°N 4.25°W, Canberra 35.40°S 148.98°E), hourly on the ephemeris grid, from SPICE in the IAU_EARTH frame over the WGS84 ellipsoid, as whole degrees (184 kB).
+
 **Polar relief for the 3D globes** (`pipeline/scripts/basemap.py`, `web/public/data/polar-cap-south-w.webp` and `-e.webp`): a hillshade of the 80 m map from 80°S to the pole, in longitude and latitude, 8192 × 2048 pixels (about 150 m per pixel north–south) in a western and an eastern half. It replaces the Moon Trek mosaic, which streaks near the pole.
 
 Citations:
@@ -70,7 +74,8 @@ The list, with each site's source and its exact or approximate label, is in `pip
   - Polygons served by [Moon Trek](https://trek.nasa.gov/moon/trekarcgis2/rest/services/A3_Named_regions_SP/MapServer/0)
 - [LROC NAC region-of-interest mosaics](https://pds.lroc.im-ldi.com/data/LRO-L-LROC-5-RDR-V1.0/LROLRC_2001/DATA/BDR/NAC_ROI/): mosaic centers used as region anchors.
 - [IAU Gazetteer of Planetary Nomenclature](https://planetarynames.wr.usgs.gov/) (USGS): feature centers.
-- IM-2 Athena landing site: [LROC](https://lroc.im-ldi.com/images/1408).
+- IM-1 Odysseus landing site: 80.13°S, 1.44°E, from [NASA](https://www.nasa.gov/missions/lro/nasas-lro-images-intuitive-machines-odysseus-lander/) and [LROC](https://lroc.im-ldi.com/images/1360). It lies north of the 10 m map, so its nearest map is the 20 m one. Landing time 22 Feb 2024 23:23 UTC.
+- IM-2 Athena landing site: [LROC](https://lroc.im-ldi.com/images/1408). Landing about 17:32 UTC on 6 Mar 2025 and end of mission early on 7 Mar, from [SpacePolicyOnline](https://spacepolicyonline.com/news/im-2-mission-ends-one-day-after-lunar-landing/) and [Spaceflight Now](https://spaceflightnow.com/2025/03/07/intuitive-machines-im-2-mission-ends-with-lander-on-its-side-on-the-moon/).
 - VIPER mission area: *Planetary Science Journal*, [doi:10.3847/PSJ/ae061a](https://iopscience.iop.org/article/10.3847/PSJ/ae061a). Re-manifest on Blue Origin: [NASA](https://www.nasa.gov/news-release/nasa-selects-blue-origin-to-deliver-viper-rover-to-moons-south-pole/).
 - ESA Leibnitz β Plateau region of interest: [arXiv:1208.5587](https://arxiv.org/abs/1208.5587), Table 2.
 

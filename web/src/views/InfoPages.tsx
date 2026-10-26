@@ -80,9 +80,30 @@ export function AboutPage() {
             them.
           </li>
           <li>
+            <strong>Deep Space Network contact</strong> needs Earth above the site's skyline and the Moon at least 10° above the
+            horizon of one of NASA's three complexes (Goldstone, Madrid, Canberra). The Moon's elevation at each is computed
+            hourly with SPICE (Earth's IAU orientation, WGS84 ellipsoid) and interpolated.
+          </li>
+          <li>
+            <strong>Drop a pin</strong> casts a horizon in your browser for any point south of 82°S, from a 480 m grid of the
+            LOLA maps, with the same geometry as the site masks. Close terrain is smoothed at that scale: at the listed sites a
+            pin's sunlight is usually within 5 points of the 10 m result.
+          </li>
+          <li>
+            <strong>Past landings</strong> replay IM-1 Odysseus and IM-2 Athena at their published landing points and times.
+            The 10 m maps can't show a crater a few metres across or a tipped lander, so the numbers describe the ground
+            around them.
+          </li>
+          <li>
             <strong>Listen</strong> plays the skyline as sound, clockwise from north over 8 seconds. The pitch rises over two
             octaves from the lowest horizon to the highest, east sounds to the right, and chimes mark the Sun and Earth: bright
             when visible, low and muffled when hidden.
+          </li>
+          <li>
+            <strong>Rover drive</strong> moves a rover at a steady speed along the waypoints you click on the 3D terrain. Every
+            10 minutes it looks along the terrain toward the Sun and toward the Earth from its position, with a camera 2 m up.
+            At the sites themselves this agrees with the horizon masks 99.8% of the time. Farther out the terrain is coarser,
+            as in the 3D view.
           </li>
           <li>
             <strong>3D print</strong> files are the 3D view's terrain grids, every second point, as a watertight solid in
@@ -139,8 +160,8 @@ export function AboutPage() {
             region's footprint, not a chosen landing spot. NASA publishes footprints, not points.
           </li>
           <li>
-            <strong>Earth visibility is geometric.</strong> It doesn't check whether a Deep Space Network antenna on Earth
-            can see the Moon at that moment, or model antenna patterns and link budgets.
+            <strong>Earth contact is geometric.</strong> The Deep Space Network check knows where the dishes are, not their
+            schedules, other missions, antenna patterns or link budgets.
           </li>
           <li>
             <strong>Earth as a disk.</strong> Earth is a solid disk 6,378 km in radius. The faint red light its atmosphere
@@ -202,7 +223,15 @@ export function CreditsPage() {
             <a href="https://www.nasa.gov/news-release/nasa-provides-update-on-artemis-iii-moon-landing-regions/">NASA Artemis</a>{' '}
             candidate regions and their footprints (via Moon Trek), LROC NAC region mosaics and landing images, the{' '}
             <a href="https://planetarynames.wr.usgs.gov/">IAU Gazetteer of Planetary Nomenclature</a> (USGS), and the VIPER
-            mission-area paper (Planetary Science Journal).
+            mission-area paper (Planetary Science Journal). Landings: IM-1 Odysseus from{' '}
+            <a href="https://www.nasa.gov/missions/lro/nasas-lro-images-intuitive-machines-odysseus-lander/">NASA</a> and{' '}
+            <a href="https://lroc.im-ldi.com/images/1360">LROC</a>; IM-2 Athena from <a href="https://lroc.im-ldi.com/images/1408">LROC</a>,{' '}
+            <a href="https://spacepolicyonline.com/news/im-2-mission-ends-one-day-after-lunar-landing/">SpacePolicyOnline</a> and{' '}
+            <a href="https://spaceflightnow.com/2025/03/07/intuitive-machines-im-2-mission-ends-with-lander-on-its-side-on-the-moon/">Spaceflight Now</a>.
+          </li>
+          <li>
+            Deep Space Network complexes: positions of the 70 m antennas at Goldstone, Madrid and Canberra (
+            <a href="https://www.nasa.gov/communicating-with-missions/dsn/">NASA DSN</a>).
           </li>
           <li>
             Validation literature: Bussey et al. 2010, Mazarico et al. 2011, Speyerer and Robinson 2013, Gläser et al. 2014 and

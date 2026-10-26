@@ -1,8 +1,10 @@
 import { GROUP_LABELS, GROUP_ORDER } from '../data/groups.ts'
 import type { Site } from '../data/load.ts'
 import { fmtLatLon } from '../lib/format.ts'
+import { usePin } from '../state/pin.ts'
 
 export function SiteList({ sites, selected, onSelect }: { sites: Site[]; selected: string; onSelect: (id: string) => void }) {
+  const clearPin = usePin((s) => s.clear)
   return (
     <fieldset>
       <legend className="font-display text-lg font-medium">Sites</legend>
@@ -11,7 +13,14 @@ export function SiteList({ sites, selected, onSelect }: { sites: Site[]; selecte
         if (!items.length) return null
         return (
           <div key={g} className="mt-3">
-            <p className="text-xs text-dust">{GROUP_LABELS[g]}</p>
+            <p className="flex items-center justify-between text-xs text-dust">
+              {GROUP_LABELS[g]}
+              {g === 'pin' && (
+                <button type="button" onClick={clearPin} className="underline decoration-regolith underline-offset-2 hover:text-bright">
+                  Remove pin
+                </button>
+              )}
+            </p>
             <ul className="mt-1">
               {items.map((s) => (
                 <li key={s.id}>

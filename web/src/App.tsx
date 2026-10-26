@@ -19,6 +19,7 @@ import { computeMetrics } from './lib/metrics.ts'
 import { formatUtcDate } from './lib/time.ts'
 import { usePlayback } from './state/playback.ts'
 import { useApp, type View } from './state/store.ts'
+import { PIN_ID, pinSite, usePin } from './state/pin.ts'
 import { applyUrl, syncUrl } from './state/url.ts'
 import { useSiteScene } from './state/useSiteScene.ts'
 import Explore from './views/Explore.tsx'
@@ -56,6 +57,10 @@ export default function App() {
         applyUrl(window.location.search, d.sites.map((s) => s.id), d.horizons.heightsM)
         initWorker(d)
         setData(d)
+        // A shared link to a dropped pin: cast its horizon again
+        const q = new URLSearchParams(window.location.search)
+        const at = (q.get('pin') ?? '').split(',').map(Number)
+        if (q.get('site') === PIN_ID && at.length === 2 && at.every(Number.isFinite)) void usePin.getState().drop(at[0], at[1], d.horizons.heightsM)
       },
       (e: unknown) => setError(e instanceof Error ? e.message : String(e)),
     )
@@ -149,9 +154,11 @@ function Planner({ data }: { data: AppData }) {
   const darkThreshold = useApp((s) => s.darkThreshold)
   const earthMarginDeg = useApp((s) => s.earthMarginDeg)
 
-  const site = data.sites.find((s) => s.id === siteId) ?? data.sites[0]
+  const pin = usePin((s) => s.pin)
+  const site = useMemo(() => (siteId === PIN_ID && pin ? pinSite(pin) : (data.sites.find((s) => s.id === siteId) ?? data.sites[0])), [siteId, pin, data])
+  const pickable = useMemo(() => (pin ? [pinSite(pin), ...data.sites] : data.sites), [pin, data])
   const heightsM = data.horizons.heightsM
-  const { heightIndex, heightM, mask, track, bodies, sunFrac, earthVis } = useSiteScene(data, site)
+  const { heightIndex, heightM, mask, track, bodies, sunFrac, earthVis } = useSiteScene(data, site, site.mask_index < 0 ? pin?.masks : undefined)
   const { series, pending } = useSeries(seriesRequest(site, heightIndex, heightsM, startMs, endMs))
   const metrics = useMemo(() => (series ? computeMetrics(series, { darkThreshold, earthMarginDeg }) : null), [series, darkThreshold, earthMarginDeg])
 
@@ -166,12 +173,12 @@ function Planner({ data }: { data: AppData }) {
   return (
     <div className="grid gap-6 px-4 py-4 lg:grid-cols-[minmax(280px,340px)_minmax(0,1fr)] lg:px-6">
       <aside className="order-2 lg:order-1">
-        <SiteList sites={data.sites} selected={site.id} onSelect={setSite} />
+        <SiteList sites={pickable} selected={site.id} onSelect={setSite} />
         <SiteMapPanel data={data} selected={site.id} onSelect={setSite} />
       </aside>
       <main className="order-1 min-w-0 lg:order-2">
         {/* On phones the site list comes after everything else, so the site can be changed here too */}
-        <SitePicker label="Site" sites={data.sites} value={site.id} onChange={setSite} className="mb-4 lg:hidden" />
+        <SitePicker label="Site" sites={pickable} value={site.id} onChange={setSite} className="mb-4 lg:hidden" />
         <MissionReplays data={data} />
         <div className="flex flex-wrap items-start justify-between gap-4">
           <SiteHeader site={site} />

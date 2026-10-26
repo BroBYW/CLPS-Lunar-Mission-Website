@@ -5,6 +5,7 @@
 
 import { formatUtcDate, parseUtc } from '../lib/time.ts'
 import { DAY_MS } from '../lib/time.ts'
+import { PIN_ID, usePin } from './pin.ts'
 import { MAX_MS, MIN_MS, useApp, type View } from './store.ts'
 
 function isoMinute(ms: number): string {
@@ -49,6 +50,8 @@ export function buildQuery(heightsM: number[]): string {
   const q = new URLSearchParams()
   if (s.view !== 'plan') q.set('view', s.view)
   q.set('site', s.siteId)
+  const pin = usePin.getState().pin
+  if (s.siteId === PIN_ID && pin) q.set('pin', `${pin.lat.toFixed(4)},${pin.lon.toFixed(4)}`)
   if (s.view === 'compare') q.set('cmp', s.compareIds.join(','))
   q.set('from', formatUtcDate(s.startMs))
   q.set('to', formatUtcDate(s.endMs - DAY_MS))

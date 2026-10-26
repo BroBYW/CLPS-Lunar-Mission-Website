@@ -5,6 +5,7 @@ export const GROUP_LABELS: Record<SiteGroup, string> = {
   illumination: 'High-illumination points',
   clps: 'CLPS landing sites',
   contrast: 'Permanent shadow',
+  pin: 'Dropped pin',
 }
 
-export const GROUP_ORDER: SiteGroup[] = ['illumination', 'artemis', 'clps', 'contrast']
+export const GROUP_ORDER: SiteGroup[] = ['pin', 'illumination', 'artemis', 'clps', 'contrast']

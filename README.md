@@ -19,10 +19,10 @@ Tools that give the Sun's and Earth's positions exist, but they are hard to use 
 | View | What you get |
 |---|---|
 | **Home** | A live 3D Moon lit by the Sun as it is right now. "Let's start" flies you down to the south pole. |
-| **Plan** | Pick one of 13 cited sites on a list or a polar map. The horizon panorama shows the terrain skyline with the Sun's and Earth's paths over your dates and their true-size disks at the chosen moment; press **Listen** to hear the skyline as a sound sweep. Time controls are in UTC. Below it: metrics, a sunlit / Earth / both timeline, overlap windows as CSV, a power and battery calculator, and a **mast planner** that shows how much a 2–50 m mast adds. |
+| **Plan** | Pick one of 14 cited sites on a list or a polar map, or **drop a pin** anywhere south of 82°S for a rough horizon there. **Replay a real landing**: IM-1 Odysseus (2024) and IM-2 Athena (2025) at their real sites and times. The horizon panorama shows the terrain skyline with the Sun's and Earth's paths over your dates and their true-size disks at the chosen moment; press **Listen** to hear the skyline as a sound sweep. Time controls are in UTC, 2024–2030. Below it: metrics, a sunlit / Earth / both timeline, **Deep Space Network contact** (when a dish on Earth can see the Moon too), overlap windows as CSV, a power and battery calculator, and a **mast planner** that shows how much a 2–50 m mast adds. |
 | **Compare** | Two or three sites side by side, with the best value in each row marked and the timelines aligned. |
 | **Find dates** | Every site and every start date in a year, scored for a 3- to 28-day mission. Set limits for sunlight, darkness and Earth contact; a heatmap shows which windows meet them and a table lists the best. |
-| **3D** | Fly to any site to see the LOLA terrain around it (7.5 m detail near the site, out to 300 km), lit by the Sun at the chosen time with shadows cast by the terrain itself. Then stand on it: the Sun, and a textured Earth lit and turned for that moment, sit over the computed skyline. Download the terrain as a **3D-print file** (STL). |
+| **3D** | Fly to any site to see the LOLA terrain around it (7.5 m detail near the site, out to 300 km), lit by the Sun at the chosen time with shadows cast by the terrain itself. Then stand on it: the Sun, and a textured Earth lit and turned for that moment, sit over the computed skyline. Plan a **rover drive** by clicking waypoints and see where it keeps the Sun and Earth, and download the terrain as a **3D-print file** (STL). |
 | **Explore** | A six-step story for classrooms, from the low Sun to libration, ending with a landing-site challenge. It works on phones. |
 | **Method, Credits** | How it works, its limitations, and every data source. |
 
@@ -88,7 +88,7 @@ Python pipeline (run once)                          Static web app (Vercel, no b
   JPL Horizons API ◄──── validation                                              CesiumJS (lazy) for 3D
 ```
 
-- **Ephemeris:** SPICE `spkpos` with light-time and stellar aberration corrections, in the lunar mean-Earth/polar-axis frame (MOON_ME, the frame LOLA uses), DE440, hourly from 2026 to 2031.
+- **Ephemeris:** SPICE `spkpos` with light-time and stellar aberration corrections, in the lunar mean-Earth/polar-axis frame (MOON_ME, the frame LOLA uses), DE440, hourly from 2024 to 2031.
 - **Horizons:** rays every 0.1° of azimuth out to 300 km, using exact spherical geometry, from 2 m and 10 m observers. They use NASA Goddard's LOLA maps (Barker et al. 2023): 10 m near each site, 20, 80 and 240 m farther out.
 - **In the browser:** the app interpolates the vectors, subtracts the site position and rotates into local east-north-up. It then computes the visible share of each disk against the horizon, in a Web Worker. Five years at 10-minute steps take about 0.1 s.
 
@@ -106,7 +106,7 @@ Full details and reproduction steps are in [VALIDATION.md](VALIDATION.md).
 | 3 Mar 2026 total lunar eclipse | darkness timings fit NASA's contact times |
 | Accessibility (axe-core, WCAG 2.1 AA) | 0 violations on every view |
 | Performance | first load about 1 s on broadband; 60+ fps playback |
-| 3D terrain sunlight vs the horizon masks, 13 sites × 28 days | agree 99.8% of the time |
+| 3D terrain sunlight vs the horizon masks, 14 sites × 28 days | agree 99.8% of the time |
 
 ## Run it locally
 
@@ -165,7 +165,7 @@ In short:
 - Region points are approximate: NASA publishes region footprints, not points.
 - Earth visibility is geometric and ignores Deep Space Network coverage and link budgets.
 - The power model ignores dust and temperature.
-- Dates are limited to 2026–2030.
+- Dates are limited to 2024–2030.
 
 See the in-app **Method** page and [VALIDATION.md](VALIDATION.md) for the full list.
 

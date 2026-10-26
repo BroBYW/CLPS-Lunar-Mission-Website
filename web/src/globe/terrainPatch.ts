@@ -5,6 +5,7 @@
  * per mesh.
  */
 
+import { gunzip } from '../lib/gunzip.ts'
 import { decodeGrid, gridNormals, gridPositions, stereoToMoonFixed, type GridSpec, type Patch } from '../lib/terrain.ts'
 import { Cesium } from './moonViewer.ts'
 
@@ -17,14 +18,6 @@ interface PatchIndex {
 const base = `${import.meta.env.BASE_URL}data/terrain/`
 let indexPromise: Promise<PatchIndex> | null = null
 const cache = new Map<string, Promise<Patch>>()
-
-/** Some servers send .gz files with Content-Encoding: gzip (the browser has then unpacked them), others don't. */
-async function gunzip(res: Response): Promise<ArrayBuffer> {
-  const buf = await res.arrayBuffer()
-  const b = new Uint8Array(buf, 0, 2)
-  if (b[0] !== 0x1f || b[1] !== 0x8b) return buf
-  return new Response(new Blob([buf]).stream().pipeThrough(new DecompressionStream('gzip'))).arrayBuffer()
-}
 
 export function loadPatch(siteId: string): Promise<Patch> {
   const hit = cache.get(siteId)
