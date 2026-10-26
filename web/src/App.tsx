@@ -1,5 +1,6 @@
 import { lazy, Suspense, useEffect, useMemo, useState } from 'react'
 import { CompareView } from './components/CompareView.tsx'
+import { MastPanel } from './components/MastPanel.tsx'
 import { MetricsPanel } from './components/MetricsPanel.tsx'
 import { Panorama } from './components/Panorama.tsx'
 import { PowerPanel } from './components/PowerPanel.tsx'
@@ -19,13 +20,16 @@ import { useApp, type View } from './state/store.ts'
 import { applyUrl, syncUrl } from './state/url.ts'
 import { useSiteScene } from './state/useSiteScene.ts'
 import Explore from './views/Explore.tsx'
+import Finder from './views/Finder.tsx'
 import { AboutPage, CreditsPage } from './views/InfoPages.tsx'
 import { Home, Logo } from './views/Home.tsx'
 import { initWorker, seriesRequest, useSeries } from './workers/client.ts'
 
-const VIEWS: [View, string][] = [
+/** View, label, and a shorter label for phones where it differs. */
+const VIEWS: [View, string, string?][] = [
   ['plan', 'Plan'],
   ['compare', 'Compare'],
+  ['finder', 'Find dates', 'Dates'],
   ['3d', '3D'],
   ['explore', 'Explore'],
   ['about', 'Method'],
@@ -72,15 +76,23 @@ export default function App() {
           <p className="text-sm text-dust max-md:hidden">Sunlight and Earth visibility at lunar south pole sites, 2026–2030</p>
         </div>
         <nav aria-label="Views" className="-mx-1 ml-auto flex gap-1 max-sm:w-full max-sm:justify-between">
-          {VIEWS.map(([v, label]) => (
+          {VIEWS.map(([v, label, short]) => (
             <button
               key={v}
               type="button"
               aria-current={view === v ? 'page' : undefined}
+              aria-label={short ? label : undefined}
               onClick={() => setView(v)}
-              className={`rounded-sm px-3 py-1 text-sm ${SECONDARY.includes(v) ? 'max-sm:hidden' : ''} ${view === v ? 'bg-shadow-2 text-bright' : 'text-dust hover:text-bright'}`}
+              className={`rounded-sm px-3 py-1 text-sm max-sm:px-2 ${SECONDARY.includes(v) ? 'max-sm:hidden' : ''} ${view === v ? 'bg-shadow-2 text-bright' : 'text-dust hover:text-bright'}`}
             >
-              {label}
+              {short ? (
+                <>
+                  <span className="max-sm:hidden">{label}</span>
+                  <span className="sm:hidden">{short}</span>
+                </>
+              ) : (
+                label
+              )}
             </button>
           ))}
         </nav>
@@ -95,6 +107,8 @@ export default function App() {
         </p>
       ) : view === 'compare' ? (
         <CompareView data={data} />
+      ) : view === 'finder' ? (
+        <Finder data={data} />
       ) : view === 'about' ? (
         <AboutPage />
       ) : view === 'credits' ? (
@@ -191,6 +205,7 @@ function Planner({ data }: { data: AppData }) {
           <WindowsTable windows={metrics?.windows ?? []} onDownload={download} />
           <PowerPanel series={series} metrics={metrics} />
         </div>
+        <MastPanel site={site} />
       </main>
     </div>
   )

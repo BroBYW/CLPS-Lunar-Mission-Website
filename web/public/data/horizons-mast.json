@@ -1,0 +1,32 @@
+{
+  "description": "Terrain horizon elevation per site, observer height and azimuth bin, for the mast planner",
+  "format": "int16 little-endian hundredths of a degree, [site][height][azimuth]",
+  "unit_deg": 0.01,
+  "az_step_deg": 0.1,
+  "az_count": 3600,
+  "heights_m": [
+    2.0,
+    5.0,
+    10.0,
+    20.0,
+    30.0,
+    50.0
+  ],
+  "sites": [
+    "peak-near-cabeus-b",
+    "haworth",
+    "malapert-massif",
+    "mons-mouton-plateau",
+    "mons-mouton",
+    "nobile-rim-1",
+    "nobile-rim-2",
+    "de-gerlache-rim-2",
+    "connecting-ridge",
+    "shackleton-rim",
+    "im2-athena",
+    "viper",
+    "shackleton-floor"
+  ],
+  "ray_length_km": 300.0,
+  "generated_utc": "2026-10-26T15:17:59Z"
+}

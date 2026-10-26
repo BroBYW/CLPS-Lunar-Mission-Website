@@ -1,8 +1,9 @@
 import * as Comlink from 'comlink'
 import { useEffect, useRef, useState } from 'react'
-import type { AppData, Site } from '../data/load.ts'
+import type { AppData, MastHorizons, Site } from '../data/load.ts'
+import type { WindowScores } from '../lib/finder.ts'
 import { STEP_MS } from '../state/store.ts'
-import type { MetricsWorkerApi, SeriesRequest, TimedSeries } from './metrics.worker.ts'
+import type { MetricsWorkerApi, ScanRequest, SeriesRequest, TimedSeries } from './metrics.worker.ts'
 
 let remote: Comlink.Remote<MetricsWorkerApi> | null = null
 let ready: Promise<void> | null = null
@@ -17,6 +18,19 @@ export function initWorker(data: AppData): void {
   ready = remote.init(Comlink.transfer(eph, [eph]), data.ephemerisMeta, Comlink.transfer(hz, [hz]), data.horizonsMeta)
 }
 
+let mastReady: Promise<void> | null = null
+
+/** Hands the mast planner's masks to the worker, once. */
+export function initMastWorker(m: MastHorizons): Promise<void> {
+  if (!remote || !ready) return Promise.reject(new Error('worker not started'))
+  const r = remote
+  mastReady ??= ready.then(() => {
+    const buf = m.set.data.slice().buffer
+    return r.initMast(Comlink.transfer(buf, [buf]), m.meta)
+  })
+  return mastReady
+}
+
 const cache = new Map<string, Promise<TimedSeries>>()
 const CACHE_SIZE = 16
 
@@ -28,13 +42,21 @@ export function requestSeries(req: SeriesRequest): Promise<TimedSeries> {
     cache.set(key, hit)
     return hit
   }
-  if (!remote || !ready) return Promise.reject(new Error('worker not started'))
+  const wait = req.maskSet === 'mast' ? mastReady : ready
+  if (!remote || !wait) return Promise.reject(new Error('worker not started'))
   const r = remote
-  const p = ready.then(() => r.series(req))
+  const p = wait.then(() => r.series(req))
   cache.set(key, p)
   if (cache.size > CACHE_SIZE) cache.delete(cache.keys().next().value!)
   p.catch(() => cache.delete(key))
   return p
+}
+
+/** Window finder scores for every site (lib/finder.ts), computed in the worker. */
+export function requestScan(req: ScanRequest): Promise<WindowScores[]> {
+  if (!remote || !ready) return Promise.reject(new Error('worker not started'))
+  const r = remote
+  return ready.then(() => r.scan(req))
 }
 
 export function seriesRequest(site: Site, heightIndex: number, heightsM: number[], startMs: number, endMs: number): SeriesRequest {

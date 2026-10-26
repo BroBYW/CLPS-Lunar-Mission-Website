@@ -79,3 +79,25 @@ export function loadAppData(): Promise<AppData> {
   cache ??= load()
   return cache
 }
+
+/** Horizon masks for observers from 2 m to 50 m (scripts/mast_horizons.py), for the mast planner only. */
+export interface MastHorizons {
+  heightsM: number[]
+  set: HorizonSet
+  meta: HorizonMeta
+}
+
+let mastCache: Promise<MastHorizons> | null = null
+
+export function loadMastHorizons(): Promise<MastHorizons> {
+  mastCache ??= (async () => {
+    const [meta, bin] = await Promise.all([getJson<HorizonMeta & { unit_deg: number }>('horizons-mast.json'), getBinary('horizons-mast.bin')])
+    // Stored as int16 hundredths of a degree
+    const q = new Int16Array(bin)
+    const deg = new Float32Array(q.length)
+    for (let i = 0; i < q.length; i++) deg[i] = q[i] * meta.unit_deg
+    return { heightsM: meta.heights_m, set: new HorizonSet(deg.buffer, meta), meta }
+  })()
+  mastCache.catch(() => (mastCache = null))
+  return mastCache
+}
