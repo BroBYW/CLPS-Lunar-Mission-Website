@@ -6,7 +6,7 @@ import type { AppData, Site } from '../data/load.ts'
 import { maskExtremes } from '../lib/horizon.ts'
 import { computeMetrics, type Metrics } from '../lib/metrics.ts'
 import { DAY_MS, formatUtc } from '../lib/time.ts'
-import { MAX_MS, MIN_MS, useApp } from '../state/store.ts'
+import { AHEAD_MS, MAX_MS, useApp } from '../state/store.ts'
 import { useSiteScene } from '../state/useSiteScene.ts'
 import { seriesRequest, useManySeries } from '../workers/client.ts'
 
@@ -70,7 +70,7 @@ function PlayMonth() {
 
 function Body({ step, data, onSite }: { step: number; data: AppData; onSite: (id: string) => void }) {
   const siteId = useApp((s) => s.siteId)
-  const full = useMetricsFor(data, ['connecting-ridge', 'shackleton-floor', 'malapert-massif'], MIN_MS, MAX_MS)
+  const full = useMetricsFor(data, ['connecting-ridge', 'shackleton-floor', 'malapert-massif'], AHEAD_MS, MAX_MS)
   const [ridge, floor, malapert] = full
   const walls = maskExtremes(data.horizons.mask(data.sites.find((s) => s.id === 'shackleton-floor')!.mask_index, 0))
 

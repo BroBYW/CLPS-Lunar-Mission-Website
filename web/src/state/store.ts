@@ -2,9 +2,11 @@ import { create } from 'zustand'
 import type { PowerInputs } from '../lib/battery.ts'
 import { DAY_MS, HOUR_MS, MINUTE_MS } from '../lib/time.ts'
 
-/** The UI covers 2026-01-01 00:00 UTC to 2031-01-01 00:00 UTC (the ephemeris span). */
-export const MIN_MS = Date.UTC(2026, 0, 1)
+/** The UI covers 2024-01-01 00:00 UTC (for past landings) to 2031-01-01 00:00 UTC, the ephemeris span. */
+export const MIN_MS = Date.UTC(2024, 0, 1)
 export const MAX_MS = Date.UTC(2031, 0, 1)
+/** Start of the years ahead, 2026–2030, that the Explore story's numbers cover */
+export const AHEAD_MS = Date.UTC(2026, 0, 1)
 export const STEP_MS = 10 * MINUTE_MS
 export const SPEEDS_HPS = [1, 6, 24, 72] as const
 export const DEFAULT_SITE = 'connecting-ridge'

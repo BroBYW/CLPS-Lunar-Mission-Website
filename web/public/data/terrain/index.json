@@ -46,7 +46,7 @@
   }
  ],
  "proj": "+proj=stere +lat_0=-90 +lat_ts=-90 +lon_0=0 +R=1737400 +units=m",
- "generated_utc": "2026-10-26T13:57:00Z",
+ "generated_utc": "2026-10-26T15:40:50Z",
  "sites": {
   "peak-near-cabeus-b": {
    "file": "peak-near-cabeus-b.bin.gz",
@@ -127,6 +127,14 @@
     -9078.85
    ],
    "base_m": 1730.0
+  },
+  "im1-odysseus": {
+   "file": "im1-odysseus.bin.gz",
+   "center_m": [
+    7539.88,
+    299939.04
+   ],
+   "base_m": 2592.0
   },
   "im2-athena": {
    "file": "im2-athena.bin.gz",

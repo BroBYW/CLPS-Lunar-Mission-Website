@@ -25,7 +25,7 @@ export function AboutPage() {
         <h3>Sun and Earth positions</h3>
         <p>
           NASA JPL's SPICE toolkit (through SpiceyPy) gives the apparent positions of the Sun and Earth seen from the Moon's
-          center, every hour from 2026 to 2031. They are corrected for light travel time and stellar aberration and expressed
+          center, every hour from 2024 to 2031. They are corrected for light travel time and stellar aberration and expressed
           in the lunar mean-Earth/polar-axis frame (MOON_ME) that LOLA topography uses, with the DE440 ephemeris. The browser
           interpolates between hours and subtracts the site's position, then converts to azimuth and elevation in the local
           east-north-up frame.
@@ -147,7 +147,7 @@ export function AboutPage() {
             bends into the shadow during eclipses is ignored.
           </li>
           <li>
-            <strong>Dates.</strong> Dates run from 2026 to 2030. Times are UTC; leap seconds after mid-2027 are assumed not to
+            <strong>Dates.</strong> Dates run from 2024 to 2030. Times are UTC; leap seconds after mid-2027 are assumed not to
             occur.
           </li>
           <li>

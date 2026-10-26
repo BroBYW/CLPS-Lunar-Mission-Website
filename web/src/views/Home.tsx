@@ -105,7 +105,7 @@ export function Home({ data }: { data: AppData | null }) {
         </h1>
         <p className="rise mt-4 max-w-[400px] text-[15px] leading-relaxed text-dust" style={{ animationDelay: '0.42s' }}>
           Compare lunar south pole landing sites by how much sunlight they get and how often they can see Earth, for
-          any dates from 2026 to 2030.
+          any dates from 2024 to 2030.
         </p>
         <div className="rise mt-8 flex items-center gap-3.5" style={{ animationDelay: '0.58s' }}>
           <button

@@ -1,4 +1,4 @@
-"""Write web/public/data/ephemeris.bin (+ .json): hourly Sun and Earth vectors seen from the Moon, 2026-2030."""
+"""Write web/public/data/ephemeris.bin (+ .json): hourly Sun and Earth vectors seen from the Moon, 2024-2030."""
 
 import datetime as dt
 import json

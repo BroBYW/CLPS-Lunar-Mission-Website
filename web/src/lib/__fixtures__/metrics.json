@@ -1,5 +1,5 @@
 {
- "generated_utc": "2026-09-30T01:06:52Z",
+ "generated_utc": "2026-10-26T15:41:39Z",
  "description": "P0 metrics (threshold 0, margin 0) over 2027-01-01T00:00:00..2027-04-01T00:00:00 UTC at 10 min.",
  "cases": [
   {
@@ -10,7 +10,7 @@
    "step_ms": 600000,
    "samples": 12960,
    "metrics": {
-    "sun_mean_pct": 91.82000316733806,
+    "sun_mean_pct": 91.82000316733804,
     "sun_any_pct": 95.51697530864197,
     "sun_full_pct": 87.2145061728395,
     "longest_dark_h": 73.5,

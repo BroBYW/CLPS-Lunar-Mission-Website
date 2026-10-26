@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-09-30T00:57:57Z",
+  "generated_utc": "2026-10-26T15:37:05Z",
   "sites": [
     {
       "id": "peak-near-cabeus-b",
@@ -327,6 +327,25 @@
       "mask_index": 9
     },
     {
+      "id": "im1-odysseus",
+      "name": "IM-1 Odysseus landing site",
+      "group": "clps",
+      "lat": -80.13,
+      "lon": 1.44,
+      "kind": "exact",
+      "point": "Where Intuitive Machines' Odysseus lander came to rest on 22 Feb 2024",
+      "source": "NASA LRO image release, Feb 2024; LROC image release 1360",
+      "url": "https://www.nasa.gov/missions/lro/nasas-lro-images-intuitive-machines-odysseus-lander/",
+      "notes": "Odysseus landed tilted in a degraded 1 km crater near Malapert A, on a local slope of about 12°, and worked for about a week. North of 83°S, so its nearest map is the 20 m one.",
+      "anchor": {
+        "lat": -80.13,
+        "lon": 1.44
+      },
+      "height_m": 2592.0,
+      "dem_10m_radius_km": 4.1,
+      "mask_index": 10
+    },
+    {
       "id": "im2-athena",
       "name": "IM-2 Athena landing site",
       "group": "clps",
@@ -343,7 +362,7 @@
       },
       "height_m": 5321.7,
       "dem_10m_radius_km": 24.3,
-      "mask_index": 10
+      "mask_index": 11
     },
     {
       "id": "viper",
@@ -362,7 +381,7 @@
       },
       "height_m": 6417.6,
       "dem_10m_radius_km": 20.0,
-      "mask_index": 11
+      "mask_index": 12
     },
     {
       "id": "shackleton-floor",
@@ -381,7 +400,7 @@
       },
       "height_m": -2872.3,
       "dem_10m_radius_km": 20.0,
-      "mask_index": 12
+      "mask_index": 13
     }
   ]
 }

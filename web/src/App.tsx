@@ -1,6 +1,8 @@
 import { lazy, Suspense, useEffect, useMemo, useState } from 'react'
 import { CompareView } from './components/CompareView.tsx'
+import { DsnPanel } from './components/DsnPanel.tsx'
 import { MastPanel } from './components/MastPanel.tsx'
+import { MissionReplays } from './components/MissionReplays.tsx'
 import { MetricsPanel } from './components/MetricsPanel.tsx'
 import { Panorama } from './components/Panorama.tsx'
 import { PowerPanel } from './components/PowerPanel.tsx'
@@ -73,7 +75,7 @@ export default function App() {
               CLPS Lunar Mission Browser
             </button>
           </h1>
-          <p className="text-sm text-dust max-md:hidden">Sunlight and Earth visibility at lunar south pole sites, 2026–2030</p>
+          <p className="text-sm text-dust max-md:hidden">Sunlight and Earth visibility at lunar south pole sites, 2024–2030</p>
         </div>
         <nav aria-label="Views" className="-mx-1 ml-auto flex gap-1 max-sm:w-full max-sm:justify-between">
           {VIEWS.map(([v, label, short]) => (
@@ -170,6 +172,7 @@ function Planner({ data }: { data: AppData }) {
       <main className="order-1 min-w-0 lg:order-2">
         {/* On phones the site list comes after everything else, so the site can be changed here too */}
         <SitePicker label="Site" sites={data.sites} value={site.id} onChange={setSite} className="mb-4 lg:hidden" />
+        <MissionReplays data={data} />
         <div className="flex flex-wrap items-start justify-between gap-4">
           <SiteHeader site={site} />
           <fieldset className="flex items-center gap-1 text-sm">
@@ -201,6 +204,7 @@ function Planner({ data }: { data: AppData }) {
           )}
         </section>
         <MetricsPanel metrics={metrics} pending={pending} />
+        <DsnPanel series={series} />
         <div className="mt-8 grid gap-8 xl:grid-cols-2">
           <WindowsTable windows={metrics?.windows ?? []} onDownload={download} />
           <PowerPanel series={series} metrics={metrics} />

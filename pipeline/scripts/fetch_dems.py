@@ -35,7 +35,10 @@ def missing_windows(manifest: dict) -> dict[str, list[tuple[float, float, float,
         new = []
         for _, lat, lon in all_points():
             x, y = (float(v) for v in polar_stereo(np.array(lat), np.array(lon)))
-            if not any(box_inside(required_box(tier, x, y), b) for b in have):
+            need = required_box(tier, x, y)
+            if need[2] <= need[0] or need[3] <= need[1]:
+                continue  # the point lies outside this tier's map (e.g. north of 83 S for the 10 m one)
+            if not any(box_inside(need, b) for b in have):
                 new.append(snap_box((x - half, y - half, x + half, y + half), res, COG_LIMITS[tier]))
         out[tier] = [snap_box(b, res, COG_LIMITS[tier]) for b in merge_boxes(new)]
     return out

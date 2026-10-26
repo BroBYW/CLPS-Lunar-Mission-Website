@@ -9,7 +9,7 @@ import spiceypy as sp
 
 from .paths import WEB_DATA_DIR
 
-START_UTC = "2026-01-01T00:00:00"
+START_UTC = "2024-01-01T00:00:00"
 END_UTC = "2031-01-01T00:00:00"
 STEP_S = 3600
 FRAME, ABCORR, OBSERVER = "MOON_ME", "LT+S", "MOON"

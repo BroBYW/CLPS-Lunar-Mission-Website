@@ -1,0 +1,31 @@
+{
+  "description": "Elevation of the Moon's centre at each Deep Space Network complex, hourly on the UTC grid",
+  "format": "int8 whole degrees, row-major (count x complexes)",
+  "complexes": [
+    {
+      "name": "Goldstone",
+      "lat": 35.4259,
+      "lon": -116.8895,
+      "alt_km": 1.0
+    },
+    {
+      "name": "Madrid",
+      "lat": 40.4313,
+      "lon": -4.2481,
+      "alt_km": 0.86
+    },
+    {
+      "name": "Canberra",
+      "lat": -35.4024,
+      "lon": 148.9813,
+      "alt_km": 0.69
+    }
+  ],
+  "limit_deg": 10,
+  "t0_utc": "2024-01-01T00:00:00Z",
+  "t_end_utc": "2031-01-01T00:00:00Z",
+  "step_s": 3600,
+  "count": 61369,
+  "frame": "IAU_EARTH, WGS84 geodetic horizon",
+  "generated_utc": "2026-10-26T15:36:43Z"
+}

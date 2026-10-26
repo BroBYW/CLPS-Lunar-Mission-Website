@@ -25,9 +25,9 @@ describe('ephemeris + az/el vs Python (SPICE at exact epochs)', () => {
   const eph = loadEphemeris()
   const out = new Float64Array(6)
 
-  it('covers 2026-01-01 to 2031-01-01 hourly', () => {
-    expect(eph.count).toBe(43_825)
-    expect(new Date(eph.startMs).toISOString()).toBe('2026-01-01T00:00:00.000Z')
+  it('covers 2024-01-01 to 2031-01-01 hourly', () => {
+    expect(eph.count).toBe(61_369)
+    expect(new Date(eph.startMs).toISOString()).toBe('2024-01-01T00:00:00.000Z')
     expect(new Date(eph.endMs).toISOString()).toBe('2031-01-01T00:00:00.000Z')
   })
 

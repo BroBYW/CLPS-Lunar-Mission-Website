@@ -1,4 +1,5 @@
 import { Ephemeris, type EphemerisMeta } from '../lib/astro.ts'
+import type { Dsn } from '../lib/dsn.ts'
 import { HorizonSet, type HorizonMeta } from '../lib/horizon.ts'
 
 export type SiteGroup = 'artemis' | 'illumination' | 'clps' | 'contrast'
@@ -78,6 +79,21 @@ let cache: Promise<AppData> | null = null
 export function loadAppData(): Promise<AppData> {
   cache ??= load()
   return cache
+}
+
+let dsnCache: Promise<Dsn> | null = null
+
+/** Moon elevation at the three Deep Space Network complexes (scripts/dsn.py), for the contact planner. */
+export function loadDsn(): Promise<Dsn> {
+  dsnCache ??= (async () => {
+    const [meta, bin] = await Promise.all([
+      getJson<{ complexes: { name: string }[]; limit_deg: number; t0_utc: string; step_s: number; count: number }>('dsn.json'),
+      getBinary('dsn.bin'),
+    ])
+    return { names: meta.complexes.map((c) => c.name), limitDeg: meta.limit_deg, t0Ms: Date.parse(meta.t0_utc), stepMs: meta.step_s * 1000, count: meta.count, el: new Int8Array(bin) }
+  })()
+  dsnCache.catch(() => (dsnCache = null))
+  return dsnCache
 }
 
 /** Horizon masks for observers from 2 m to 50 m (scripts/mast_horizons.py), for the mast planner only. */

@@ -13,10 +13,10 @@
   "frame": "MOON_ME",
   "abcorr": "LT+S",
   "observer": "MOON",
-  "t0_utc": "2026-01-01T00:00:00Z",
+  "t0_utc": "2024-01-01T00:00:00Z",
   "t_end_utc": "2031-01-01T00:00:00Z",
   "step_s": 3600,
-  "count": 43825,
+  "count": 61369,
   "kernels": [
     "naif0012.tls",
     "pck00011.tpc",
@@ -25,5 +25,5 @@
     "moon_de440_250416.tf"
   ],
   "toolkit": "CSPICE_N0067",
-  "generated_utc": "2026-09-29T08:33:32Z"
+  "generated_utc": "2026-10-26T15:35:28Z"
 }
