@@ -41,6 +41,8 @@ All of these maps are LOLA heights in metres above the 1737.4 km sphere, in a so
 
 **Derived terrain for the 3D views** (`pipeline/scripts/terrain_patches.py`, `web/public/data/terrain/`): for each site, six 401 × 401 height grids centred on it, sampled from the same tiers as the horizon masks. They are 7.5 m spacing to ±1.5 km and 30 m to ±6 km (point samples), 120 m to ±24 km and 240 m to ±48 km (mean of 3 × 3 samples per node), and 600 m to ±120 km and 1.5 km to ±300 km (mean of 5 × 5). About 790 kB per site, 10.3 MB in all. They are cropped, downsampled grids, not the raw maps.
 
+**Mast horizons** (`pipeline/scripts/mast_horizons.py`, `web/public/data/horizons-mast.bin`): horizon masks for observers 2, 5, 10, 20, 30 and 50 m above each site, from the same LOLA tiers and ray casting as the 2 m and 10 m masks, stored as int16 hundredths of a degree (562 kB). Only the mast planner loads them.
+
 **Polar relief for the 3D globes** (`pipeline/scripts/basemap.py`, `web/public/data/polar-cap-south-w.webp` and `-e.webp`): a hillshade of the 80 m map from 80°S to the pole, in longitude and latitude, 8192 × 2048 pixels (about 150 m per pixel north–south) in a western and an eastern half. It replaces the Moon Trek mosaic, which streaks near the pole.
 
 Citations:

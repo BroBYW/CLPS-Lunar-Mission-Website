@@ -66,6 +66,31 @@ export function AboutPage() {
         </ul>
       </section>
       <section>
+        <h3>Planning tools</h3>
+        <ul>
+          <li>
+            <strong>Find dates</strong> scores a mission starting on every day of a year at every site, with the definitions
+            above but from hourly samples, so its numbers can differ slightly from the Plan view's 10-minute ones. A window
+            meets your limits when its sunlight and Earth-in-view shares are high enough and its longest darkness short
+            enough.
+          </li>
+          <li>
+            <strong>Mast height</strong> uses horizon masks computed the same way for observers 2, 5, 10, 20, 30 and 50 m above
+            the ground, stored to 0.01°. The height needed for a sunlight target is interpolated in a straight line between
+            them.
+          </li>
+          <li>
+            <strong>Listen</strong> plays the skyline as sound, clockwise from north over 8 seconds. The pitch rises over two
+            octaves from the lowest horizon to the highest, east sounds to the right, and chimes mark the Sun and Earth: bright
+            when visible, low and muffled when hidden.
+          </li>
+          <li>
+            <strong>3D print</strong> files are the 3D view's terrain grids, every second point, as a watertight solid in
+            millimetres. Heights are measured from the reference sphere, so the Moon's curvature is taken out.
+          </li>
+        </ul>
+      </section>
+      <section>
         <h3>The 3D views</h3>
         <p>
           Around each site, the 3D view draws LOLA terrain from six nested grids: 7.5 m spacing to 1.5 km (from the 10 m

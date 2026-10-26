@@ -11,7 +11,8 @@ This file records how we checked the numbers the app shows. Each section says wh
 | 5. Eclipse | Sunlight drops during the 3 Mar 2026 total lunar eclipse | Timings fall inside NASA's contact windows at 3 sites | Pass |
 | 6. Performance | < 500 ms per site-range; first load < 3 s; 60 fps | 5 years in 104–148 ms; first load about 1 s; 142 fps playback | Pass |
 | 7. Accessibility | WCAG 2.1 AA | axe-core: 0 violations on every view | Pass |
-| 8. 3D terrain sunlight | Matches the horizon masks | Synthetic shadows exact; agrees with the masks 99.8% of the time, sunlight within 2.4 points at every site | Pass |
+| 8. 3D terrain sunlight | Matches the horizon masks | Synthetic shadows exact; agrees with the masks 99.8% of the time, sunlight within 1.4 points at every site | Pass |
+| 9. Planning tools | Same numbers as the Plan view | Window finder equals the metrics on every window; mast masks match the Plan view's at 2 m; 3D-print files are watertight | Pass |
 
 ## 1. Browser vs Python
 
@@ -212,10 +213,11 @@ Both are under the 3 s target. Cesium never loads for the Plan, Compare or Explo
 
 Checked with [axe-core](https://github.com/dequelabs/axe-core) 4.13 against WCAG 2.1 A and AA plus best practices, including color contrast. Every view has **0 violations**:
 - Home
-- Plan
+- Plan, including the mast planner
 - Compare
+- Find dates (checked 26 Oct 2026, when it was added)
 - Explore, at step 1 and at the challenge with every site shown
-- 3D, in globe view, over the terrain and standing at a site
+- 3D, in globe view, over the terrain and standing at a site, and with the 3D-print panel
 
 The same check at a 375 px phone width (headless Chrome, 30 Sep 2026) also finds 0 violations on Home, Plan, Compare, 3D, Explore and Credits. At 360 px and 390 px, no view scrolls sideways.
 
@@ -263,3 +265,11 @@ Beyond the automated check:
 | 20 Mar 2027, 12:00 | 0.3° S, 1.6° E | 0°, 1.9° E |
 | 21 Jun 2027, 00:00 | 23.4° N, 179.9° E | 23.4° N, 180° |
 | 23 Sep 2027, 18:00 | 0.1° S, 92.2° W | 0°, 92.0° W |
+
+## 9. Planning tools
+
+**Find dates** (`web/src/lib/finder.test.ts`, part of `npm test`). The finder scores every start day from one series per site with running sums, instead of recomputing each window. On a synthetic 60-day series with darkness and blackouts of hours to days, every 7-day window gives the same sunlight, Earth and both shares as `computeMetrics` on that slice (to 0.001 point) and exactly the same longest darkness and blackout. The list of best windows is sorted and never holds two overlapping windows of one site. In the app, a window opened from the finder shows the same numbers in the Plan view; the finder samples hourly, the Plan view every 10 minutes.
+
+**Mast height.** The mast masks (2–50 m) come from the same ray casting as the app's 2 m and 10 m masks, stored to 0.01°. At the VIPER mission area for June 2027, the mast planner's 2 m row gives 28.0% sunlight and at least 393 h of darkness, exactly as the Plan view, and 65.7% Earth in view against 65.8%: the 0.01° rounding moves the Earth's center across the skyline for one more 10-minute sample. The interpolated height for a target is checked in `web/src/lib/mast.test.ts`.
+
+**3D print** (`web/src/lib/stl.test.ts`). The STL is a closed solid: every edge belongs to exactly two triangles, running in opposite directions, so slicers read it as watertight. It spans the requested width and sits on a flat base. Real files are 82,400 triangles (4.1 MB) and build in under 50 ms.

@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, type KeyboardEvent, type PointerEvent } from 'react'
 import { EarthGlyph, SunGlyph } from '../components/Glyphs.tsx'
+import { PrintPanel } from '../components/PrintPanel.tsx'
 import { SitePicker } from '../components/SitePicker.tsx'
 import { TimeControls } from '../components/TimeControls.tsx'
 import type { AppData, Site } from '../data/load.ts'
@@ -581,6 +582,7 @@ export default function Globe3D({ data }: { data: AppData }) {
         Earth {earthUp ? 'in view' : 'hidden'}, azimuth {fmtDeg(b.earthAz)}, elevation {fmtDeg(b.earthEl, 2)}.
       </p>
       <TimeControls />
+      <PrintPanel site={site} />
     </main>
   )
 }

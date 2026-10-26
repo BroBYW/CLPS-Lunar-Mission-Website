@@ -25,6 +25,8 @@ interface View {
 
 const MARGIN = { l: 40, r: 12, t: 12, b: 26 }
 const MIN_WIDTH = 20
+/** Length of the "Listen" sound sweep, seconds */
+const SWEEP_S = 8
 const Y_MIN = -5
 
 const clamp = (v: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, v))
@@ -51,6 +53,7 @@ export function Panorama({ mask, track, bodies, sunFrac, earthVis, initialWidth 
   const clipId = useId()
   const terrainClipId = useId()
   const descId = useId()
+  const listenId = useId()
 
   const extremes = useMemo(() => maskExtremes(mask), [mask])
   const yMax = Math.max(15, Math.ceil(extremes.max + 2))
@@ -186,6 +189,45 @@ export function Panorama({ mask, track, bodies, sunFrac, earthVis, initialWidth 
     e.preventDefault()
   }
 
+  // Hear the horizon (lib/sonify.ts): one sweep, with a marker following it across the full panorama
+  const audio = useRef<{ ctx: AudioContext; stop: () => void; raf: number } | null>(null)
+  const [sweepAz, setSweepAz] = useState<number | null>(null)
+  const stopListening = () => {
+    const a = audio.current
+    if (!a) return
+    a.stop()
+    cancelAnimationFrame(a.raf)
+    audio.current = null
+    setSweepAz(null)
+  }
+  const listen = async () => {
+    if (audio.current) return stopListening()
+    const ctx = new AudioContext()
+    await ctx.resume()
+    const { playSweep } = await import('../lib/sonify.ts')
+    const sweep = playSweep(ctx, { mask, sunAz: bodies.sunAz, sunVisible: sunFrac > 0, earthAz: bodies.earthAz, earthVisible: earthVis, durationS: SWEEP_S })
+    setFollow('none')
+    setView({ center: 180, width: 360 })
+    const tick = () => {
+      const t = (ctx.currentTime - sweep.start) / (sweep.end - sweep.start)
+      if (t >= 1) {
+        stopListening()
+        return
+      }
+      setSweepAz(Math.max(0, t) * 360)
+      if (audio.current) audio.current.raf = requestAnimationFrame(tick)
+    }
+    audio.current = {
+      ctx,
+      stop: () => {
+        sweep.stop()
+        window.setTimeout(() => ctx.state !== 'closed' && void ctx.close(), 200)
+      },
+      raf: requestAnimationFrame(tick),
+    }
+  }
+  useEffect(() => () => stopListening(), [])
+
   const sunState = sunFrac <= 0 ? 'hidden by terrain' : sunFrac >= 1 ? 'fully visible' : `${fmtPct(sunFrac)} visible`
   const sunText = `Sun ${sunState}, azimuth ${fmtDeg(bodies.sunAz)}, elevation ${fmtDeg(bodies.sunEl, 2)}.`
   const earthText = `Earth ${earthVis ? 'in view' : 'hidden'}, azimuth ${fmtDeg(bodies.earthAz)}, elevation ${fmtDeg(bodies.earthEl, 2)}.`
@@ -218,6 +260,20 @@ export function Panorama({ mask, track, bodies, sunFrac, earthVis, initialWidth 
         <button type="button" className={btn} aria-pressed={follow === 'earth'} onClick={() => startFollow('earth')}>
           <EarthGlyph className="mr-1 inline text-earth" /> Follow Earth
         </button>
+        <button
+          type="button"
+          className={btn}
+          aria-pressed={sweepAz !== null}
+          aria-describedby={listenId}
+          onClick={() => void listen()}
+        >
+          {sweepAz !== null ? '■ Stop' : '♪ Listen'}
+        </button>
+        <span id={listenId} className="sr-only">
+          Plays an {SWEEP_S}-second sound sweep around the horizon, clockwise from north: the pitch rises with the terrain, east
+          sounds to the right. A bright chime marks the Sun and a two-note chime the Earth when they are visible; a low, muffled
+          one when the terrain hides them.
+        </span>
         <span className="ml-auto text-xs text-dust tabular">
           {exaggeration > 1.1 ? `Vertical scale ×${exaggeration.toFixed(1)}` : 'True proportions'}
         </span>
@@ -287,6 +343,16 @@ export function Panorama({ mask, track, bodies, sunFrac, earthVis, initialWidth 
               <path d={paths.earth} stroke="var(--color-earth)" strokeOpacity={0.55} />
               <path d={paths.sun} stroke="var(--color-sun)" strokeOpacity={0.6} />
             </g>
+            {sweepAz !== null && (
+              <line
+                x1={xOf(azDiff(sweepAz, view.center))}
+                x2={xOf(azDiff(sweepAz, view.center))}
+                y1={MARGIN.t}
+                y2={MARGIN.t + plotH}
+                stroke="var(--color-bright)"
+                strokeWidth={1.5}
+              />
+            )}
           </g>
 
           {sunDisk && (
