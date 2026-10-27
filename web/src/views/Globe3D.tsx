@@ -1,7 +1,9 @@
 import { useEffect, useRef, useState, type KeyboardEvent, type PointerEvent } from 'react'
 import { DrivePanel } from '../components/DrivePanel.tsx'
 import { EarthGlyph, SunGlyph } from '../components/Glyphs.tsx'
+import { composePostcard, PostcardPreview, type PostcardImage } from '../components/Postcard.tsx'
 import { PrintPanel } from '../components/PrintPanel.tsx'
+import { RoverGame } from '../components/RoverGame.tsx'
 import { SitePicker } from '../components/SitePicker.tsx'
 import { TimeControls } from '../components/TimeControls.tsx'
 import type { AppData, Site } from '../data/load.ts'
@@ -11,10 +13,12 @@ import type { TerrainScene } from '../globe/terrainPatch.ts'
 import { R_MOON_KM, siteFrame } from '../lib/astro.ts'
 import { fmtDeg, fmtPct } from '../lib/format.ts'
 import { horizonAt } from '../lib/horizon.ts'
+import { bestEarthMoment } from '../lib/postcard.ts'
+import { DAY_MS, HOUR_MS, formatUtc, formatUtcDate } from '../lib/time.ts'
 import { bodiesAt } from '../lib/track.ts'
 import { earthVisible, sunFraction } from '../lib/visibility.ts'
 import { prefersReducedMotion } from '../state/playback.ts'
-import { useApp } from '../state/store.ts'
+import { MAX_MS, useApp } from '../state/store.ts'
 import { TerrainShading } from '../workers/terrainClient.ts'
 
 type ViewerMod = typeof import('../globe/moonViewer.ts')
@@ -55,6 +59,7 @@ export default function Globe3D({ data }: { data: AppData }) {
   const api = useRef<Api | null>(null)
   const terrain = useRef<TerrainScene | null>(null)
   const loadToken = useRef(0)
+  const flightToken = useRef(0)
   const extras = useRef<import('cesium').Entity[]>([])
   const look = useRef<{ x: number; y: number; heading: number; pitch: number } | null>(null)
   const fov = useRef(75)
@@ -65,6 +70,9 @@ export default function Globe3D({ data }: { data: AppData }) {
   const [ready, setReady] = useState(false)
   const [failed, setFailed] = useState(false)
   const [terrainState, setTerrainState] = useState<'idle' | 'loading' | 'failed'>('idle')
+  const [hud, setHud] = useState<HTMLDivElement | null>(null)
+  const [postcard, setPostcard] = useState<PostcardImage | null>(null)
+  const [cardState, setCardState] = useState<'idle' | 'working' | 'none'>('idle')
   const siteId = useApp((s) => s.siteId)
   const setSite = useApp((s) => s.setSite)
   const timeMs = useApp((s) => s.timeMs)
@@ -260,6 +268,8 @@ export default function Globe3D({ data }: { data: AppData }) {
     const { Cesium } = a.mod
     restoreGlobe()
     setMode('flying')
+    // A newer flight cancels this one; only the newest may change the mode
+    const flight = ++flightToken.current
     const load = ensureTerrain(s)
     const land = () =>
       void load.then((t) => {
@@ -272,7 +282,7 @@ export default function Globe3D({ data }: { data: AppData }) {
       orientation: { heading: 0, pitch: Cesium.Math.toRadians(-90), roll: 0 },
       duration: prefersReducedMotion() ? 0 : 2.5,
       complete: land,
-      cancel: () => setMode('globe'),
+      cancel: () => flight === flightToken.current && setMode('globe'),
     })
   }
 
@@ -362,6 +372,62 @@ export default function Globe3D({ data }: { data: AppData }) {
       orientation: { heading, pitch: Cesium.Math.clamp(pitch, Cesium.Math.toRadians(-40), Cesium.Math.toRadians(70)), roll: 0 },
     })
     a.mv.viewer.scene.requestRender()
+  }
+
+  /**
+   * Earth postcard (lib/postcard.ts): the best moment in the next 30 days to see Earth just over this site's skyline,
+   * framed in the standing view and captured with a caption.
+   */
+  const makePostcard = async () => {
+    const a = api.current
+    if (!a || modeRef.current !== 'ground') return
+    setCardState('working')
+    const st = useApp.getState()
+    const mask = data.horizons.mask(site.mask_index, st.heightIndex)
+    const frame = siteFrame(site.lat, site.lon, site.height_m + data.horizons.heightsM[st.heightIndex])
+    const m = bestEarthMoment(data.ephemeris, frame, mask, st.timeMs, Math.min(MAX_MS, st.timeMs + 30 * DAY_MS), HOUR_MS)
+    if (!m) {
+      setCardState('none')
+      return
+    }
+    if (m.tMs < st.startMs || m.tMs > st.endMs) st.setRange(m.tMs - DAY_MS, m.tMs + 29 * DAY_MS)
+    st.setPlaying(false)
+    st.setTime(m.tMs)
+    const { Cesium } = a.mod
+    fov.current = 24
+    ;(a.mv.viewer.camera.frustum as import('cesium').PerspectiveFrustum).fov = Cesium.Math.toRadians(fov.current)
+    // Earth in the upper part of the frame, the skyline below it
+    turn(Cesium.Math.toRadians(m.earthAz), Cesium.Math.toRadians(m.earthEl - 3))
+    // Give the worker time to light the terrain for the new moment, then grab a frame
+    await new Promise((r) => setTimeout(r, 1500))
+    if (api.current !== a || modeRef.current !== 'ground') {
+      setCardState('idle')
+      return
+    }
+    // Read the pixels right after a frame is drawn, before the browser clears the buffer
+    const shot = await new Promise<string>((resolve) => {
+      const scene = a.mv.viewer.scene
+      const stop = scene.postRender.addEventListener(() => {
+        stop()
+        resolve(a.mv.viewer.canvas.toDataURL('image/jpeg', 0.95))
+      })
+      scene.requestRender()
+      // A tab in the background draws no frames: draw one now (the listener above still catches it)
+      window.setTimeout(() => !a.mv.viewer.isDestroyed() && a.mv.viewer.render(), 300)
+    })
+    const title = `Earth from ${site.name}`
+    const sun =
+      m.sun <= 0.01
+        ? 'Sun hidden by the terrain'
+        : m.sunEl >= 0
+          ? `Sun ${m.sunEl.toFixed(1)}° up`
+          : `Sun ${Math.abs(m.sunEl).toFixed(1)}° below the level horizon`
+    const url = await composePostcard(shot, title, [
+      `${formatUtc(m.tMs)} · Earth ${Math.round(m.lit * 100)}% lit, ${m.aboveDeg.toFixed(1)}° over the skyline · ${sun}`,
+      'CLPS Lunar Mission Browser · LOLA terrain, SPICE ephemeris, Natural Earth II texture',
+    ])
+    setPostcard({ url, fileName: `earth-from-${site.id}-${formatUtcDate(m.tMs)}.jpg`, alt: `${title}, ${formatUtc(m.tMs)}` })
+    setCardState('idle')
   }
 
   const zoom = (factor: number) => {
@@ -535,6 +601,11 @@ export default function Globe3D({ data }: { data: AppData }) {
             <button type="button" className={`${btn} ${mode === 'ground' ? on : off}`} onClick={() => void standAtSite()}>
               Stand at the site
             </button>
+            {mode === 'ground' && (
+              <button type="button" className={`${btn} ${off}`} disabled={cardState === 'working'} onClick={() => void makePostcard()}>
+                {cardState === 'working' ? 'Finding Earth…' : 'Earth postcard'}
+              </button>
+            )}
           </div>
         )}
         <div
@@ -562,6 +633,7 @@ export default function Globe3D({ data }: { data: AppData }) {
             Loading LOLA terrain…
           </p>
         )}
+        <div ref={setHud} className="pointer-events-none absolute right-3 bottom-3 z-10" />
         {terrainState === 'failed' && (
           <p className="absolute inset-x-3 top-1/2 mx-auto w-fit rounded-sm bg-sky/70 px-3 py-1.5 text-sm text-alert backdrop-blur-sm" role="alert">
             The terrain for this site didn't load. Try again.
@@ -582,6 +654,8 @@ export default function Globe3D({ data }: { data: AppData }) {
         <EarthGlyph className="ml-3 mr-1 inline text-earth" />
         Earth {earthUp ? 'in view' : 'hidden'}, azimuth {fmtDeg(b.earthAz)}, elevation {fmtDeg(b.earthEl, 2)}.
       </p>
+      {cardState === 'none' && <p className="mt-2 text-sm text-dust">Earth doesn't sit low over this site's skyline in the next 30 days.</p>}
+      {postcard && <PostcardPreview card={postcard} onClose={() => setPostcard(null)} />}
       <TimeControls />
       {ready && api.current && (
         <DrivePanel
@@ -590,6 +664,18 @@ export default function Globe3D({ data }: { data: AppData }) {
           site={site}
           patch={terrain.current?.siteId === site.id ? terrain.current.patch : null}
           ephemeris={data.ephemeris}
+        />
+      )}
+      {ready && api.current && (
+        <RoverGame
+          Cesium={api.current.mod.Cesium}
+          viewer={api.current.mv.viewer}
+          site={site}
+          patch={terrain.current?.siteId === site.id ? terrain.current.patch : null}
+          ephemeris={data.ephemeris}
+          inTerrain={mode === 'terrain'}
+          onFly={() => flyToSite()}
+          overlay={hud}
         />
       )}
       <PrintPanel site={site} />

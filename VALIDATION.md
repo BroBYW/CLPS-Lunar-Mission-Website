@@ -12,7 +12,7 @@ This file records how we checked the numbers the app shows. Each section says wh
 | 6. Performance | < 500 ms per site-range; first load < 3 s; 60 fps | 5 years in 104–148 ms; first load about 1 s; 142 fps playback | Pass |
 | 7. Accessibility | WCAG 2.1 AA | axe-core: 0 violations on every view | Pass |
 | 8. 3D terrain sunlight | Matches the horizon masks | Synthetic shadows exact; agrees with the masks 99.8% of the time, sunlight within 1.4 points at every site | Pass |
-| 9. Planning tools | Same numbers as the Plan view | Window finder equals the metrics on every window; mast masks match the Plan view's at 2 m; 3D-print files are watertight; DSN contact rule tested; pins within 5 points of the sites' sunlight at 12 of 13; rover rays agree with the masks 99.8% | Pass |
+| 9. Planning tools | Same numbers as the Plan view | Window finder equals the metrics on every window; mast masks match the Plan view's at 2 m; 3D-print files are watertight; DSN contact rule tested; pins within 5 points of the sites' sunlight at 12 of 13; rover rays agree with the masks 99.8%; eclipse timings within 2 minutes of the SPICE pipeline; games and postcard tested | Pass |
 | 10. LRO photos (2009–2011) | Sunlit or in shadow as photographed | Sites: 99.3% of 2,281 photos that can tell (115 of 117 terrain shadows confirmed); whole photos: 98.3% of 62,221 km² agree | Pass |
 
 ## 1. Browser vs Python
@@ -301,6 +301,18 @@ Sunlight agrees within 5 points at 12 of the 13 sites. Malapert Massif is the ex
 **Past landings.** The replays use the published landing points and times. For IM-2 Athena, the time from landing to NASA's end-of-mission time is 12.7 h, matching the "about 13 hours" reported. At touchdown the Sun was 2.5° above the horizontal on the plateau: a low Sun that a lander lying on its side in a crater could hardly use.
 
 **Rover drive** (`web/src/lib/rover.test.ts` and `web/scripts/rover-vs-masks.ts`). The rover looks at the skyline with just two rays over the site's 3D terrain grids, toward the Sun and toward Earth. The tests check routes, heights from the finest grid, a smooth sphere's dip and a wall at a known distance. Standing a rover at each site's own point every 6 hours through 2027, its rays agree with the horizon masks on whether more than half the Sun is visible 99.8% of the time, and on whether Earth is in view 99.9% (20,440 samples, 14 sites). Away from the site, the grids coarsen with distance from the site, as in the 3D view.
+
+**Eclipses seen from the Moon** (`web/src/lib/eclipses.test.ts`). The browser finds eclipses in its hourly ephemeris as the times the Sun's and Earth's disks overlap, seen from the Moon's centre. For 2024–2030 it finds 15, each within a minute or two of the greatest eclipse in NASA's list of lunar eclipses (11:34 UT on 3 March 2026, for example). The one it misses, 18 July 2027, is so shallow a penumbral eclipse that, seen from the Moon's centre, the two disks miss by a quarter of a degree (at 16:03 UT); only the Moon's edge grazes Earth's penumbra. At a site, the same visibility code as every other number times the eclipse minute by minute, terrain included. For Malapert Massif on 3 March 2026 it gives 09:27, 10:55, 12:06 and 13:34 UT for the start of dimming, the whole Sun hidden, the Sun back and the end of dimming: the times the SPICE pipeline gives in §5, to within 2 minutes.
+
+**Earth postcard** (`web/src/lib/postcard.test.ts`). The postcard looks for Earth's whole disk at most 4° over the skyline, as full as possible and with the Sun lighting the ground (visible and above the level horizon). For Haworth in January 2027 it picks a moment on the 8th, around new Moon, when Earth is at least 90% lit. The share of Earth lit, (1 − cos θ)/2 with θ between the Sun and Earth seen from the Moon, is checked at full, new and half Earth.
+
+**Games and phones.** Each game's rules are tested on made-up inputs:
+- *Survive the lunar night* (`survive.test.ts`): the budget, the hours a battery lasts in the dark, and science reaching Earth only while Earth is in view, with the store's limit.
+- *Daily challenge* (`daily.test.ts`): the same mission for everyone on a day, limits eased the same way when no landing meets them, and a guess scored against the year's best.
+- *Outrun the shadows* (`roverGame.test.ts`): driving at top speed toward the target, stopping at the terrain's edge, and charging or draining with a fixed Sun.
+- *Look around* (`compass.test.ts`): the phone's heading from its orientation, upright and lying flat.
+
+The quiz's "real or model?" round adds the photo's own grain and the faint light in its shadows to the model, measured from that photo's shadows, so the game isn't won on noise alone. That is game rendering only: §10's comparisons use the plain model.
 
 ## 10. LRO photos
 

@@ -6,7 +6,7 @@
 import { formatUtcDate, parseUtc } from '../lib/time.ts'
 import { DAY_MS } from '../lib/time.ts'
 import { PIN_ID, usePin } from './pin.ts'
-import { MAX_MS, MIN_MS, useApp, type View } from './store.ts'
+import { GAMES, MAX_MS, MIN_MS, useApp, type Game, type View } from './store.ts'
 
 function isoMinute(ms: number): string {
   return new Date(ms).toISOString().slice(0, 16) + 'Z'
@@ -17,9 +17,11 @@ export function applyUrl(search: string, siteIds: string[], heightsM: number[]):
   const s = useApp.getState()
   const view = q.get('view')
   // A bare URL opens the home page; any shared state opens the app directly
-  const views: View[] = ['plan', 'compare', 'finder', '3d', 'explore', 'about', 'credits']
+  const views: View[] = ['plan', 'compare', 'finder', '3d', 'explore', 'play', 'about', 'credits']
   if (views.includes(view as View)) s.setView(view as View)
   else if ([...q.keys()].length > 0) s.setView('plan')
+  const game = q.get('game')
+  if (GAMES.includes(game as Game)) s.setGame(game as Game)
   const site = q.get('site')
   if (site && siteIds.includes(site)) s.setSite(site)
   const cmp = q.get('cmp')
@@ -53,6 +55,7 @@ export function buildQuery(heightsM: number[]): string {
   const pin = usePin.getState().pin
   if (s.siteId === PIN_ID && pin) q.set('pin', `${pin.lat.toFixed(4)},${pin.lon.toFixed(4)}`)
   if (s.view === 'compare') q.set('cmp', s.compareIds.join(','))
+  if (s.view === 'play') q.set('game', s.game)
   q.set('from', formatUtcDate(s.startMs))
   q.set('to', formatUtcDate(s.endMs - DAY_MS))
   q.set('t', isoMinute(s.timeMs))

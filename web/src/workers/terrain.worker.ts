@@ -28,6 +28,12 @@ const api = {
       images.map((a) => a.buffer),
     )
   },
+  /** The visible fraction of the Sun at every node of one grid only (finer grids are skipped), or null for a stale patch. */
+  shadeGrid(id: string, sun: number[], sunRadiusRad: number, gridIndex: number): Float32Array | null {
+    if (!current || current.id !== id) return null
+    const lit = current.sun.compute(sun, sunRadiusRad, current.lit, gridIndex)[gridIndex].slice()
+    return Comlink.transfer(lit, [lit.buffer])
+  },
 }
 
 export type TerrainWorkerApi = typeof api

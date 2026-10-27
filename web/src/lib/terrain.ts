@@ -156,8 +156,11 @@ export class TerrainSun {
     })
   }
 
-  /** sun: vector toward the Sun, Moon-fixed (any length). Fills and returns one array per grid, 0–1. */
-  compute(sun: ArrayLike<number>, sunRadiusRad: number, out?: Float32Array[]): Float32Array[] {
+  /**
+   * sun: vector toward the Sun, Moon-fixed (any length). Fills and returns one array per grid, 0–1. Grids finer than
+   * `finest` are skipped (their arrays are left as they were): coarser grids never depend on finer ones.
+   */
+  compute(sun: ArrayLike<number>, sunRadiusRad: number, out?: Float32Array[], finest = 0): Float32Array[] {
     const p = this.patch
     const { n } = p
     const [cx, cy] = p.center
@@ -173,7 +176,7 @@ export class TerrainSun {
     const vy = ux
     const result = out ?? p.grids.map(() => new Float32Array(n * n))
 
-    for (let gi = p.grids.length - 1; gi >= 0; gi--) {
+    for (let gi = p.grids.length - 1; gi >= finest; gi--) {
       const g = p.grids[gi]
       const L = this.levels[gi]
       const coarser = gi + 1 < p.grids.length ? this.levels[gi + 1] : undefined

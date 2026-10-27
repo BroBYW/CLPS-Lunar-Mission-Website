@@ -116,6 +116,47 @@ export function AboutPage() {
             photo; every shadow comes from the terrain and the Sun's position alone. Ground counts as sunlit, in both, where
             its reflectance (I/F) is above 0.003, between the photos' shadow and sunlit peaks.
           </li>
+          <li>
+            <strong>Shadow movie</strong> lights the same 48 km for each step through the selected dates, with the brightness
+            scale typical of the LRO photos (0.14), and plays it like LRO's polar movies. Saving records it in the browser.
+          </li>
+          <li>
+            <strong>Eclipses</strong> are found in the ephemeris as the times Earth's and the Sun's disks overlap seen from the
+            Moon's centre; each site's timings come from the same visibility code as every other number, minute by minute.
+          </li>
+          <li>
+            <strong>Look around</strong> turns the panorama with a phone's compass heading. North on the Moon is mapped to
+            north on Earth.
+          </li>
+          <li>
+            <strong>Earth postcard</strong> searches the next 30 days, hour by hour, for Earth's whole disk at most 4° over the
+            skyline, preferring a full Earth over sunlit ground (the Sun visible and above the level horizon), then
+            captures the standing view.
+          </li>
+        </ul>
+      </section>
+      <section>
+        <h3>The games</h3>
+        <ul>
+          <li>
+            <strong>Survive the lunar night</strong> uses the power panel's model: a 30% efficient panel tracking the Sun, at 1361 W/m²
+            at 1 AU, times the visible share of the Sun. The lander draws 60 W, plus 60 W for science; 80% of the battery is usable.
+            Science counts once it reaches Earth, which takes Earth above the skyline; the lander stores 48 hours of it.
+          </li>
+          <li>
+            <strong>The daily challenge</strong> draws its mission from the date, the same for everyone, and eases the limits
+            the same way for everyone if no landing that year meets them. A try's score is its share of the best landing's
+            score, with the Find dates view's code.
+          </li>
+          <li>
+            <strong>The photo quiz</strong> uses the LRO photo comparison. In "real or model?", the model also gets the photo's
+            grain and the faint light in its shadows, measured from that photo, so it can't be spotted by noise alone.
+          </li>
+          <li>
+            <strong>Outrun the shadows</strong> drives a rover at 0.5 km/h on the 3D view's terrain. Its two skyline rays, toward the
+            Sun and toward Earth, are the rover drive's; its 250 W panel tracks the Sun, it draws 40 W idle and 100 W driving,
+            and it scores one point for each hour with at least half the Sun on its panel and Earth in sight.
+          </li>
         </ul>
       </section>
       <section>
@@ -144,7 +185,10 @@ export function AboutPage() {
             Sunlight at published points on the Connecting ridge and Shackleton rim matches Gläser et al. (2014, 2018) to within
             1.5 percentage points, and the longest darkness to within about 2 hours.
           </li>
-          <li>During the total lunar eclipse of 3 March 2026, the sites lose the Sun at times that fit NASA's eclipse contact times.</li>
+          <li>
+            During the total lunar eclipse of 3 March 2026, the sites lose the Sun at times that fit NASA's eclipse contact times. The
+            browser's own eclipse finder lands within 2 minutes of the SPICE pipeline.
+          </li>
           <li>
             In 1,022 photos of the south pole taken by LRO's Wide Angle Camera in 2009–2011, the horizons called the sites sunlit
             or in shadow as photographed 99.3% of the time (2,281 site photos clear enough to tell). Over whole photos of the 48 km

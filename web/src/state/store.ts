@@ -12,10 +12,18 @@ export const SPEEDS_HPS = [1, 6, 24, 72] as const
 export const DEFAULT_SITE = 'connecting-ridge'
 export const MAX_COMPARE = 3
 
-export type View = 'home' | 'plan' | 'compare' | 'finder' | '3d' | 'explore' | 'about' | 'credits'
+export type View = 'home' | 'plan' | 'compare' | 'finder' | '3d' | 'explore' | 'play' | 'about' | 'credits'
+export type Game = 'survive' | 'daily' | 'quiz' | 'rover'
+export const GAMES: Game[] = ['survive', 'daily', 'quiz', 'rover']
 
 export interface AppState {
   view: View
+  /** The game open in the Play view */
+  game: Game
+  /** Set when the Play view sends the player to the 3D view's rover game, which starts it and clears this */
+  roverGamePending: boolean
+  /** Bumping n restarts the Plan view's panorama with this view (eclipse replays zoom in on the Sun) */
+  panoramaFocus: { n: number; follow: 'none' | 'sun' | 'earth'; width: number }
   siteId: string
   compareIds: string[]
   startMs: number
@@ -28,6 +36,7 @@ export interface AppState {
   earthMarginDeg: number
   power: PowerInputs
   setView: (view: View) => void
+  setGame: (game: Game) => void
   setSite: (id: string) => void
   setCompare: (ids: string[]) => void
   setRange: (startMs: number, endMs: number) => void
@@ -55,6 +64,9 @@ export const DEFAULT_POWER: PowerInputs = { areaM2: 1.5, efficiency: 0.3, loadW:
 
 export const useApp = create<AppState>()((set, get) => ({
   view: 'home',
+  game: 'survive',
+  roverGamePending: false,
+  panoramaFocus: { n: 0, follow: 'none', width: 360 },
   siteId: DEFAULT_SITE,
   compareIds: [DEFAULT_SITE, 'shackleton-rim', 'malapert-massif'],
   startMs: start0,
@@ -67,6 +79,7 @@ export const useApp = create<AppState>()((set, get) => ({
   earthMarginDeg: 0,
   power: DEFAULT_POWER,
   setView: (view) => set({ view, playing: false }),
+  setGame: (game) => set({ game }),
   setSite: (siteId) => set({ siteId }),
   setCompare: (ids) => set({ compareIds: ids.slice(0, MAX_COMPARE) }),
   setRange: (startMs, endMs) => {

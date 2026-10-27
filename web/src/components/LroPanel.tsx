@@ -1,23 +1,11 @@
-import * as Comlink from 'comlink'
 import { useEffect, useId, useRef, useState, type PointerEvent, type RefObject } from 'react'
-import { loadLroPhotos, lroPhotoUrl, type LroPhoto, type LroPhotos, type Site } from '../data/load.ts'
-import { loadPatch } from '../data/patches.ts'
-import { R_SUN_KM } from '../lib/astro.ts'
-import { comparePhoto, modelBrightness, type Agreement } from '../lib/lroCompare.ts'
+import { loadLroPhotos, type LroPhoto, type LroPhotos, type Site } from '../data/load.ts'
 import { toStereo } from '../lib/pinHorizon.ts'
 import { formatUtc } from '../lib/time.ts'
-import type { TerrainWorkerApi } from '../workers/terrain.worker.ts'
+import { TerrainLighter } from '../workers/terrainLighter.ts'
+import { dnOf, hatch, photoComparison, sunImageDir, type PhotoComparison } from './lroImages.ts'
 
-/** The patch grid that matches the photos: 120 m spacing over the same 48 km */
-const GRID = 'mid'
 const SCALE_KM = 10
-
-interface Comparison {
-  key: string
-  photo: ImageData
-  iof: Float32Array
-  agreement: Agreement
-}
 
 /**
  * Compare with an LRO photo: LROC Wide Angle Camera photos of the 48 km around the site, taken 2009–2011, beside the
@@ -219,14 +207,14 @@ function useNearViewport(ref: RefObject<Element | null>): boolean {
 
 /** Loads the photo and the site's terrain, lights the terrain in a worker and compares the two. */
 function useComparison(doc: LroPhotos | null, siteId: string, origin: [number, number] | null, photo: LroPhoto | null) {
-  const [result, setResult] = useState<Comparison | null>(null)
+  const [result, setResult] = useState<PhotoComparison | null>(null)
   const [error, setError] = useState(false)
-  const workerRef = useRef<{ worker: Worker; remote: Comlink.Remote<TerrainWorkerApi>; patchId: string } | null>(null)
+  const lighter = useRef<TerrainLighter | null>(null)
 
   useEffect(
     () => () => {
-      workerRef.current?.worker.terminate()
-      workerRef.current = null
+      lighter.current?.destroy()
+      lighter.current = null
     },
     [],
   )
@@ -235,54 +223,17 @@ function useComparison(doc: LroPhotos | null, siteId: string, origin: [number, n
     if (!doc || !origin || !photo) return
     let live = true
     setError(false)
-    ;(async () => {
-      const [patch, img] = await Promise.all([loadPatch(siteId), decodePhoto(lroPhotoUrl(photo.file), doc.size)])
-      // A newer request owns the worker now; don't swap its terrain
-      if (!live) return
-      const gi = patch.grids.findIndex((g) => g.name === GRID)
-      if (gi < 0) throw new Error(`no ${GRID} grid`)
-      if (!workerRef.current) {
-        const worker = new Worker(new URL('../workers/terrain.worker.ts', import.meta.url), { type: 'module' })
-        workerRef.current = { worker, remote: Comlink.wrap<TerrainWorkerApi>(worker), patchId: '' }
-      }
-      const w = workerRef.current
-      if (w.patchId !== siteId) {
-        w.patchId = siteId
-        await w.remote.setPatch(siteId, patch)
-        if (!live) return
-      }
-      const sun = photo.sun_km
-      const images = await w.remote.shade(siteId, sun, Math.asin(R_SUN_KM / Math.hypot(sun[0], sun[1], sun[2])))
-      if (!live || !images) return
-      const rgba = images[gi]
-      const lit = new Float32Array(patch.n * patch.n)
-      for (let k = 0; k < lit.length; k++) lit[k] = rgba[4 * k] / 255
-      const model = modelBrightness(patch, gi, lit, sun, { size: doc.size, pixelM: doc.pixel_m, x0: origin[0], y0: origin[1] })
-      const iof = new Float32Array(doc.size * doc.size)
-      for (let k = 0; k < iof.length; k++) {
-        const v = img.data[4 * k] / 255
-        iof[k] = img.data[4 * k + 3] < 128 ? Number.NaN : doc.stretch_iof * v * v
-      }
-      setResult({ key: `${siteId}/${photo.frame}`, photo: img, iof, agreement: comparePhoto(iof, model, doc.iof_lit) })
-    })().catch(() => live && setError(true))
+    lighter.current ??= new TerrainLighter()
+    photoComparison(doc, siteId, origin, photo, lighter.current, () => live).then(
+      (c) => live && c && setResult(c),
+      () => live && setError(true),
+    )
     return () => {
       live = false
     }
   }, [doc, siteId, origin, photo])
 
   return { result, error }
-}
-
-async function decodePhoto(url: string, size: number): Promise<ImageData> {
-  const img = new Image()
-  img.src = url
-  await img.decode()
-  const c = document.createElement('canvas')
-  c.width = size
-  c.height = size
-  const ctx = c.getContext('2d', { willReadFrequently: true })!
-  ctx.drawImage(img, 0, 0)
-  return ctx.getImageData(0, 0, size, size)
 }
 
 /** The site's position in photo pixels (the crop is centred on the frame pixel nearest the site). */
@@ -298,7 +249,7 @@ function rgb(hex: string): [number, number, number] {
   return [(v >> 16) & 255, (v >> 8) & 255, v & 255]
 }
 
-function draw(canvas: HTMLCanvasElement, c: Comparison, doc: LroPhotos, split: number, diff: boolean, site: [number, number], sun: number[]) {
+function draw(canvas: HTMLCanvasElement, c: PhotoComparison, doc: LroPhotos, split: number, diff: boolean, site: [number, number], sun: number[]) {
   const n = doc.size
   canvas.width = n
   canvas.height = n
@@ -317,9 +268,9 @@ function draw(canvas: HTMLCanvasElement, c: Comparison, doc: LroPhotos, split: n
       const fromPhoto = i < cut
       let v: number
       if (fromPhoto ? Number.isNaN(p) : Number.isNaN(m)) {
-        v = (i + j) % 8 === 0 ? 70 : 24 // hatched: no data
+        v = hatch(i, j)
       } else {
-        v = fromPhoto ? c.photo.data[4 * k] : 255 * Math.sqrt(Math.min(1, m / doc.stretch_iof))
+        v = fromPhoto ? c.photo.data[4 * k] : dnOf(m, doc.stretch_iof)
       }
       let r = v
       let g = v
@@ -348,10 +299,7 @@ function draw(canvas: HTMLCanvasElement, c: Comparison, doc: LroPhotos, split: n
   ctx.beginPath()
   ctx.arc(site[0], site[1], 7, 0, 2 * Math.PI)
   ctx.stroke()
-  // Toward the Sun (stereographic x follows Moon-fixed y, y follows x; canvas y points down)
-  const len = Math.hypot(sun[0], sun[1]) || 1
-  const dx = sun[1] / len
-  const dy = -sun[0] / len
+  const [dx, dy] = sunImageDir(sun)
   const ox = 34
   const oy = n - 34
   ctx.strokeStyle = bright

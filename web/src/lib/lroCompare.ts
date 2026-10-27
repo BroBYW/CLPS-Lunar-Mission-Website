@@ -19,6 +19,40 @@ export interface CropGeometry {
   y0: number
 }
 
+/** Lommel–Seeliger brightness at the nodes of one patch grid, with the grid's geometry worked out once. */
+export class GridShader {
+  readonly n: number
+  private readonly nor: Float32Array
+  /** μ: cosine of the camera's angle from each node's normal, for a camera looking straight down */
+  private readonly mu: Float32Array
+
+  constructor(patch: Patch, gridIndex: number) {
+    const { n } = patch
+    this.n = n
+    const pos = gridPositions(patch, patch.grids[gridIndex])
+    this.nor = gridNormals(pos, n)
+    this.mu = new Float32Array(n * n)
+    for (let k = 0; k < n * n; k++) {
+      const r = Math.hypot(pos[3 * k], pos[3 * k + 1], pos[3 * k + 2])
+      this.mu[k] = Math.max(0, (this.nor[3 * k] * pos[3 * k] + this.nor[3 * k + 1] * pos[3 * k + 1] + this.nor[3 * k + 2] * pos[3 * k + 2]) / r)
+    }
+  }
+
+  /** μ0 / (μ0 + μ) times the visible fraction of the Sun, at every node; sun: toward the Sun, Moon-fixed. */
+  brightness(lit: ArrayLike<number>, sun: ArrayLike<number>, out = new Float32Array(this.n * this.n)): Float32Array {
+    const sl = Math.hypot(sun[0], sun[1], sun[2])
+    const sx = sun[0] / sl
+    const sy = sun[1] / sl
+    const sz = sun[2] / sl
+    const nor = this.nor
+    for (let k = 0; k < out.length; k++) {
+      const mu0 = nor[3 * k] * sx + nor[3 * k + 1] * sy + nor[3 * k + 2] * sz
+      out[k] = mu0 <= 0 || lit[k] <= 0 ? 0 : (mu0 / (mu0 + this.mu[k])) * lit[k]
+    }
+    return out
+  }
+}
+
 /**
  * Model brightness at each photo pixel, before scaling: Lommel–Seeliger times the visible fraction of the Sun,
  * sampled bilinearly from one grid of the patch. NaN where the grid doesn't reach.
@@ -28,23 +62,7 @@ export interface CropGeometry {
 export function modelBrightness(patch: Patch, gridIndex: number, lit: ArrayLike<number>, sun: ArrayLike<number>, crop: CropGeometry): Float32Array {
   const g = patch.grids[gridIndex]
   const { n } = patch
-  const pos = gridPositions(patch, g)
-  const nor = gridNormals(pos, n)
-  const sl = Math.hypot(sun[0], sun[1], sun[2])
-  const sx = sun[0] / sl
-  const sy = sun[1] / sl
-  const sz = sun[2] / sl
-  const node = new Float32Array(n * n)
-  for (let k = 0; k < n * n; k++) {
-    const nx = nor[3 * k]
-    const ny = nor[3 * k + 1]
-    const nz = nor[3 * k + 2]
-    const mu0 = nx * sx + ny * sy + nz * sz
-    if (mu0 <= 0 || lit[k] <= 0) continue
-    const r = Math.hypot(pos[3 * k], pos[3 * k + 1], pos[3 * k + 2])
-    const mu = Math.max(0, (nx * pos[3 * k] + ny * pos[3 * k + 1] + nz * pos[3 * k + 2]) / r)
-    node[k] = (mu0 / (mu0 + mu)) * lit[k]
-  }
+  const node = new GridShader(patch, gridIndex).brightness(lit, sun)
 
   const { size, pixelM } = crop
   const out = new Float32Array(size * size)
@@ -88,15 +106,18 @@ export interface Agreement {
   predicted: Float32Array
 }
 
-/** Brightness below which a lit surface is too dim to tell from shadow is left to the threshold, like the photo. */
+/** Only ground lit at least this brightly (before scaling) is used to fit the scale. */
 const FIT_MIN_BRIGHTNESS = 0.1
+/** I/F per unit of model brightness when there is no photo to fit: the median scale fitted to the 28 LRO photos
+ * (web/scripts/lro-vs-model.ts). */
+export const TYPICAL_SCALE = 0.14
 
 /**
  * Compare a photo (I/F per pixel, NaN where the frame has no data) with the model brightness. A pixel counts as
  * sunlit where its I/F is above iofLit, in the photo and in the scaled model alike, so dim grazing light is judged
  * the same way in both.
  */
-export function comparePhoto(photo: Float32Array, model: Float32Array, iofLit: number, fallbackScale = 0.12): Agreement {
+export function comparePhoto(photo: Float32Array, model: Float32Array, iofLit: number, fallbackScale = TYPICAL_SCALE): Agreement {
   const ratios: number[] = []
   for (let k = 0; k < photo.length; k++) {
     const p = photo[k]

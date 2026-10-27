@@ -1,12 +1,14 @@
 import { lazy, Suspense, useEffect, useMemo, useState } from 'react'
 import { CompareView } from './components/CompareView.tsx'
 import { DsnPanel } from './components/DsnPanel.tsx'
+import { EclipseReplays } from './components/EclipseReplays.tsx'
 import { LroPanel } from './components/LroPanel.tsx'
 import { MastPanel } from './components/MastPanel.tsx'
 import { MissionReplays } from './components/MissionReplays.tsx'
 import { MetricsPanel } from './components/MetricsPanel.tsx'
 import { Panorama } from './components/Panorama.tsx'
 import { PowerPanel } from './components/PowerPanel.tsx'
+import { ShadowMovie } from './components/ShadowMovie.tsx'
 import { SiteHeader } from './components/SiteHeader.tsx'
 import { SiteList } from './components/SiteList.tsx'
 import { SiteMapPanel } from './components/SiteMapPanel.tsx'
@@ -36,6 +38,7 @@ const VIEWS: [View, string, string?][] = [
   ['finder', 'Find dates', 'Dates'],
   ['3d', '3D'],
   ['explore', 'Explore'],
+  ['play', 'Play'],
   ['about', 'Method'],
   ['credits', 'Credits'],
 ]
@@ -45,6 +48,7 @@ const REPO_URL = 'https://github.com/BroBYW/CLPS-Lunar-Mission-Website'
 
 // CesiumJS only loads when the 3D view (or the home page backdrop) is shown
 const Globe3D = lazy(() => import('./views/Globe3D.tsx'))
+const Play = lazy(() => import('./views/Play.tsx'))
 
 export default function App() {
   const [data, setData] = useState<AppData | null>(null)
@@ -123,6 +127,10 @@ export default function App() {
         <CreditsPage />
       ) : view === 'explore' ? (
         <Explore data={data} />
+      ) : view === 'play' ? (
+        <Suspense fallback={<p className="m-6 text-dust">Loading the games…</p>}>
+          <Play data={data} />
+        </Suspense>
       ) : view === '3d' ? (
         <Suspense fallback={<p className="m-6 text-dust">Loading the 3D view…</p>}>
           <Globe3D data={data} />
@@ -154,6 +162,7 @@ function Planner({ data }: { data: AppData }) {
   const setHeightIndex = useApp((s) => s.setHeightIndex)
   const darkThreshold = useApp((s) => s.darkThreshold)
   const earthMarginDeg = useApp((s) => s.earthMarginDeg)
+  const focus = useApp((s) => s.panoramaFocus)
 
   const pin = usePin((s) => s.pin)
   const site = useMemo(() => (siteId === PIN_ID && pin ? pinSite(pin) : (data.sites.find((s) => s.id === siteId) ?? data.sites[0])), [siteId, pin, data])
@@ -181,6 +190,7 @@ function Planner({ data }: { data: AppData }) {
         {/* On phones the site list comes after everything else, so the site can be changed here too */}
         <SitePicker label="Site" sites={pickable} value={site.id} onChange={setSite} className="mb-4 lg:hidden" />
         <MissionReplays data={data} />
+        <EclipseReplays data={data} site={site} />
         <div className="flex flex-wrap items-start justify-between gap-4">
           <SiteHeader site={site} />
           <fieldset className="flex items-center gap-1 text-sm">
@@ -199,7 +209,7 @@ function Planner({ data }: { data: AppData }) {
           </fieldset>
         </div>
         <div className="mt-4">
-          <Panorama mask={mask} track={track} bodies={bodies} sunFrac={sunFrac} earthVis={earthVis} />
+          <Panorama key={focus.n} mask={mask} track={track} bodies={bodies} sunFrac={sunFrac} earthVis={earthVis} initialFollow={focus.follow} initialWidth={focus.width} />
         </div>
         <TimeControls />
         <section aria-label="Timeline" className="mt-4">
@@ -219,6 +229,7 @@ function Planner({ data }: { data: AppData }) {
         </div>
         <MastPanel site={site} />
         <LroPanel site={site} />
+        <ShadowMovie data={data} site={site} />
       </main>
     </div>
   )

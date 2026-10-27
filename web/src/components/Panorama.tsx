@@ -1,7 +1,9 @@
 import { useEffect, useId, useMemo, useRef, useState, type KeyboardEvent, type PointerEvent } from 'react'
 import { azDiff, DEG } from '../lib/astro.ts'
+import { compassHeading } from '../lib/compass.ts'
 import { azLabel, fmtDeg, fmtPct } from '../lib/format.ts'
 import { horizonAt, maskExtremes } from '../lib/horizon.ts'
+import { sunFraction } from '../lib/visibility.ts'
 import type { Bodies, Track } from '../lib/track.ts'
 import { useElementWidth } from '../lib/useElementWidth.ts'
 import { EarthGlyph, SunGlyph } from './Glyphs.tsx'
@@ -28,6 +30,8 @@ const MIN_WIDTH = 20
 /** Length of the "Listen" sound sweep, seconds */
 const SWEEP_S = 8
 const Y_MIN = -5
+/** Degrees of horizon a phone shows while looking around, about its camera's field of view */
+const LOOK_WIDTH = 60
 
 const clamp = (v: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, v))
 const norm = (a: number) => ((a % 360) + 360) % 360
@@ -54,6 +58,7 @@ export function Panorama({ mask, track, bodies, sunFrac, earthVis, initialWidth 
   const terrainClipId = useId()
   const descId = useId()
   const listenId = useId()
+  const lookId = useId()
 
   const extremes = useMemo(() => maskExtremes(mask), [mask])
   const yMax = Math.max(15, Math.ceil(extremes.max + 2))
@@ -228,7 +233,56 @@ export function Panorama({ mask, track, bodies, sunFrac, earthVis, initialWidth 
   }
   useEffect(() => () => stopListening(), [])
 
-  const sunState = sunFrac <= 0 ? 'hidden by terrain' : sunFrac >= 1 ? 'fully visible' : `${fmtPct(sunFrac)} visible`
+  // Look around with a phone: the panorama turns with the way it faces (lib/compass.ts)
+  const [compass, setCompass] = useState<'off' | 'on' | 'nodata' | 'denied'>('off')
+  const compassOff = useRef<(() => void) | null>(null)
+  const canCompass = typeof window !== 'undefined' && 'DeviceOrientationEvent' in window && navigator.maxTouchPoints > 0
+  const stopCompass = () => {
+    compassOff.current?.()
+    compassOff.current = null
+    setCompass('off')
+  }
+  const startCompass = async () => {
+    const request = (window.DeviceOrientationEvent as unknown as { requestPermission?: () => Promise<string> }).requestPermission
+    if (typeof request === 'function') {
+      try {
+        if ((await request()) !== 'granted') return setCompass('denied')
+      } catch {
+        return setCompass('denied')
+      }
+    }
+    let got = false
+    let last = 0
+    const onOrient = (e: DeviceOrientationEvent) => {
+      const ios = (e as DeviceOrientationEvent & { webkitCompassHeading?: number }).webkitCompassHeading
+      let heading: number
+      if (typeof ios === 'number' && !Number.isNaN(ios)) heading = ios
+      else if ((e.absolute || e.type === 'deviceorientationabsolute') && e.alpha !== null && e.beta !== null && e.gamma !== null) heading = compassHeading(e.alpha, e.beta, e.gamma)
+      else return
+      got = true
+      // Sensors report about 60 times a second; redraw at most 20
+      const now = performance.now()
+      if (now - last < 50) return
+      last = now
+      setFollow('none')
+      setView({ center: norm(heading), width: LOOK_WIDTH })
+    }
+    window.addEventListener('deviceorientationabsolute', onOrient as EventListener)
+    window.addEventListener('deviceorientation', onOrient)
+    const timer = window.setTimeout(() => !got && setCompass('nodata'), 2000)
+    compassOff.current = () => {
+      window.removeEventListener('deviceorientationabsolute', onOrient as EventListener)
+      window.removeEventListener('deviceorientation', onOrient)
+      clearTimeout(timer)
+    }
+    setCompass('on')
+  }
+  useEffect(() => () => compassOff.current?.(), [])
+
+  // sunFrac counts Earth too: during an eclipse, Earth rather than the terrain is what hides the Sun
+  const eclipsed = sunFraction(mask, bodies.sunAz, bodies.sunEl, bodies.sunRadius) > sunFrac + 1e-6
+  const sunState =
+    sunFrac <= 0 ? (eclipsed ? 'hidden by Earth (an eclipse)' : 'hidden by terrain') : sunFrac >= 1 ? 'fully visible' : `${fmtPct(sunFrac)} visible${eclipsed ? ', Earth covering part of it' : ''}`
   const sunText = `Sun ${sunState}, azimuth ${fmtDeg(bodies.sunAz)}, elevation ${fmtDeg(bodies.sunEl, 2)}.`
   const earthText = `Earth ${earthVis ? 'in view' : 'hidden'}, azimuth ${fmtDeg(bodies.earthAz)}, elevation ${fmtDeg(bodies.earthEl, 2)}.`
 
@@ -269,6 +323,14 @@ export function Panorama({ mask, track, bodies, sunFrac, earthVis, initialWidth 
         >
           {sweepAz !== null ? '■ Stop' : '♪ Listen'}
         </button>
+        {canCompass && (
+          <button type="button" className={btn} aria-pressed={compass === 'on'} aria-describedby={lookId} onClick={() => (compass === 'on' ? stopCompass() : void startCompass())}>
+            Look around
+          </button>
+        )}
+        <span id={lookId} className="sr-only">
+          Hold your phone up and turn around: the panorama turns with it, using the phone's compass.
+        </span>
         <span id={listenId} className="sr-only">
           Plays an {SWEEP_S}-second sound sweep around the horizon, clockwise from north: the pitch rises with the terrain, east
           sounds to the right. A bright chime marks the Sun and a two-note chime the Earth when they are visible; a low, muffled
@@ -279,6 +341,9 @@ export function Panorama({ mask, track, bodies, sunFrac, earthVis, initialWidth 
         </span>
       </div>
 
+      {compass === 'nodata' && <p className="mb-2 text-xs text-alert">This device didn't report a compass heading, so the panorama can't turn with it.</p>}
+      {compass === 'denied' && <p className="mb-2 text-xs text-alert">Motion and orientation access wasn't allowed, so the panorama can't turn with the phone.</p>}
+      {compass === 'on' && <p className="mb-2 text-xs text-dust">Hold the phone up and turn around: the panorama follows it. North is toward the lunar north, away from the pole.</p>}
       <div ref={wrapRef} className="w-full">
         <svg
           ref={svgRef}
