@@ -75,6 +75,7 @@ export default function Globe3D({ data }: { data: AppData }) {
   const [cardState, setCardState] = useState<'idle' | 'working' | 'none'>('idle')
   const siteId = useApp((s) => s.siteId)
   const setSite = useApp((s) => s.setSite)
+  const tourReturn = useApp((s) => s.tourReturn)
   const timeMs = useApp((s) => s.timeMs)
   const heightIndex = useApp((s) => s.heightIndex)
   const site = data.sites.find((s) => s.id === siteId) ?? data.sites[0]
@@ -537,6 +538,15 @@ export default function Globe3D({ data }: { data: AppData }) {
     return () => el.removeEventListener('wheel', onWheel)
   }, [ready])
 
+  // Sent here by the tour's "See it in 3D": stand at the site, or fly over it, as soon as the globe is ready
+  useEffect(() => {
+    const how = useApp.getState().arrive3d
+    if (!ready || !how) return
+    useApp.setState({ arrive3d: null })
+    if (how === 'fly') flyToSite()
+    else void standAtSite()
+  }, [ready])
+
   // Follow the site and observer height: stand again, or move over the new site's terrain
   useEffect(() => {
     const a = api.current
@@ -584,7 +594,14 @@ export default function Globe3D({ data }: { data: AppData }) {
             </span>
           </p>
         </div>
-        <SitePicker label="Site" sites={data.sites} value={site.id} onChange={setSite} className="max-sm:w-full sm:w-60" />
+        <div className="flex flex-wrap items-end gap-3 max-sm:w-full">
+          {tourReturn !== null && (
+            <button type="button" className="btn btn-primary" onClick={() => useApp.setState({ view: 'explore', playing: false })}>
+              ← Back to the tour
+            </button>
+          )}
+          <SitePicker label="Site" sites={data.sites} value={site.id} onChange={setSite} className="max-sm:w-full sm:w-60" />
+        </div>
       </div>
 
       {/* On phones the view buttons sit in a bar above the 3D view; on larger screens they float over it */}

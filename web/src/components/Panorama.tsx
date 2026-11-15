@@ -19,6 +19,8 @@ interface Props {
   /** Starting view; remount the component (change its key) to apply a new one */
   initialWidth?: number
   initialFollow?: Follow
+  /** For the tour: no toolbar or minimap, a glow on the Sun and Earth, and the status in plain words */
+  simple?: boolean
 }
 interface View {
   center: number
@@ -43,7 +45,7 @@ function azTickStep(w: number): number {
   return 5
 }
 
-export function Panorama({ mask, track, bodies, sunFrac, earthVis, initialWidth = 360, initialFollow = 'none' }: Props) {
+export function Panorama({ mask, track, bodies, sunFrac, earthVis, initialWidth = 360, initialFollow = 'none', simple = false }: Props) {
   const wrapRef = useRef<HTMLDivElement>(null)
   const width = useElementWidth(wrapRef)
   const height = width < 640 ? 240 : width < 1000 ? 320 : 360
@@ -286,12 +288,22 @@ export function Panorama({ mask, track, bodies, sunFrac, earthVis, initialWidth 
   const sunText = `Sun ${sunState}, azimuth ${fmtDeg(bodies.sunAz)}, elevation ${fmtDeg(bodies.sunEl, 2)}.`
   const earthText = `Earth ${earthVis ? 'in view' : 'hidden'}, azimuth ${fmtDeg(bodies.earthAz)}, elevation ${fmtDeg(bodies.earthEl, 2)}.`
 
+  const plainSun =
+    sunFrac <= 0
+      ? eclipsed
+        ? 'Earth is covering the Sun: an eclipse.'
+        : 'The Sun is behind the terrain: no power for the solar panels.'
+      : sunFrac >= 1
+        ? 'The Sun is up: the solar panels have power.'
+        : `Only ${fmtPct(sunFrac)} of the Sun is above the skyline.`
+  const plainEarth =earthVis ? 'Earth is in view: the lander can radio home.' : 'Earth is behind the terrain: no radio link home.'
+
   const btn =
     'btn'
 
   return (
     <section aria-label="Horizon panorama" className="select-none">
-      <div className="mb-2 flex flex-wrap items-center gap-2">
+      <div className={`mb-2 flex flex-wrap items-center gap-2 ${simple ? 'hidden' : ''}`}>
         <button type="button" className={btn} onClick={() => zoom(1.5)} aria-label="Zoom out">
           −
         </button>
@@ -398,6 +410,8 @@ export function Panorama({ mask, track, bodies, sunFrac, earthVis, initialWidth 
             {/* Paths above the terrain: the terrain fill hides the parts below the horizon */}
             <path d={paths.earth} fill="none" stroke="var(--color-earth)" strokeWidth={1.5} strokeOpacity={0.75} />
             <path d={paths.sun} fill="none" stroke="var(--color-sun)" strokeWidth={1.5} strokeOpacity={0.85} />
+            {simple && earthDisk && <circle cx={earthDisk.cx} cy={earthDisk.cy} r={11} fill="var(--color-earth)" fillOpacity={0.3} />}
+            {simple && sunDisk && <circle cx={sunDisk.cx} cy={sunDisk.cy} r={13} fill="var(--color-sun)" fillOpacity={0.35} />}
             {earthDisk && <ellipse {...earthDisk} fill="var(--color-earth)" />}
             {sunDisk && <ellipse {...sunDisk} fill="var(--color-sun)" />}
 
@@ -422,14 +436,14 @@ export function Panorama({ mask, track, bodies, sunFrac, earthVis, initialWidth 
 
           {sunDisk && (
             <g transform={`translate(${clamp(sunDisk.cx, MARGIN.l + 30, MARGIN.l + plotW - 60)} ${clamp(sunDisk.cy - sunDisk.ry - 10, MARGIN.t + 10, MARGIN.t + plotH - 4)})`}>
-              <text textAnchor="middle" className="fill-sun text-xs" aria-hidden="true">
-                Sun {sunFrac <= 0 ? 'hidden' : sunFrac >= 1 ? '' : fmtPct(sunFrac)}
+              <text textAnchor="middle" className={`fill-sun ${simple ? 'text-sm font-semibold' : 'text-xs'}`} aria-hidden="true">
+                {`Sun${sunFrac <= 0 ? ' hidden' : sunFrac >= 1 ? '' : ` ${fmtPct(sunFrac)}`}`}
               </text>
             </g>
           )}
           {earthDisk && (
             <g transform={`translate(${clamp(earthDisk.cx, MARGIN.l + 30, MARGIN.l + plotW - 60)} ${clamp(earthDisk.cy - earthDisk.ry - 10, MARGIN.t + 10, MARGIN.t + plotH - 4)})`}>
-              <text textAnchor="middle" className="fill-earth text-xs" aria-hidden="true">
+              <text textAnchor="middle" className={`fill-earth ${simple ? 'text-sm font-semibold' : 'text-xs'}`} aria-hidden="true">
                 Earth{earthVis ? '' : ' hidden'}
               </text>
             </g>
@@ -454,12 +468,12 @@ export function Panorama({ mask, track, bodies, sunFrac, earthVis, initialWidth 
         </svg>
       </div>
 
-      <Minimap mask={mask} view={view} bodies={bodies} yMax={yMax} onCenter={(c) => { setFollow('none'); setView((v) => ({ ...v, center: c })) }} width={width} />
+      {!simple && <Minimap mask={mask} view={view} bodies={bodies} yMax={yMax} onCenter={(c) => { setFollow('none'); setView((v) => ({ ...v, center: c })) }} width={width} />}
 
       <p id={descId} className="mt-2 text-sm text-dust" aria-live="polite">
         <SunGlyph className="mr-1 inline text-sun" />
-        {sunText} <EarthGlyph className="ml-2 mr-1 inline text-earth" />
-        {earthText}
+        {simple ? plainSun : sunText} <EarthGlyph className="ml-2 mr-1 inline text-earth" />
+        {simple ? plainEarth : earthText}
       </p>
     </section>
   )

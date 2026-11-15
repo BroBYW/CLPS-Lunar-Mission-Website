@@ -27,12 +27,14 @@ interface StepDef {
   days: number
   width?: number
   follow?: Follow
+  /** How "See it in 3D" shows the site: standing on it (the default), or from above where standing sees only shadow */
+  view3d?: 'stand' | 'fly'
 }
 
 const STEPS: StepDef[] = [
   { title: 'The Sun never climbs high', site: 'connecting-ridge', start: MONTH_START, days: 30 },
   { title: 'A little height goes a long way', site: 'connecting-ridge', start: MONTH_START, days: 30 },
-  { title: 'Craters the Sun never reaches', site: 'shackleton-floor', start: MONTH_START, days: 30 },
+  { title: 'Craters the Sun never reaches', site: 'shackleton-floor', start: MONTH_START, days: 30, view3d: 'fly' },
   { title: 'Earth wobbles in the sky', site: 'malapert-massif', start: MONTH_START, days: 30, width: 90, follow: 'earth' },
   { title: 'Power and a link home, together', site: 'connecting-ridge', start: MONTH_START, days: 30 },
   // Opens on the first candidate so the panorama doesn't give the answer away
@@ -332,7 +334,11 @@ function Challenge({ data }: { data: AppData }) {
 }
 
 export default function Explore({ data }: { data: AppData }) {
-  const [step, setStep] = useState(0)
+  // Back from the 3D view: carry on at the step that sent the visitor there
+  const [step, setStep] = useState(() => useApp.getState().tourReturn ?? 0)
+  useEffect(() => {
+    useApp.setState({ tourReturn: null })
+  }, [])
   const heading = useRef<HTMLHeadingElement>(null)
   const setSite = useApp((s) => s.setSite)
   const setView = useApp((s) => s.setView)
@@ -367,9 +373,16 @@ export default function Explore({ data }: { data: AppData }) {
       <h2 ref={heading} tabIndex={-1} className="heading-4 mt-1 outline-none">
         {def.title}
       </h2>
-      <p className="mt-1 text-sm text-dust">
-        {site.name}, lander height 2 m
-      </p>
+      <div className="mt-1 flex flex-wrap items-center justify-between gap-3">
+        <p className="text-sm text-dust">The skyline all around {site.name}, as a lander 2 m tall would see it</p>
+        <button
+          type="button"
+          className="btn"
+          onClick={() => useApp.setState({ view: '3d', playing: false, arrive3d: def.view3d ?? 'stand', tourReturn: step })}
+        >
+          See it in 3D
+        </button>
+      </div>
       <div className="mt-3">
         <Panorama
           key={`${step}-${site.id}`}
@@ -380,6 +393,7 @@ export default function Explore({ data }: { data: AppData }) {
           earthVis={scene.earthVis}
           initialWidth={def.width ?? 360}
           initialFollow={def.follow ?? 'none'}
+          simple
         />
       </div>
       <div className="mt-4 max-w-[68ch] text-base leading-relaxed">

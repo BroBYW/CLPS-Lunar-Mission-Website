@@ -22,6 +22,10 @@ export interface AppState {
   game: Game
   /** Set when the Play view sends the player to the 3D view's rover game, which starts it and clears this */
   roverGamePending: boolean
+  /** Set when the tour sends the visitor to the 3D view: stand at the site or fly over it; the 3D view does it and clears this */
+  arrive3d: 'stand' | 'fly' | null
+  /** The tour step to come back to after a visit to the 3D view, or null */
+  tourReturn: number | null
   /** Bumping n restarts the Plan view's panorama with this view (eclipse replays zoom in on the Sun) */
   panoramaFocus: { n: number; follow: 'none' | 'sun' | 'earth'; width: number }
   siteId: string
@@ -82,6 +86,8 @@ export const useApp = create<AppState>()((set, get) => ({
   view: 'home',
   game: 'survive',
   roverGamePending: false,
+  arrive3d: null,
+  tourReturn: null,
   panoramaFocus: { n: 0, follow: 'none', width: 360 },
   siteId: DEFAULT_SITE,
   compareIds: [DEFAULT_SITE, 'shackleton-rim', 'malapert-massif'],
@@ -96,7 +102,7 @@ export const useApp = create<AppState>()((set, get) => ({
   power: DEFAULT_POWER,
   handControl: false,
   moreDetails: readDetails(),
-  setView: (view) => set(view === 'home' ? { view, playing: false, handControl: false } : { view, playing: false }),
+  setView: (view) => set(view === 'home' ? { view, playing: false, handControl: false, tourReturn: null } : { view, playing: false }),
   setGame: (game) => set({ game }),
   setSite: (siteId) => set({ siteId }),
   setCompare: (ids) => set({ compareIds: ids.slice(0, MAX_COMPARE) }),
