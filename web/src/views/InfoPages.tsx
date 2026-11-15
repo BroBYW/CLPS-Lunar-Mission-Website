@@ -129,6 +129,12 @@ export function AboutPage() {
             north on Earth.
           </li>
           <li>
+            <strong>Hand control</strong> (by the time controls) reads 21 points on your hand from the camera with
+            MediaPipe's Hand Landmarker, running in the page; no image leaves your device. A hand whose fingertips sit well
+            beyond their middle joints, as seen from the wrist, is open and drags time as the palm moves; a fist lets go.
+            A sweep across the camera moves time as far as two seconds of playback at the chosen speed.
+          </li>
+          <li>
             <strong>Earth postcard</strong> searches the next 30 days, hour by hour, for Earth's whole disk at most 4° over the
             skyline, preferring a full Earth over sunlit ground (the Sun visible and above the level horizon), then
             captures the standing view.
@@ -304,7 +310,7 @@ export function CreditsPage() {
       <section>
         <h3>Software</h3>
         <ul>
-          <li>Web: React, Vite, TypeScript, Tailwind CSS, Zustand (MIT); d3-scale and d3-time-format (ISC); Comlink and CesiumJS (Apache-2.0).</li>
+          <li>Web: React, Vite, TypeScript, Tailwind CSS, Zustand (MIT); d3-scale and d3-time-format (ISC); Comlink, CesiumJS, and MediaPipe Tasks Vision with its Hand Landmarker model (Apache-2.0).</li>
           <li>Pipeline: SpiceyPy and pyproj (MIT); NumPy, SciPy and rasterio (BSD); Matplotlib; Pillow.</li>
           <li>Fonts: Jost and Atkinson Hyperlegible Next (SIL Open Font License), self-hosted through Fontsource.</li>
         </ul>

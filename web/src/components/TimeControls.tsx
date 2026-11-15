@@ -1,11 +1,18 @@
-import { useId } from 'react'
+import { lazy, Suspense, useId } from 'react'
 import { MAX_MS, MIN_MS, SPEEDS_HPS, STEP_MS, useApp } from '../state/store.ts'
 import { DAY_MS, formatUtc, formatUtcDate, HOUR_MS, parseUtc } from '../lib/time.ts'
+
+// MediaPipe and its model load only once someone turns hand control on
+const HandControl = lazy(() => import('./HandControl.tsx'))
+/** getUserMedia exists only in secure contexts (https or localhost) */
+const cameraAvailable = typeof navigator !== 'undefined' && !!navigator.mediaDevices?.getUserMedia
 
 const speedLabel = (h: number) => (h < 24 ? `${h} h per second` : `${h / 24} day${h === 24 ? '' : 's'} per second`)
 
 export function TimeControls() {
   const { startMs, endMs, timeMs, playing, speedHps, setRange, setTime, setPlaying, setSpeed } = useApp()
+  const handControl = useApp((s) => s.handControl)
+  const setHandControl = useApp((s) => s.setHandControl)
   const ids = { start: useId(), end: useId(), scrub: useId(), speed: useId() }
   const minDate = formatUtcDate(MIN_MS)
   const maxDate = formatUtcDate(MAX_MS - DAY_MS)
@@ -92,7 +99,23 @@ export function TimeControls() {
             ))}
           </select>
         </span>
+        {cameraAvailable && (
+          <button
+            type="button"
+            className={`${btn} ${handControl ? 'border-sun text-sun' : ''} sm:ml-auto`}
+            onClick={() => setHandControl(!handControl)}
+            aria-pressed={handControl}
+            title="Use your camera: an open hand drags time, a fist holds it"
+          >
+            Hand control
+          </button>
+        )}
       </div>
+      {handControl && (
+        <Suspense fallback={null}>
+          <HandControl />
+        </Suspense>
+      )}
 
       <label htmlFor={ids.scrub} className="sr-only">
         Time within the selected range

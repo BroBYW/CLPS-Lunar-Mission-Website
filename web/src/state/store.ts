@@ -35,6 +35,8 @@ export interface AppState {
   darkThreshold: number
   earthMarginDeg: number
   power: PowerInputs
+  /** Camera hand control: an open hand drags time, a fist holds it */
+  handControl: boolean
   setView: (view: View) => void
   setGame: (game: Game) => void
   setSite: (id: string) => void
@@ -47,6 +49,7 @@ export interface AppState {
   setDarkThreshold: (t: number) => void
   setEarthMargin: (deg: number) => void
   setPower: (p: Partial<PowerInputs>) => void
+  setHandControl: (on: boolean) => void
 }
 
 export const clamp = (v: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, v))
@@ -78,6 +81,7 @@ export const useApp = create<AppState>()((set, get) => ({
   darkThreshold: 0,
   earthMarginDeg: 0,
   power: DEFAULT_POWER,
+  handControl: false,
   setView: (view) => set({ view, playing: false }),
   setGame: (game) => set({ game }),
   setSite: (siteId) => set({ siteId }),
@@ -101,4 +105,5 @@ export const useApp = create<AppState>()((set, get) => ({
   setDarkThreshold: (darkThreshold) => set({ darkThreshold: clamp(darkThreshold, 0, 0.99) }),
   setEarthMargin: (earthMarginDeg) => set({ earthMarginDeg: clamp(earthMarginDeg, 0, 10) }),
   setPower: (p) => set({ power: { ...get().power, ...p } }),
+  setHandControl: (handControl) => set({ handControl }),
 }))
