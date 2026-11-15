@@ -1,11 +1,11 @@
-# Handoff: 15 November 2026, 17:50 (UTC+8)
+# Handoff: 15 November 2026, 18:00 (UTC+8)
 
 Written on the second computer (the one with a camera). This file is everything the next Claude session needs; [CLAUDE.md](CLAUDE.md) has the standing rules.
 
 ## Demo video (done)
 
 - English, 29.09 s, 1080p, voice-over, captions and music: [docs/demo/CLPS-demo-30s.mp4](docs/demo/CLPS-demo-30s.mp4). Second cut (commit `64585da`): recorded from the current build, the compare shot replaced by the Play view (game cards, Survive the lunar night running), and the LRO line says 99.3%.
-- **Link for the "Link to Project Demo" field** (plays in the browser, no sign-in, pinned to commit `64585da`; works once that commit is pushed): https://cdn.jsdelivr.net/gh/BroBYW/CLPS-Lunar-Mission-Website@64585da/docs/demo/CLPS-demo-30s.mp4. The first cut stays at `@48e0071`. GitHub's own file page won't play a file this size; it only offers a download.
+- **Link for the "Link to Project Demo" field** (plays in the browser, no sign-in, pinned to commit `64585da`; pushed and checked: it serves the 6,011,556-byte second cut as video/mp4): https://cdn.jsdelivr.net/gh/BroBYW/CLPS-Lunar-Mission-Website@64585da/docs/demo/CLPS-demo-30s.mp4. The first cut stays at `@48e0071`. GitHub's own file page won't play a file this size; it only offers a download.
 - Space Apps SI rules: the video has a visible "SI-assisted" watermark and an SI disclosure in its metadata (the voice is Microsoft neural text-to-speech; the music was synthesised in code). Say the same in the submission's SI field.
 - Team **Luosifen**, challenge **Lunar Landing Site Navigator**: https://www.spaceappschallenge.org/2026/find-a-team/luosifen/?tab=project
 - The video shows the redesigned site, which production now serves (see below).
@@ -18,11 +18,11 @@ Written on the second computer (the one with a camera). This file is everything 
 ## Where things stand
 
 - GitHub `main` = `dev`. Pushes don't deploy (Vercel isn't linked to GitHub).
-- **Live:** the redesign is in production. Preview `clps-lunar-mission-browser-4yhj4m2gg-alvin-s.vercel.app` (commit `e4d7fab`) was checked and promoted at 17:07 (UTC+8) from Alvin's Vercel account. The live site serves the same build, data files and hand model; no console errors.
+- **Live:** production serves commit `0f2408c`: preview `clps-lunar-mission-browser-astdj9d6f-alvin-s.vercel.app`, checked and promoted at about 18:00 (UTC+8) from Alvin's Vercel account, with everything below (the redesign, shorter header, easier tour and games, help icons). The live site serves the same JavaScript and CSS as the local build; no console errors. GitHub `main` and `dev` were pushed at the same time.
 - The README screenshots were retaken from the redesign (same pages, dates and links as before).
-- **Shorter header** (after the deploy above): five views, Tour (the guided story, view id still `explore`), Plan, Compare, 3D and Play, plus a **More** menu with Find dates, Method and Credits. While a More page is shown, the button takes its name. The home page's nav reads Tour, Plan, Compare, 3D, Play. The README screenshots that show the header were retaken. Deploy it like the redesign: new preview, check, promote with the user's OK.
-- **Easier tour and games** (same deploy): the tour's panorama hides the expert toolbar, glows the Sun and Earth and says what they mean in plain words; each step has **See it in 3D** (with **Back to the tour**); the Play view shows its games as picture cards.
-- **Help icons** (same deploy): a circled "i" beside each main section title opens a short "What it is / How to use it" card (`web/src/components/InfoTip.tsx`).
+- **Shorter header**: five views, Tour (the guided story, view id still `explore`), Plan, Compare, 3D and Play, plus a **More** menu with Find dates, Method and Credits. While a More page is shown, the button takes its name. The home page's nav reads Tour, Plan, Compare, 3D, Play. The README screenshots that show the header were retaken.
+- **Easier tour and games**: the tour's panorama hides the expert toolbar, glows the Sun and Earth and says what they mean in plain words; each step has **See it in 3D** (with **Back to the tour**); the Play view shows its games as picture cards.
+- **Help icons**: a circled "i" beside each main section title opens a short "What it is / How to use it" card (`web/src/components/InfoTip.tsx`).
 - Commit `e4d7fab` added the **redesign** (Geist type, solid buttons, cards, floating nav, docked time bar), the **newcomer changes** (the home button leads into the guided story; the Plan view opens with an "At a glance" card; expert panels fold under "Show more details") and the **fun changes** (a hand control button in story step 1; home cards for hand control and the lunar night game). AI_USAGE.md has the details.
 - Hand control passed an automated check (MediaPipe's hand photos through a fake camera) but **has not been tried with a real hand** yet.
 
