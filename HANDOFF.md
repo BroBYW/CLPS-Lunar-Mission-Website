@@ -1,11 +1,11 @@
-# Handoff: 15 November 2026, 17:25 (UTC+8)
+# Handoff: 15 November 2026, 17:50 (UTC+8)
 
 Written on the second computer (the one with a camera). This file is everything the next Claude session needs; [CLAUDE.md](CLAUDE.md) has the standing rules.
 
 ## Demo video (done)
 
-- English, 29.15 s, 1080p, voice-over, captions and music: [docs/demo/CLPS-demo-30s.mp4](docs/demo/CLPS-demo-30s.mp4).
-- **Link for the "Link to Project Demo" field** (plays in the browser, no sign-in, pinned to commit `48e0071`): https://cdn.jsdelivr.net/gh/BroBYW/CLPS-Lunar-Mission-Website@48e0071/docs/demo/CLPS-demo-30s.mp4. GitHub's own file page won't play a file this size; it only offers a download.
+- English, 29.09 s, 1080p, voice-over, captions and music: [docs/demo/CLPS-demo-30s.mp4](docs/demo/CLPS-demo-30s.mp4). Second cut (commit `64585da`): recorded from the current build, the compare shot replaced by the Play view (game cards, Survive the lunar night running), and the LRO line says 99.3%.
+- **Link for the "Link to Project Demo" field** (plays in the browser, no sign-in, pinned to commit `64585da`; works once that commit is pushed): https://cdn.jsdelivr.net/gh/BroBYW/CLPS-Lunar-Mission-Website@64585da/docs/demo/CLPS-demo-30s.mp4. The first cut stays at `@48e0071`. GitHub's own file page won't play a file this size; it only offers a download.
 - Space Apps SI rules: the video has a visible "SI-assisted" watermark and an SI disclosure in its metadata (the voice is Microsoft neural text-to-speech; the music was synthesised in code). Say the same in the submission's SI field.
 - Team **Luosifen**, challenge **Lunar Landing Site Navigator**: https://www.spaceappschallenge.org/2026/find-a-team/luosifen/?tab=project
 - The video shows the redesigned site, which production now serves (see below).

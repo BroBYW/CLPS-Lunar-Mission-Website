@@ -2,7 +2,7 @@
 
 **Pick a lunar south pole site and a date range. See when it has sunlight, when it can see Earth, and how it compares to other sites.**
 
-### [Open the live site →](https://clps-lunar-mission-browser.vercel.app) · [Watch the 30 s demo →](https://cdn.jsdelivr.net/gh/BroBYW/CLPS-Lunar-Mission-Website@48e0071/docs/demo/CLPS-demo-30s.mp4)
+### [Open the live site →](https://clps-lunar-mission-browser.vercel.app) · [Watch the 30 s demo →](https://cdn.jsdelivr.net/gh/BroBYW/CLPS-Lunar-Mission-Website@64585da/docs/demo/CLPS-demo-30s.mp4)
 
 <a href="https://clps-lunar-mission-browser.vercel.app"><img src="docs/screenshots/home.jpg" width="100%" alt="The home page: the headline Where the Sun skims the horizon, a Find a sunlit site button, and a live 3D Moon lit by the Sun as it is right now"></a>
 
