@@ -1,4 +1,4 @@
-# Handoff: 15 November 2026, 16:40 (UTC+8)
+# Handoff: 15 November 2026, 17:25 (UTC+8)
 
 Written on the second computer (the one with a camera). This file is everything the next Claude session needs; [CLAUDE.md](CLAUDE.md) has the standing rules.
 
@@ -8,7 +8,7 @@ Written on the second computer (the one with a camera). This file is everything 
 - **Link for the "Link to Project Demo" field** (plays in the browser, no sign-in, pinned to commit `48e0071`): https://cdn.jsdelivr.net/gh/BroBYW/CLPS-Lunar-Mission-Website@48e0071/docs/demo/CLPS-demo-30s.mp4. GitHub's own file page won't play a file this size; it only offers a download.
 - Space Apps SI rules: the video has a visible "SI-assisted" watermark and an SI disclosure in its metadata (the voice is Microsoft neural text-to-speech; the music was synthesised in code). Say the same in the submission's SI field.
 - Team **Luosifen**, challenge **Lunar Landing Site Navigator**: https://www.spaceappschallenge.org/2026/find-a-team/luosifen/?tab=project
-- The video shows the redesigned site, so production must serve the redesign (see below).
+- The video shows the redesigned site, which production now serves (see below).
 - The scripts that made it (Playwright screencast, edge-tts, numpy music, ffmpeg) were in a temporary folder and are not in the repository.
 
 ## Deadline
@@ -17,9 +17,10 @@ Written on the second computer (the one with a camera). This file is everything 
 
 ## Where things stand
 
-- GitHub `main` = `dev` = the commit that adds this file. Pushes don't deploy (Vercel isn't linked to GitHub).
-- This commit adds the **redesign** (Geist type, solid buttons, cards, floating nav, docked time bar), the **newcomer changes** (the home button leads into the guided story; the Plan view opens with an "At a glance" card; expert panels fold under "Show more details") and the **fun changes** (a hand control button in story step 1; home cards for hand control and the lunar night game). AI_USAGE.md has the details.
-- Deploy it with a new preview from `web/` and promote that preview with the user's OK; older previews don't have the redesign.
+- GitHub `main` = `dev`. Pushes don't deploy (Vercel isn't linked to GitHub).
+- **Live:** the redesign is in production. Preview `clps-lunar-mission-browser-4yhj4m2gg-alvin-s.vercel.app` (commit `e4d7fab`) was checked and promoted at 17:07 (UTC+8) from Alvin's Vercel account. The live site serves the same build, data files and hand model; no console errors.
+- The README screenshots were retaken from the redesign (same pages, dates and links as before).
+- Commit `e4d7fab` added the **redesign** (Geist type, solid buttons, cards, floating nav, docked time bar), the **newcomer changes** (the home button leads into the guided story; the Plan view opens with an "At a glance" card; expert panels fold under "Show more details") and the **fun changes** (a hand control button in story step 1; home cards for hand control and the lunar night game). AI_USAGE.md has the details.
 - Hand control passed an automated check (MediaPipe's hand photos through a fake camera) but **has not been tried with a real hand** yet.
 
 ## Hand control (new, needs a real camera test)
@@ -74,7 +75,6 @@ Known limits: one hand only; needs reasonable light; detection runs on the main 
 
 ## Next steps, in order
 
-1. Deploy a preview of this commit, check it, and promote it to production with the user's OK. Check the live site afterwards.
-2. The user fills in the Space Apps project page (all in English): the demo link above, the live site as the final project, the SI field, NASA data. Then **Submit for Judging** before 21:00 (UTC+8); the official close is 23:59 local event time.
-3. If there's time: the user tries hand control with a real hand (checklist above) and it gets tuned.
-4. Add rows to AI_USAGE.md for any further AI-assisted work.
+1. The user fills in the Space Apps project page (all in English): the demo link above, the live site as the final project, the SI field, NASA data. Then **Submit for Judging** before 21:00 (UTC+8); the official close is 23:59 local event time.
+2. If there's time: the user tries hand control with a real hand (checklist above) and it gets tuned. Any later change needs a new preview from `web/` (this computer's Vercel CLI is signed in to Alvin's account) and a promote with the user's OK.
+3. Add rows to AI_USAGE.md for any further AI-assisted work.

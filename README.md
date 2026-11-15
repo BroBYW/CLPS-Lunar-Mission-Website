@@ -36,8 +36,8 @@ Click a picture to open that view on the live site.
 <table>
   <tr>
     <td width="50%" valign="top">
-      <a href="https://clps-lunar-mission-browser.vercel.app/?site=connecting-ridge&amp;from=2027-01-01&amp;to=2027-01-30&amp;t=2027-01-12T06:00Z&amp;h=2"><img src="docs/screenshots/plan.png" alt="The Plan view for the Connecting ridge: the site list, the 3D site map, the horizon panorama with the Sun's and Earth's paths, time controls and the sunlit, Earth and both timeline"></a>
-      <br><b>Plan.</b> The Connecting ridge in January 2027: the horizon panorama with the Sun's and Earth's paths, the site list and map, and the timeline of sunlight and Earth in view.
+      <a href="https://clps-lunar-mission-browser.vercel.app/?site=connecting-ridge&amp;from=2027-01-01&amp;to=2027-01-30&amp;t=2027-01-12T06:00Z&amp;h=2"><img src="docs/screenshots/plan.png" alt="The Plan view for the Connecting ridge: an At a glance card (the Sun up 100% of the time, Earth in view 47%, never dark, and the best time to land), the site list and 3D map, the horizon panorama with the Sun's and Earth's paths, and the time controls"></a>
+      <br><b>Plan.</b> The Connecting ridge in January 2027. The <i>At a glance</i> card answers in plain words, down to the best time to land; below it, the horizon panorama with the Sun's and Earth's paths, beside the site list and map.
     </td>
     <td width="50%" valign="top">
       <a href="https://clps-lunar-mission-browser.vercel.app/?view=compare&amp;site=haworth&amp;cmp=haworth,connecting-ridge,shackleton-rim&amp;from=2027-01-01&amp;to=2027-01-15&amp;t=2027-01-05T00:00Z&amp;h=2"><img src="docs/screenshots/compare.png" alt="The Compare view: Haworth, the Connecting ridge and Shackleton rim side by side, with a table of metrics and aligned timelines"></a>
