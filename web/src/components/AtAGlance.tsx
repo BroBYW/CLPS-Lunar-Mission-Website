@@ -1,3 +1,4 @@
+import { InfoTip } from './InfoTip.tsx'
 import type { ReactNode } from 'react'
 import type { Site } from '../data/load.ts'
 import type { Longest, Metrics, Window } from '../lib/metrics.ts'
@@ -51,7 +52,7 @@ export function AtAGlance({ site, metrics, pending }: { site: Site; metrics: Met
   return (
     <section aria-label="At a glance" aria-busy={pending} className="card">
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <p className="caption-4 text-dust">At a glance</p>
+        <p className="caption-4 flex items-center gap-2 text-dust">At a glance <InfoTip topic="At a glance" what="The short answer for this site and these dates: how often the Sun is up (power), how often Earth is in view (a radio link home), the longest darkness (how long the battery must last) and the best time to land." how="Pick another site or change the dates in the time bar and it updates. Show me moves the time to the best landing window." /></p>
         <button type="button" onClick={() => setView('explore')} className="caption-1 text-sun-soft underline decoration-sun/40 underline-offset-4 transition-colors hover:text-sun">
           New here? Take the 2 minute tour
         </button>

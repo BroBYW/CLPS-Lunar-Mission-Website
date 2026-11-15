@@ -1,3 +1,4 @@
+import { InfoTip } from './InfoTip.tsx'
 import { useState } from 'react'
 import { fmtHours } from '../lib/format.ts'
 import type { Window } from '../lib/metrics.ts'
@@ -11,7 +12,7 @@ export function WindowsTable({ windows, onDownload }: { windows: Window[]; onDow
   return (
     <section aria-label="Sun and Earth windows">
       <div className="flex flex-wrap items-baseline justify-between gap-2">
-        <h3 className="title-2">Windows with sunlight and Earth in view</h3>
+        <h3 className="title-2 flex items-center gap-2">Windows with sunlight and Earth in view <InfoTip topic="this table" what="Every stretch of your dates when the site has sunlight and Earth in view at once: when a lander can make power and talk to Earth together." how="Click a start time to jump the page there. Download CSV saves the list for a spreadsheet." /></h3>
         <button type="button" onClick={onDownload} className="btn">
           Download CSV
         </button>

@@ -1,3 +1,4 @@
+import { InfoTip } from './InfoTip.tsx'
 import { GROUP_LABELS, GROUP_ORDER } from '../data/groups.ts'
 import type { Site } from '../data/load.ts'
 import { fmtLatLon } from '../lib/format.ts'
@@ -7,7 +8,7 @@ export function SiteList({ sites, selected, onSelect }: { sites: Site[]; selecte
   const clearPin = usePin((s) => s.clear)
   return (
     <fieldset>
-      <legend className="title-2">Sites</legend>
+      <legend className="title-2 flex items-center gap-2">Sites <InfoTip topic="the site list" what="The landing sites, each from a published source: lit ridges and rims, the Artemis candidate regions, real landing sites, and a crater floor in permanent shadow. A filled dot is an exact published point; a ring is a representative point for a larger region." how="Click a site to open it everywhere in the app." /></legend>
       {GROUP_ORDER.map((g) => {
         const items = sites.filter((s) => s.group === g)
         if (!items.length) return null

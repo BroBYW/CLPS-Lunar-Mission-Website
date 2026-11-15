@@ -1,3 +1,4 @@
+import { InfoTip } from './InfoTip.tsx'
 import { useEffect, useId, useMemo, useRef, useState, type KeyboardEvent, type PointerEvent } from 'react'
 import { azDiff, DEG } from '../lib/astro.ts'
 import { compassHeading } from '../lib/compass.ts'
@@ -348,6 +349,7 @@ export function Panorama({ mask, track, bodies, sunFrac, earthVis, initialWidth 
           sounds to the right. A bright chime marks the Sun and a two-note chime the Earth when they are visible; a low, muffled
           one when the terrain hides them.
         </span>
+        <InfoTip topic="the horizon panorama" what="The skyline all around the site, as a lander would see it. Grey is the real terrain from NASA's LOLA laser altimeter; the yellow line is the Sun's path over your dates and the blue line is Earth's. Where a line dips behind the grey, the terrain hides it." how="Drag to look around, use + and − to zoom, or press Follow Sun or Follow Earth to keep one in view. Listen plays the skyline as a sound sweep." />
         <span className="ml-auto text-xs text-dust tabular">
           {exaggeration > 1.1 ? `Vertical scale ×${exaggeration.toFixed(1)}` : 'True proportions'}
         </span>

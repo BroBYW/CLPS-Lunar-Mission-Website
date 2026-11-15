@@ -1,3 +1,4 @@
+import { InfoTip } from './InfoTip.tsx'
 import { scaleLinear } from 'd3-scale'
 import { useEffect, useId, useMemo, useRef, useState } from 'react'
 import { loadMastHorizons, type MastHorizons, type Site } from '../data/load.ts'
@@ -60,7 +61,7 @@ export function MastPanel({ site }: { site: Site }) {
 
   return (
     <section aria-label="Mast height" className="mt-8">
-      <h3 className="title-2">Mast height</h3>
+      <h3 className="title-2 flex items-center gap-2">Mast height <InfoTip topic="the mast planner" what="How much more sunlight and Earth contact a solar panel or antenna gets when it is raised on a mast, from 2 m up to 50 m." how="Compare the heights for your dates. At the pole a few metres can lift a panel over a ridge and add days of sunlight." /></h3>
       <p className="mt-1 max-w-prose text-xs text-dust">
         At the pole the Sun skims the horizon, so a few metres of height can add days of sunlight. NASA's Vertical Solar Array
         Technology project is building solar arrays on masts about 10 m tall for the south pole, and larger designs reach over

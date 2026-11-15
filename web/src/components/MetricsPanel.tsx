@@ -1,3 +1,4 @@
+import { InfoTip } from './InfoTip.tsx'
 import { useId, type ReactNode } from 'react'
 import { fmtHours } from '../lib/format.ts'
 import type { Longest, Metrics } from '../lib/metrics.ts'
@@ -32,7 +33,7 @@ export function MetricsPanel({ metrics, pending }: { metrics: Metrics | null; pe
 
   return (
     <section aria-label="Metrics for the selected dates" aria-busy={pending} className="mt-6">
-      <h3 className="title-2">Over the selected dates</h3>
+      <h3 className="title-2 flex items-center gap-2">Over the selected dates <InfoTip topic="these numbers" what="The numbers behind the At a glance card, over your whole date range: how much sunlight the site gets, its longest darkness, how much Earth is in view, and how often both happen together." how="Change the dates in the time bar, or the observer height (Lander 2 m or Mast 10 m) above the panorama, and they update." /></h3>
       {metrics ? (
         <div className={`mt-3 grid grid-cols-2 gap-x-6 gap-y-5 md:grid-cols-3${pending ? 'opacity-60' : ''}`}>
           <Stat

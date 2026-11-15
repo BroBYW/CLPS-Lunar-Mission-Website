@@ -1,3 +1,4 @@
+import { InfoTip } from './InfoTip.tsx'
 import { useId, type CSSProperties } from 'react'
 import { MAX_MS, MIN_MS, SPEEDS_HPS, STEP_MS, useApp } from '../state/store.ts'
 import { DAY_MS, formatUtc, formatUtcDate, HOUR_MS, parseUtc } from '../lib/time.ts'
@@ -102,7 +103,7 @@ export function TimeControls() {
 
       <div className="mt-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-4">
         <div className="shrink-0">
-          <p className="text-xs text-dust">Time shown</p>
+          <p className="flex items-center gap-2 text-xs text-dust">Time shown <InfoTip topic="the time bar" what="The moment the whole page shows, and the dates every number covers. Times are in UTC." how="Press Play to watch time pass, drag the slider, or step an hour with −1 h and +1 h. Change From and To for other dates. Hand control moves time when you wave an open hand at your camera; a fist holds it." /></p>
           <p className="title-2 tabular text-bright" aria-live="off">
             {formatUtc(timeMs)}
           </p>

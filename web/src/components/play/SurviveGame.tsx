@@ -1,3 +1,4 @@
+import { InfoTip } from '../InfoTip.tsx'
 import { useEffect, useId, useMemo, useRef, useState } from 'react'
 import { loadMastHorizons, type AppData, type MastHorizons } from '../../data/load.ts'
 import { fmtPct } from '../../lib/format.ts'
@@ -104,7 +105,7 @@ export function SurviveGame({ data }: { data: AppData }) {
         Surprise me
       </button>
 
-      <h3 className="mt-6 title-2">Build your lander</h3>
+      <h3 className="mt-6 title-2 flex items-center gap-2">Build your lander <InfoTip topic="this game" what="A month on the Moon at a real site and date. When the Sun drops behind the terrain your panel goes dark and the battery has to last; science only counts when Earth is in view to receive it." how="Spend your 100 points on a panel, a battery and a mast, then press Land. Keep the battery above zero for 28 days, and turn science on when Earth is up." /></h3>
       <div className="mt-2 grid max-w-3xl gap-4 sm:grid-cols-3">
         <div>
           <label htmlFor={ids.panel} className="block text-xs text-dust">

@@ -1,3 +1,4 @@
+import { InfoTip } from '../components/InfoTip.tsx'
 import { useEffect, useRef, useState, type KeyboardEvent, type PointerEvent } from 'react'
 import { DrivePanel } from '../components/DrivePanel.tsx'
 import { EarthGlyph, SunGlyph } from '../components/Glyphs.tsx'
@@ -584,7 +585,7 @@ export default function Globe3D({ data }: { data: AppData }) {
     <main className="mx-auto max-w-[1600px] px-4 py-6 lg:px-6">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h2 className="heading-4">3D view</h2>
+          <h2 className="heading-4 flex items-center gap-3">3D view <InfoTip topic="the 3D view" what="The real LOLA terrain around a site in 3D, lit by the Sun at the time shown, with the terrain's own shadows." how="Press Fly to for a view from above, then Stand at the site to look around as a lander would. Drag to move or look, scroll to zoom, and press Play in the time bar to watch the shadows move." /></h2>
           <p className="body-6 mt-2 max-w-prose text-dust">
             Fly to a site to see the LOLA terrain around it, lit and shadowed by the Sun at the time below, then stand
             on it.{' '}

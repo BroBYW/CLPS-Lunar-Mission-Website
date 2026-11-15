@@ -1,3 +1,4 @@
+import { InfoTip } from './InfoTip.tsx'
 import { useMemo } from 'react'
 import type { AppData, Site } from '../data/load.ts'
 import { windowsCsv, downloadText } from '../lib/csv.ts'
@@ -85,7 +86,7 @@ export function CompareView({ data }: { data: AppData }) {
 
   return (
     <main className="mx-auto max-w-[1600px] px-4 py-6 lg:px-6">
-      <h2 className="heading-4">Compare sites</h2>
+      <h2 className="heading-4 flex items-center gap-3">Compare sites <InfoTip topic="Compare" what="Two or three sites side by side over the same dates, with the best value in each row marked." how="Pick sites in the boxes below and change the dates in the time bar. The timelines at the bottom show when each site has sunlight and Earth." /></h2>
       <p className="body-6 mt-2 max-w-prose text-dust">
         Pick up to three sites. They share the dates, observer height and criteria set below and in the Plan view.
       </p>
@@ -182,7 +183,7 @@ export function CompareView({ data }: { data: AppData }) {
 
       <section aria-label="Aligned timelines" className="card mt-6">
         <div className="mb-2 flex flex-wrap items-baseline justify-between gap-2">
-          <h3 className="title-2">Timelines</h3>
+          <h3 className="title-2 flex items-center gap-2">Timelines <InfoTip topic="the timelines" what="For each site, when it has sunlight (yellow), Earth in view (blue) and both, on one shared time axis." how="Look for where the bars line up across sites. Download CSV saves every window." /></h3>
           <button type="button" onClick={download} disabled={!ready} className="btn">
             Download CSV of all windows
           </button>

@@ -1,3 +1,4 @@
+import { InfoTip } from '../components/InfoTip.tsx'
 import { utcFormat } from 'd3-time-format'
 import { useEffect, useId, useMemo, useRef, useState, type MouseEvent } from 'react'
 import { EarthGlyph, SunGlyph } from '../components/Glyphs.tsx'
@@ -177,7 +178,7 @@ export default function Finder({ data }: { data: AppData }) {
 
   return (
     <main className="mx-auto max-w-[1600px] px-4 py-6 lg:px-6">
-      <h2 className="heading-4">Find landing dates</h2>
+      <h2 className="heading-4 flex items-center gap-3">Find landing dates <InfoTip topic="Find dates" what="A search over a whole year for the best landing dates: every site and every start date, scored for a mission of the length you choose." how="Set the year, the mission length and your limits for sunlight, darkness and Earth. Bright cells meet them; click a cell or a table row to open those dates in the Plan view." /></h2>
       <p className="mt-1 max-w-prose text-sm text-dust">
         Every site and every start date in a year, scored for a mission of the length you choose. Bright cells meet your limits;
         dark ones don't. Pick a cell, or a row in the table below, to open those dates in the Plan view.

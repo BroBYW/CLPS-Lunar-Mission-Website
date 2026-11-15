@@ -1,3 +1,4 @@
+import { InfoTip } from './InfoTip.tsx'
 import { useEffect, useId, useRef, useState, type PointerEvent, type RefObject } from 'react'
 import { loadLroPhotos, type LroPhoto, type LroPhotos, type Site } from '../data/load.ts'
 import { toStereo } from '../lib/pinHorizon.ts'
@@ -58,7 +59,7 @@ export function LroPanel({ site }: { site: Site }) {
 
   return (
     <section ref={sectionRef} aria-label="Compare with an LRO photo" className="mt-8">
-      <h3 className="title-2">Compare with an LRO photo</h3>
+      <h3 className="title-2 flex items-center gap-2">Compare with an LRO photo <InfoTip topic="the photo check" what="A real photo of this site from NASA's Lunar Reconnaissance Orbiter, next to the app's own terrain lit by the Sun at the same moment. Matching photos like this is how we checked the app: it calls sunlight or shadow right in 99.3% of 1,022 photos." how="Drag across the picture to compare the photo and the model. Pick another photo from the list." /></h3>
       <p className="mt-1 max-w-prose text-xs text-dust">
         From 2009 to 2011 the Lunar Reconnaissance Orbiter photographed the south pole about every two hours. Here is one of those
         photos of the 48 km around {site.name}, next to the app's own terrain lit by the Sun at that same moment. Drag across the

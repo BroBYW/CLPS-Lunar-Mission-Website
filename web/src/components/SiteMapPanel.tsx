@@ -1,3 +1,4 @@
+import { InfoTip } from './InfoTip.tsx'
 import { useState } from 'react'
 import type { AppData } from '../data/load.ts'
 import { usePin } from '../state/pin.ts'
@@ -50,7 +51,7 @@ export function SiteMapPanel({ data, selected, onSelect }: { data: AppData; sele
   return (
     <section aria-label="Map of the sites" className="mt-6">
       <div className="mb-2 flex items-center justify-between">
-        <h2 className="title-2">Map</h2>
+        <h2 className="title-2 flex items-center gap-2">Map <InfoTip topic="the map" what="Where the sites sit around the Moon's south pole." how="Switch between the 3D Moon and a flat map, and click a site to select it. Drop a pin, then click anywhere south of 82°S, to get a rough horizon for a place that isn't on the list." /></h2>
         <div role="group" aria-label="Map style" className="flex gap-1">
           {btn('globe', '3D Moon')}
           {btn('flat', 'Flat map')}

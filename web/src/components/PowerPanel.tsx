@@ -1,3 +1,4 @@
+import { InfoTip } from './InfoTip.tsx'
 import { useId, useMemo } from 'react'
 import { analyzePower } from '../lib/battery.ts'
 import type { Metrics } from '../lib/metrics.ts'
@@ -44,7 +45,7 @@ export function PowerPanel({ series, metrics }: { series: Series | null; metrics
 
   return (
     <section aria-label="Power and battery">
-      <h3 className="title-2">Power and battery</h3>
+      <h3 className="title-2 flex items-center gap-2">Power and battery <InfoTip topic="the power calculator" what="How much power a Sun-tracking solar panel makes at this site over your dates, and how big a battery a lander needs to get through the darkness." how="Set the panel area, its efficiency, the power the lander uses (load) and how deep the battery may discharge. Battery needed is simulated hour by hour." /></h3>
       <p className="mt-1 max-w-prose text-xs text-dust">
         A vertical panel that turns to face the Sun: power = 1361 W/m² × (1 AU / distance)² × efficiency × area × visible
         share of the Sun × cos(Sun elevation).
