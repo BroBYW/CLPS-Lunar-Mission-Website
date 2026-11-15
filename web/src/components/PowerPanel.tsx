@@ -26,7 +26,7 @@ function Field({ label, value, unit, min, max, step, onChange }: { label: string
             const v = Number(e.target.value)
             if (Number.isFinite(v)) onChange(Math.min(max, Math.max(min, v)))
           }}
-          className="w-24 rounded-sm border border-regolith bg-sky px-2 py-1 text-sm tabular"
+          className="w-24 field text-sm tabular"
         />
         <span className="text-xs text-dust">{unit}</span>
       </div>
@@ -44,7 +44,7 @@ export function PowerPanel({ series, metrics }: { series: Series | null; metrics
 
   return (
     <section aria-label="Power and battery">
-      <h3 className="font-display text-lg font-medium">Power and battery</h3>
+      <h3 className="title-2">Power and battery</h3>
       <p className="mt-1 max-w-prose text-xs text-dust">
         A vertical panel that turns to face the Sun: power = 1361 W/m² × (1 AU / distance)² × efficiency × area × visible
         share of the Sun × cos(Sun elevation).

@@ -215,7 +215,7 @@ export function RoverGame({ Cesium, viewer, site, patch, ephemeris, inTerrain, o
 
   const over = game && (game.frozen || game.done)
   const days = game ? game.elapsedMs / DAY_MS : 0
-  const btn = 'rounded-sm border border-regolith bg-sky/70 px-2 py-1 text-sm text-dust hover:border-dust hover:text-bright'
+  const btn = 'btn btn-glass'
   const hud = game && overlay
     ? createPortal(
         <div className="pointer-events-auto w-60 rounded-sm border border-shadow-2 bg-sky/80 px-3 py-2 text-sm backdrop-blur-sm" aria-live="polite">
@@ -259,7 +259,7 @@ export function RoverGame({ Cesium, viewer, site, patch, ephemeris, inTerrain, o
   return (
     <section aria-label="Outrun the shadows" className="mt-8">
       {hud}
-      <h3 className="font-display text-lg font-medium">Outrun the shadows</h3>
+      <h3 className="title-2">Outrun the shadows</h3>
       <p className="mt-1 max-w-prose text-xs text-dust">
         A game on this terrain: time races at {rate} hours per second and the low Sun drags shadows across the ground. Click or tap
         the terrain to drive your rover there ({SPEED_KMH} km/h), or use the arrow keys (up is away from the pole). Its panel needs
@@ -267,13 +267,13 @@ export function RoverGame({ Cesium, viewer, site, patch, ephemeris, inTerrain, o
         Sun.
       </p>
       <div className="mt-3 flex flex-wrap items-center gap-2">
-        <button type="button" className="rounded-sm border border-sun px-4 py-1.5 text-sm text-sun hover:bg-sun hover:text-sky" onClick={start}>
+        <button type="button" className="btn btn-primary" onClick={start}>
           {game ? 'Start again' : inTerrain ? 'Start' : `Fly to ${site.name} and start`}
         </button>
         <label htmlFor={rateId} className="ml-2 text-sm text-dust">
           Time
         </label>
-        <select id={rateId} value={rate} onChange={(e) => setRate(Number(e.target.value))} className="rounded-sm border border-regolith bg-sky px-2 py-1 text-sm">
+        <select id={rateId} value={rate} onChange={(e) => setRate(Number(e.target.value))} className="field text-sm">
           {RATES.map((r) => (
             <option key={r} value={r}>
               {r} h per second

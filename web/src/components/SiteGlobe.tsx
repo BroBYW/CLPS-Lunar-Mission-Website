@@ -92,7 +92,7 @@ export function SiteGlobe({
       point: { pixelSize: 11, color: C.Color.fromCssColorString('#ffc53d'), outlineColor: C.Color.BLACK, outlineWidth: 2, disableDepthTestDistance: Number.POSITIVE_INFINITY },
       label: {
         text: 'Pin',
-        font: '14px "Atkinson Hyperlegible Next Variable", sans-serif',
+        font: '14px "Geist Variable", sans-serif',
         fillColor: C.Color.fromCssColorString('#ffc53d'),
         outlineColor: C.Color.BLACK,
         outlineWidth: 3,
@@ -126,7 +126,7 @@ export function SiteGlobe({
         <button
           type="button"
           onClick={() => inst.current && inst.current.mod.viewSouthPole(inst.current.mv.viewer, START_DISTANCE_M)}
-          className="absolute right-2 top-2 rounded-sm border border-regolith bg-sky/70 px-2 py-1 text-xs text-dust backdrop-blur-sm hover:border-dust hover:text-bright"
+          className="absolute right-2 top-2 btn btn-sm btn-glass"
         >
           Reset view
         </button>

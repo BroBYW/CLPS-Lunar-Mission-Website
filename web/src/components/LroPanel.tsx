@@ -58,7 +58,7 @@ export function LroPanel({ site }: { site: Site }) {
 
   return (
     <section ref={sectionRef} aria-label="Compare with an LRO photo" className="mt-8">
-      <h3 className="font-display text-lg font-medium">Compare with an LRO photo</h3>
+      <h3 className="title-2">Compare with an LRO photo</h3>
       <p className="mt-1 max-w-prose text-xs text-dust">
         From 2009 to 2011 the Lunar Reconnaissance Orbiter photographed the south pole about every two hours. Here is one of those
         photos of the 48 km around {site.name}, next to the app's own terrain lit by the Sun at that same moment. Drag across the

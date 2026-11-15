@@ -60,6 +60,8 @@ export default function HandControl() {
   const timeMs = useApp((s) => s.timeMs)
   const speedHps = useApp((s) => s.speedHps)
   const setHandControl = useApp((s) => s.setHandControl)
+  // The story has no time bar to clear, and the skyline chart sits higher up
+  const low = useApp((s) => s.view === 'explore')
 
   useEffect(() => {
     const v = video.current!
@@ -144,13 +146,13 @@ export default function HandControl() {
   return (
     <section
       aria-label="Hand control"
-      className="fixed right-3 bottom-3 z-50 w-60 rounded-sm border border-regolith bg-shadow p-2 shadow-lg shadow-sky/60"
+      className={`fixed right-4 ${low ? 'bottom-4' : 'bottom-44'} z-50 w-48 rounded-2xl border border-white/10 bg-shadow/85 sm:w-64 p-2 backdrop-blur-xl`}
     >
-      <div className="flex items-center justify-between">
-        <h2 className="font-display text-sm">Hand control</h2>
+      <div className="flex items-center justify-between pl-1">
+        <h2 className="title-4">Hand control</h2>
         <button
           type="button"
-          className="rounded-sm px-2 text-dust hover:text-bright"
+          className="rounded-md px-2 py-1 text-dust transition-colors hover:bg-shadow-2 hover:text-bright"
           onClick={() => setHandControl(false)}
           aria-label="Turn off hand control"
         >
@@ -158,7 +160,7 @@ export default function HandControl() {
         </button>
       </div>
       {/* Mirrored, so moving the hand right moves it right on screen */}
-      <div className="relative mt-1 min-h-24 overflow-hidden rounded-sm bg-sky">
+      <div className="relative mt-1 min-h-24 overflow-hidden rounded-lg bg-sky">
         <video ref={video} muted playsInline className="block w-full -scale-x-100" />
         <canvas ref={canvas} className="absolute inset-0 h-full w-full -scale-x-100" />
         {status === 'starting' && (
@@ -173,16 +175,16 @@ export default function HandControl() {
         </p>
       ) : (
         <>
-          <p className={`mt-2 text-xs ${grip === 'open' ? 'text-sun' : ''}`} aria-live="polite">
+          <p className={`mt-2 px-1 text-xs ${grip === 'open' ? 'text-sun' : ''}`} aria-live="polite">
             {HINT[grip]}
           </p>
-          <p className="font-display text-sm tabular">{formatUtc(timeMs)}</p>
-          <p className="mt-1 text-xs text-dust">
+          <p className="title-4 px-1 tabular">{formatUtc(timeMs)}</p>
+          <p className="mt-1 px-1 text-xs text-dust">
             A sweep across the camera moves time {sweepLabel(speedHps * SWEEP_SECONDS)}; the Speed menu sets this.
           </p>
         </>
       )}
-      <p className="mt-1 text-xs text-dust">The camera image stays on this device.</p>
+      <p className="mt-1 px-1 text-xs text-dust">The camera image stays on this device.</p>
     </section>
   )
 }

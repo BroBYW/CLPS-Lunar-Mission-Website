@@ -44,6 +44,8 @@ export function applyUrl(search: string, siteIds: string[], heightsM: number[]):
   if (q.has('dark') && Number.isFinite(dark)) s.setDarkThreshold(dark / 100)
   const margin = Number(q.get('margin'))
   if (q.has('margin') && Number.isFinite(margin)) s.setEarthMargin(margin)
+  // more=1 opens the Plan view's detailed panels (used by links to the LRO photo comparison)
+  if (q.get('more') === '1') s.setMoreDetails(true)
 }
 
 export function buildQuery(heightsM: number[]): string {

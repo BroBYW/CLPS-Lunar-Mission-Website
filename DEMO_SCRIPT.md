@@ -8,7 +8,7 @@ Record at 1920×1080 in Chrome with reduced motion **off**. Use the production s
 
 | Time | Screen | Subtitle |
 |---|---|---|
-| 0:00–0:04 | **Home** at the bare URL. The Moon turns, lit by today's Sun. Click **Let's start**; the camera dives to the south pole. | At the Moon's south pole, the Sun skims the horizon. |
+| 0:00–0:04 | **Home** at the bare URL. The Moon turns, lit by today's Sun. Click **Find a sunlit site**; the camera dives to the south pole. | At the Moon's south pole, the Sun skims the horizon. |
 | 0:04–0:11 | **Plan**, Connecting ridge: `?site=connecting-ridge&from=2027-01-01&to=2027-01-30&h=2`. Set speed to 3 days per second and press **Play**. The Sun slides along the jagged skyline and the timeline fills in. | Pick a site and dates. See when it has sunlight, and when it can see Earth. |
 | 0:11–0:15 | Click **Shackleton crater floor** in the list. The walls fill the panorama and the status reads "Sun hidden". | A crater 20 km away never sees the Sun. |
 | 0:15–0:22 | **Compare**: `?view=compare&cmp=haworth,connecting-ridge,mons-mouton&from=2027-01-01&to=2027-01-14&h=2`. Pan across the table and its "best" markers. | Compare sites: the sunniest ridge loses Earth, and Haworth balances both. |

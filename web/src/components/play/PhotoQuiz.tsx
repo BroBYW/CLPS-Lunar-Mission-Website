@@ -143,8 +143,8 @@ export function PhotoQuiz({ data }: { data: AppData }) {
     setAnswer({ kind: 'sun', guessDeg, trueDeg, points })
   }
 
-  const btn = 'rounded-sm border border-regolith px-3 py-1.5 text-sm text-dust hover:border-dust hover:text-bright aria-pressed:border-bright aria-pressed:text-bright disabled:opacity-40'
-  const primary = 'rounded-sm border border-sun px-3 py-1.5 text-sm text-sun hover:bg-sun hover:text-sky disabled:opacity-40'
+  const btn = 'btn'
+  const primary = 'btn btn-primary'
 
   if (failed) return <p className="text-sm text-alert">The photos didn't load. Check your connection and reload the page.</p>
   if (!doc || !deck.length) return <p className="text-sm text-dust">Loading the photos…</p>
@@ -353,7 +353,7 @@ function RealOrModel({ round, doc, answer, onPick }: { round: Round; doc: LroPho
   const model = useMemo(() => pictureRgba(round.c, doc, 'model'), [round, doc])
   const site = useMemo(() => sitePixel(round.card, doc.pixel_m), [round, doc])
   const [left, right] = round.photoLeft ? [photo, model] : [model, photo]
-  const btn = 'rounded-sm border border-regolith px-3 py-1.5 text-sm text-dust hover:border-dust hover:text-bright disabled:opacity-40'
+  const btn = 'btn'
   return (
     <div className="mt-4">
       <p className="text-sm">One of these is LRO's photo; the other is the app's terrain, lit by the Sun at the same moment. Which is real?</p>
@@ -386,7 +386,7 @@ function WhereIsTheSun({ round, doc, answer, guessDeg, onGuess, guessId, onLock 
   const photo = useMemo(() => pictureRgba(round.c, doc, 'photo'), [round, doc])
   const site = useMemo(() => sitePixel(round.card, doc.pixel_m), [round, doc])
   const arrows = answer?.kind === 'sun' ? [{ deg: answer.guessDeg, color: '--color-bright' }, { deg: answer.trueDeg, color: '--color-sun' }] : [{ deg: guessDeg, color: '--color-bright' }]
-  const primary = 'rounded-sm border border-sun px-3 py-1.5 text-sm text-sun hover:bg-sun hover:text-sky disabled:opacity-40'
+  const primary = 'btn btn-primary'
   return (
     <div className="mt-4 max-w-md">
       <p className="text-sm">Which way was the Sun? Shadows point away from it, and slopes facing it are bright. Tap the photo or use the slider.</p>

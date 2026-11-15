@@ -107,11 +107,11 @@ export function DrivePanel({ Cesium, viewer, site, patch, ephemeris }: { Cesium:
   }, [now, Cesium, viewer])
 
   const length = routeLength(route)
-  const btn = 'rounded-sm border border-regolith px-2 py-1 text-sm text-dust hover:border-dust hover:text-bright aria-pressed:border-sun aria-pressed:text-sun disabled:opacity-40'
+  const btn = 'btn btn-sun'
 
   return (
     <section aria-label="Rover drive" className="mt-8">
-      <h3 className="font-display text-lg font-medium">Rover drive in the light</h3>
+      <h3 className="title-2">Rover drive in the light</h3>
       <p className="mt-1 max-w-prose text-xs text-dust">
         Plan a drive from {site.name}: fly to the site, press Add waypoints and click the terrain. The rover leaves at the time
         shown and keeps a steady speed; every 10 minutes the app looks along the terrain toward the Sun and the Earth from
@@ -138,7 +138,7 @@ export function DrivePanel({ Cesium, viewer, site, patch, ephemeris }: { Cesium:
         <label htmlFor={speedId} className="ml-2 text-sm text-dust">
           Speed
         </label>
-        <select id={speedId} value={speed} onChange={(e) => setSpeed(Number(e.target.value))} className="rounded-sm border border-regolith bg-sky px-2 py-1 text-sm text-bright">
+        <select id={speedId} value={speed} onChange={(e) => setSpeed(Number(e.target.value))} className="field text-sm text-bright">
           {SPEEDS.map((s) => (
             <option key={s} value={s}>
               {s} km/h

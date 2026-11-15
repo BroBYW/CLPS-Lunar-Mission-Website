@@ -84,9 +84,9 @@ export function CompareView({ data }: { data: AppData }) {
   }
 
   return (
-    <main className="px-4 py-4 lg:px-6">
-      <h2 className="font-display text-2xl font-medium">Compare sites</h2>
-      <p className="mt-1 max-w-prose text-sm text-dust">
+    <main className="mx-auto max-w-[1600px] px-4 py-6 lg:px-6">
+      <h2 className="heading-4">Compare sites</h2>
+      <p className="body-6 mt-2 max-w-prose text-dust">
         Pick up to three sites. They share the dates, observer height and criteria set below and in the Plan view.
       </p>
       <div className="mt-4 grid max-w-3xl gap-3 sm:grid-cols-3">
@@ -97,7 +97,7 @@ export function CompareView({ data }: { data: AppData }) {
 
       <TimeControls />
 
-      <section aria-label="Comparison table" aria-busy={pending} className="mt-6 overflow-x-auto max-sm:hidden">
+      <section aria-label="Comparison table" aria-busy={pending} className="card mt-6 overflow-x-auto max-sm:hidden">
         <table className={`w-full min-w-[640px] text-sm tabular ${pending ? 'opacity-60' : ''}`}>
           <caption className="sr-only">
             Metrics per site from {formatUtcDate(startMs)} to {formatUtcDate(endMs - 86_400_000)}, observer {heightsM[heightIndex]} m. The best value in each row is marked.
@@ -129,7 +129,7 @@ export function CompareView({ data }: { data: AppData }) {
                       {m ? (
                         <>
                           <span className={vals[i] === best ? 'text-bright' : 'text-dust'}>{row.text(m)}</span>
-                          {vals[i] === best && <span className="ml-2 rounded-sm border border-bright px-1 text-xs text-bright">best</span>}
+                          {vals[i] === best && <span className="caption-4 ml-2 rounded-md bg-bright/10 px-2 py-0.5 text-bright">best</span>}
                         </>
                       ) : (
                         '…'
@@ -144,7 +144,7 @@ export function CompareView({ data }: { data: AppData }) {
       </section>
 
       {/* Phones: each metric with the sites' values side by side beneath it, instead of a wide table */}
-      <section aria-label="Comparison" aria-busy={pending} className={`mt-6 text-sm tabular sm:hidden ${pending ? 'opacity-60' : ''}`}>
+      <section aria-label="Comparison" aria-busy={pending} className={`card mt-6 text-sm tabular sm:hidden ${pending ? 'opacity-60' : ''}`}>
         <p className="text-xs text-dust">
           {heightsM[heightIndex]} m observer. The best value in each row is marked.
         </p>
@@ -152,7 +152,7 @@ export function CompareView({ data }: { data: AppData }) {
           {sites.map((s) => (
             <p key={s.id} className="font-display text-sm leading-tight">
               {s.name}
-              <span className="block font-sans text-[11px] text-dust">{s.kind === 'exact' ? 'published point' : 'approximate'}</span>
+              <span className="block font-sans text-xs text-dust">{s.kind === 'exact' ? 'published point' : 'approximate'}</span>
             </p>
           ))}
         </div>
@@ -167,7 +167,7 @@ export function CompareView({ data }: { data: AppData }) {
                     {m ? (
                       <>
                         <span className={vals[i] === best ? 'text-bright' : 'text-dust'}>{row.text(m)}</span>
-                        {vals[i] === best && <span className="mt-1 block w-fit rounded-sm border border-bright px-1 text-xs text-bright">best</span>}
+                        {vals[i] === best && <span className="caption-4 mt-1 block w-fit rounded-md bg-bright/10 px-2 py-0.5 text-bright">best</span>}
                       </>
                     ) : (
                       '…'
@@ -180,10 +180,10 @@ export function CompareView({ data }: { data: AppData }) {
         </dl>
       </section>
 
-      <section aria-label="Aligned timelines" className="mt-6">
+      <section aria-label="Aligned timelines" className="card mt-6">
         <div className="mb-2 flex flex-wrap items-baseline justify-between gap-2">
-          <h3 className="font-display text-lg font-medium">Timelines</h3>
-          <button type="button" onClick={download} disabled={!ready} className="rounded-sm border border-regolith px-3 py-1 text-sm hover:border-dust disabled:opacity-50">
+          <h3 className="title-2">Timelines</h3>
+          <button type="button" onClick={download} disabled={!ready} className="btn">
             Download CSV of all windows
           </button>
         </div>

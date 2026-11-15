@@ -105,8 +105,8 @@ export function DailyChallenge({ data }: { data: AppData }) {
   }
 
   const l = mission.limits
-  const primary = 'rounded-sm border border-sun px-4 py-1.5 text-sm text-sun hover:bg-sun hover:text-sky disabled:opacity-40 disabled:hover:bg-transparent disabled:hover:text-sun'
-  const btn = 'rounded-sm border border-regolith px-3 py-1.5 text-sm text-dust hover:border-dust hover:text-bright'
+  const primary = 'btn btn-primary'
+  const btn = 'btn'
 
   if (failed) return <p className="text-sm text-alert">The challenge didn't load. Reload the page to try again.</p>
 
@@ -148,7 +148,7 @@ export function DailyChallenge({ data }: { data: AppData }) {
                   min={formatUtcDate(yearStart)}
                   max={formatUtcDate(yearStart + (days - 1) * DAY_MS)}
                   onChange={(e) => setDate(e.target.value)}
-                  className="mt-1 rounded-sm border border-regolith bg-sky px-2 py-1.5 text-sm"
+                  className="mt-1 field text-sm"
                 />
               </div>
               <button type="button" className={primary} disabled={!dayValid} onClick={check}>

@@ -7,7 +7,7 @@ export function SiteList({ sites, selected, onSelect }: { sites: Site[]; selecte
   const clearPin = usePin((s) => s.clear)
   return (
     <fieldset>
-      <legend className="font-display text-lg font-medium">Sites</legend>
+      <legend className="title-2">Sites</legend>
       {GROUP_ORDER.map((g) => {
         const items = sites.filter((s) => s.group === g)
         if (!items.length) return null

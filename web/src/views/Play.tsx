@@ -17,8 +17,8 @@ export default function Play({ data }: { data: AppData }) {
   const setGame = useApp((s) => s.setGame)
   const btn = 'rounded-sm border px-3 py-1.5 text-sm'
   return (
-    <main className="px-4 py-4 lg:px-6">
-      <h2 className="font-display text-2xl font-medium">Play</h2>
+    <main className="mx-auto max-w-[1600px] px-4 py-6 lg:px-6">
+      <h2 className="heading-4">Play</h2>
       <p className="mt-1 max-w-prose text-sm text-dust">
         Games built on the same data as the planner: the real Sun, Earth and terrain at the south pole, and real photos from LRO.
       </p>
@@ -55,7 +55,7 @@ function RoverIntro() {
         and Sun as everything else in the app.
       </p>
       <p className="mt-2 text-sm text-dust">It runs in the 3D view: click or tap the terrain to drive, or use the arrow keys.</p>
-      <button type="button" className="mt-3 rounded-sm border border-sun px-4 py-1.5 text-sm text-sun hover:bg-sun hover:text-sky" onClick={go}>
+      <button type="button" className="mt-3 btn btn-primary" onClick={go}>
         Play in the 3D view
       </button>
     </section>

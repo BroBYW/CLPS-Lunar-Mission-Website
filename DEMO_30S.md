@@ -4,11 +4,11 @@ Record the browser window (Windows: Win+Alt+R with Xbox Game Bar, or the Snippin
 
 | Time | Shot | Link (append to the base URL) | Do |
 |---|---|---|---|
-| 0–4 s | Home: the live Moon | `/` | Press **Let's start**: the camera dives to the south pole |
+| 0–4 s | Home: the live Moon | `/` | Press **Find a sunlit site**: the camera dives to the south pole |
 | 4–11 s | Plan: the Sun skims the horizon | `/?site=connecting-ridge&from=2027-01-01&to=2027-01-30&t=2027-01-12T06:00Z` | Press **Play**: the Sun slides along the skyline; hold on the **At the time shown** cards ("Sets in …") |
 | 11–16 s | Compare: three sites side by side | `/?view=compare&cmp=connecting-ridge,shackleton-rim,malapert-massif&from=2027-01-01&to=2027-01-30` | Slow scroll over the table and its **best** marks |
 | 16–23 s | 3D: real terrain, real shadows | `/?view=3d&site=shackleton-rim&from=2027-01-01&to=2027-01-30&t=2027-01-12T06:00Z` | **Fly to Shackleton rim**, then **Stand at the site** and drag toward Earth |
-| 23–27 s | Proof: a real LRO photo | `/?site=shackleton-rim` (scroll to **Compare with an LRO photo**) | Drag the divider across: photo on the left, the app's model on the right |
+| 23–27 s | Proof: a real LRO photo | `/?site=shackleton-rim&more=1` (scroll to **Compare with an LRO photo**) | Drag the divider across: photo on the left, the app's model on the right |
 | 27–30 s | End card | | Title and URL on screen |
 
 ## Voice-over (about 70 words, English)

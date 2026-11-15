@@ -15,7 +15,7 @@ export const MOON_TREK_CREDIT = 'Imagery: NASA Moon Trek, LRO WAC global mosaic 
 
 const EARTH_COLOR = '#5ab4ff'
 const SUN_COLOR = '#ffc53d'
-const LABEL_FONT = '15px "Atkinson Hyperlegible Next Variable", sans-serif'
+const LABEL_FONT = '15px "Geist Variable", sans-serif'
 const EARTH_RADII = new Cesium.Cartesian3(6_378_137, 6_378_137, 6_356_752.3142)
 const R_SUN_M = 695_700_000
 /** The Sun is drawn this far from the camera (beyond the Earth), in its true direction. */

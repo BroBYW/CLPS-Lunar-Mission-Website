@@ -46,10 +46,10 @@ export function PrintPanel({ site }: { site: Site }) {
     }
   }
 
-  const select = 'rounded-sm border border-regolith bg-sky px-2 py-1 text-sm text-bright'
+  const select = 'field text-sm text-bright'
   return (
     <section aria-label="3D print" className="mt-8">
-      <h3 className="font-display text-lg font-medium">3D-print this site</h3>
+      <h3 className="title-2">3D-print this site</h3>
       <p className="mt-1 max-w-prose text-xs text-dust">
         The LOLA terrain around {site.name} as an STL file for a 3D printer: a {WIDTH_MM} mm square on a {BASE_MM} mm base, with the
         Moon's curvature taken out. Raising the heights makes low polar relief easier to see and feel.
@@ -79,7 +79,7 @@ export function PrintPanel({ site }: { site: Site }) {
           type="button"
           onClick={() => void download()}
           disabled={state === 'busy'}
-          className="rounded-sm border border-regolith px-3 py-1 text-sm hover:border-dust disabled:opacity-50"
+          className="btn"
         >
           {state === 'busy' ? 'Preparing…' : 'Download STL (about 4 MB)'}
         </button>

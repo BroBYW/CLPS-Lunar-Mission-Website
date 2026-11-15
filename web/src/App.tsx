@@ -1,4 +1,6 @@
 import { lazy, Suspense, useEffect, useMemo, useState } from 'react'
+import { createPortal } from 'react-dom'
+import { AtAGlance } from './components/AtAGlance.tsx'
 import { CompareView } from './components/CompareView.tsx'
 import { DsnPanel } from './components/DsnPanel.tsx'
 import { EclipseReplays } from './components/EclipseReplays.tsx'
@@ -50,12 +52,15 @@ const REPO_URL = 'https://github.com/BroBYW/CLPS-Lunar-Mission-Website'
 // CesiumJS only loads when the 3D view (or the home page backdrop) is shown
 const Globe3D = lazy(() => import('./views/Globe3D.tsx'))
 const Play = lazy(() => import('./views/Play.tsx'))
+// MediaPipe and its model load only once someone turns hand control on
+const HandControl = lazy(() => import('./components/HandControl.tsx'))
 
 export default function App() {
   const [data, setData] = useState<AppData | null>(null)
   const [error, setError] = useState<string | null>(null)
   const view = useApp((s) => s.view)
   const setView = useApp((s) => s.setView)
+  const handControl = useApp((s) => s.handControl)
 
   useEffect(() => {
     loadAppData().then(
@@ -73,22 +78,29 @@ export default function App() {
   }, [])
   useEffect(() => (data ? syncUrl(data.horizons.heightsM) : undefined), [data])
   usePlayback()
+  // A new view starts at its top, not at the scroll position of the one before
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [view])
 
   if (view === 'home' && !error) return <Home data={data} />
 
   return (
     <div className="min-h-screen">
-      <header className="flex flex-wrap items-center gap-x-6 gap-y-2 border-b border-shadow-2 px-4 py-3 lg:px-6">
-        <div className="flex flex-wrap items-baseline gap-x-4">
-          <h1 className="font-display text-base font-medium sm:text-xl">
-            <button type="button" onClick={() => setView('home')} className="flex items-center gap-2.5 text-left hover:text-bright" aria-label="CLPS Lunar Mission Browser, back to the home page">
-              <Logo size={26} />
-              CLPS Lunar Mission Browser
-            </button>
-          </h1>
-          <p className="text-sm text-dust max-md:hidden">Sunlight and Earth visibility at lunar south pole sites, 2024–2030</p>
-        </div>
-        <nav aria-label="Views" className="-mx-1 ml-auto flex gap-1 max-sm:w-full max-sm:justify-between">
+      <a href="#content" className="sr-only z-50 rounded-lg bg-bright px-3 py-2 text-sm font-semibold text-sky focus:not-sr-only focus:fixed focus:top-4 focus:left-4">
+        Skip to content
+      </a>
+      <header className="sticky top-3 z-40 mx-3 mt-3 flex flex-wrap items-center justify-between gap-2 rounded-2xl border border-white/10 bg-shadow/70 p-2 backdrop-blur-xl sm:mx-auto sm:w-fit sm:flex-nowrap sm:gap-6">
+        <h1 className="title-4 sm:title-3 pl-2">
+          <button type="button" onClick={() => setView('home')} className="flex items-center gap-2 text-left text-bright transition-opacity hover:opacity-80" aria-label="CLPS Lunar Mission Browser, back to the home page">
+            <Logo size={24} />
+            <span className="whitespace-nowrap">CLPS Lunar Mission Browser</span>
+          </button>
+        </h1>
+        <nav
+          aria-label="Views"
+          className="flex gap-0.5 max-sm:w-full max-sm:justify-between"
+        >
           {VIEWS.map(([v, label, short]) => (
             <button
               key={v}
@@ -96,7 +108,9 @@ export default function App() {
               aria-current={view === v ? 'page' : undefined}
               aria-label={short ? label : undefined}
               onClick={() => setView(v)}
-              className={`rounded-sm px-3 py-1 text-sm max-sm:px-2 ${SECONDARY.includes(v) ? 'max-sm:hidden' : ''} ${view === v ? 'bg-shadow-2 text-bright' : 'text-dust hover:text-bright'}`}
+              className={`title-4 rounded-lg px-3 py-2 whitespace-nowrap transition-colors max-sm:px-2 ${SECONDARY.includes(v) ? 'max-sm:hidden' : ''} ${
+                view === v ? 'bg-bright text-sky' : 'text-dust hover:bg-shadow-2 hover:text-bright'
+              }`}
             >
               {short ? (
                 <>
@@ -110,14 +124,23 @@ export default function App() {
           ))}
         </nav>
       </header>
+      <div id="content" tabIndex={-1} className="outline-none" />
       {error ? (
         <p role="alert" className="m-6 max-w-prose text-alert">
           The mission data didn't load: {error}. Check your connection and reload the page.
         </p>
       ) : !data ? (
-        <p className="m-6 text-dust" aria-live="polite">
-          Loading ephemeris and terrain…
-        </p>
+        <div className="mx-auto grid max-w-[1600px] gap-6 px-4 py-6 lg:grid-cols-[minmax(280px,340px)_minmax(0,1fr)] lg:px-6" aria-busy="true">
+          <p className="sr-only" aria-live="polite">
+            Loading ephemeris and terrain…
+          </p>
+          <div className="h-[480px] animate-pulse rounded-2xl bg-shadow max-lg:hidden" />
+          <div className="flex flex-col gap-6">
+            <div className="h-16 animate-pulse rounded-2xl bg-shadow" />
+            <div className="h-[420px] animate-pulse rounded-2xl bg-shadow" />
+            <div className="h-28 animate-pulse rounded-3xl bg-shadow" />
+          </div>
+        </div>
       ) : view === 'compare' ? (
         <CompareView data={data} />
       ) : view === 'finder' ? (
@@ -139,8 +162,17 @@ export default function App() {
       ) : (
         <Planner data={data} />
       )}
-      <footer className="mt-10 border-t border-shadow-2 px-4 py-4 text-xs text-dust lg:px-6">
-        <nav aria-label="About this project" className="flex flex-wrap gap-x-5 gap-y-2">
+      {/* Mounted here so the story and every time bar share it; a portal keeps blurred bars from trapping its fixed position */}
+      {handControl &&
+        data &&
+        createPortal(
+          <Suspense fallback={null}>
+            <HandControl />
+          </Suspense>,
+          document.body,
+        )}
+      <footer className="mt-12 px-4 py-6 text-xs text-dust lg:px-6">
+        <nav aria-label="About this project" className="flex flex-wrap gap-x-6 gap-y-2">
           {VIEWS.filter(([v]) => SECONDARY.includes(v)).map(([v, label]) => (
             <button key={v} type="button" onClick={() => setView(v)} className="underline decoration-regolith underline-offset-2 hover:text-bright">
               {label}
@@ -164,6 +196,8 @@ function Planner({ data }: { data: AppData }) {
   const darkThreshold = useApp((s) => s.darkThreshold)
   const earthMarginDeg = useApp((s) => s.earthMarginDeg)
   const focus = useApp((s) => s.panoramaFocus)
+  const moreDetails = useApp((s) => s.moreDetails)
+  const setMoreDetails = useApp((s) => s.setMoreDetails)
 
   const pin = usePin((s) => s.pin)
   const site = useMemo(() => (siteId === PIN_ID && pin ? pinSite(pin) : (data.sites.find((s) => s.id === siteId) ?? data.sites[0])), [siteId, pin, data])
@@ -182,39 +216,39 @@ function Planner({ data }: { data: AppData }) {
   }
 
   return (
-    <div className="grid gap-6 px-4 py-4 lg:grid-cols-[minmax(280px,340px)_minmax(0,1fr)] lg:px-6">
-      <aside className="order-2 lg:order-1">
-        <SiteList sites={pickable} selected={site.id} onSelect={setSite} />
-        <SiteMapPanel data={data} selected={site.id} onSelect={setSite} />
-      </aside>
-      <main className="order-1 min-w-0 lg:order-2">
-        {/* On phones the site list comes after everything else, so the site can be changed here too */}
-        <SitePicker label="Site" sites={pickable} value={site.id} onChange={setSite} className="mb-4 lg:hidden" />
-        <MissionReplays data={data} />
-        <EclipseReplays data={data} site={site} />
-        <div className="flex flex-wrap items-start justify-between gap-4">
-          <SiteHeader site={site} />
-          <fieldset className="flex items-center gap-1 text-sm">
-            <legend className="sr-only">Observer height</legend>
-            {heightsM.map((h, i) => (
-              <label
-                key={h}
-                className={`cursor-pointer rounded-sm border px-2 py-1 has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-bright ${
-                  i === heightIndex ? 'border-bright text-bright' : 'border-regolith text-dust'
-                }`}
-              >
-                <input type="radio" name="height" className="sr-only" checked={i === heightIndex} onChange={() => setHeightIndex(i)} />
-                {i === 0 ? `Lander, ${h} m` : `Mast, ${h} m`}
-              </label>
-            ))}
-          </fieldset>
+    <div className="mx-auto grid max-w-[1600px] gap-6 px-4 py-6 lg:grid-cols-[minmax(280px,340px)_minmax(0,1fr)] lg:px-6">
+      <aside className="order-2 flex flex-col gap-6 lg:order-1">
+        <div className="card">
+          <SiteList sites={pickable} selected={site.id} onSelect={setSite} />
         </div>
-        <div className="mt-4">
-          <Panorama key={focus.n} mask={mask} track={track} bodies={bodies} sunFrac={sunFrac} earthVis={earthVis} initialFollow={focus.follow} initialWidth={focus.width} />
+        <div className="card">
+          <SiteMapPanel data={data} selected={site.id} onSelect={setSite} />
+        </div>
+      </aside>
+      <main className="order-1 flex min-w-0 flex-col gap-6 lg:order-2">
+        {/* On phones the site list comes after everything else, so the site can be changed here too */}
+        <SitePicker label="Site" sites={pickable} value={site.id} onChange={setSite} className="lg:hidden" />
+        <AtAGlance site={site} metrics={metrics} pending={pending} />
+        <div className="card">
+          <div className="flex flex-wrap items-start justify-between gap-4">
+            <SiteHeader site={site} />
+            <fieldset className="seg">
+              <legend className="sr-only">Observer height</legend>
+              {heightsM.map((h, i) => (
+                <label key={h} className="chip">
+                  <input type="radio" name="height" className="sr-only" checked={i === heightIndex} onChange={() => setHeightIndex(i)} />
+                  {i === 0 ? `Lander, ${h} m` : `Mast, ${h} m`}
+                </label>
+              ))}
+            </fieldset>
+          </div>
+          <div className="mt-4">
+            <Panorama key={focus.n} mask={mask} track={track} bodies={bodies} sunFrac={sunFrac} earthVis={earthVis} initialFollow={focus.follow} initialWidth={focus.width} />
+          </div>
         </div>
         <TimeControls />
         <NowPanel data={data} frame={frame} mask={mask} />
-        <section aria-label="Timeline" className="mt-4">
+        <section aria-label="Timeline" className="card">
           <Timeline rows={[{ label: site.name, series }]} startMs={startMs} endMs={endMs} />
           {metrics && (
             <p className="sr-only">
@@ -223,15 +257,52 @@ function Planner({ data }: { data: AppData }) {
             </p>
           )}
         </section>
-        <MetricsPanel metrics={metrics} pending={pending} />
-        <DsnPanel series={series} />
-        <div className="mt-8 grid gap-8 xl:grid-cols-2">
-          <WindowsTable windows={metrics?.windows ?? []} onDownload={download} />
-          <PowerPanel series={series} metrics={metrics} />
+        {/* Newcomers see the answer, the skyline and the timeline; the expert panels open on request */}
+        <div className="flex flex-col items-center gap-2 py-2">
+          <button type="button" className="btn" aria-expanded={moreDetails} aria-controls="more-details" onClick={() => setMoreDetails(!moreDetails)}>
+            {moreDetails ? 'Hide the details' : 'Show more details'}
+            <svg width={14} height={14} viewBox="0 0 256 256" fill="currentColor" aria-hidden="true" className={`transition-transform duration-300 ${moreDetails ? 'rotate-180' : ''}`}>
+              <path d="M213.66 101.66l-80 80a8 8 0 0 1-11.32 0l-80-80A8 8 0 0 1 53.66 90.34L128 164.69l74.34-74.35a8 8 0 0 1 11.32 11.32Z" />
+            </svg>
+          </button>
+          {!moreDetails && (
+            <p className="caption-5 max-w-[680px] text-center text-dust">
+              Exact numbers and their definitions, Deep Space Network contact, power and battery, mast height, real LRO photos, a shadow movie and
+              replays of real landings
+            </p>
+          )}
         </div>
-        <MastPanel site={site} />
-        <LroPanel site={site} />
-        <ShadowMovie data={data} site={site} />
+        {moreDetails && (
+          <div id="more-details" className="flex flex-col gap-6">
+            <div className="card flex flex-col gap-3 py-4 [&>*]:mb-0">
+              <MissionReplays data={data} />
+              <EclipseReplays data={data} site={site} />
+            </div>
+            <div className="card">
+              <MetricsPanel metrics={metrics} pending={pending} />
+            </div>
+            <div className="card">
+              <DsnPanel series={series} />
+            </div>
+            <div className="grid gap-6 xl:grid-cols-2">
+              <div className="card">
+                <WindowsTable windows={metrics?.windows ?? []} onDownload={download} />
+              </div>
+              <div className="card">
+                <PowerPanel series={series} metrics={metrics} />
+              </div>
+            </div>
+            <div className="card">
+              <MastPanel site={site} />
+            </div>
+            <div className="card">
+              <LroPanel site={site} />
+            </div>
+            <div className="card">
+              <ShadowMovie data={data} site={site} />
+            </div>
+          </div>
+        )}
       </main>
     </div>
   )

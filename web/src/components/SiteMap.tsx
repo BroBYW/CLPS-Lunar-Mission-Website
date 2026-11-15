@@ -67,7 +67,7 @@ export function SiteMap({
           <line x1={SIZE / 2} y1={0} x2={SIZE / 2} y2={SIZE} />
           <line x1={0} y1={SIZE / 2} x2={SIZE} y2={SIZE / 2} />
         </g>
-        <g className="fill-dust text-[26px]" aria-hidden="true">
+        <g className="fill-dust text-2xl" aria-hidden="true">
           <text x={SIZE / 2 + 8} y={30}>0° (toward Earth)</text>
           <text x={SIZE - 12} y={SIZE / 2 - 10} textAnchor="end">90°E</text>
           <text x={SIZE / 2 + 8} y={SIZE - 14}>180°</text>
@@ -128,7 +128,7 @@ export function SiteMap({
                 x={right ? cx + 30 : cx - 30}
                 y={cy + 9}
                 textAnchor={right ? 'start' : 'end'}
-                className="fill-bright text-[30px]"
+                className="fill-bright text-3xl"
                 stroke="var(--color-sky)"
                 strokeWidth={6}
                 paintOrder="stroke"

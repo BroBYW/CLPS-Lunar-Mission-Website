@@ -50,7 +50,7 @@ export function SiteMapPanel({ data, selected, onSelect }: { data: AppData; sele
   return (
     <section aria-label="Map of the sites" className="mt-6">
       <div className="mb-2 flex items-center justify-between">
-        <h2 className="font-display text-lg font-medium">Map</h2>
+        <h2 className="title-2">Map</h2>
         <div role="group" aria-label="Map style" className="flex gap-1">
           {btn('globe', '3D Moon')}
           {btn('flat', 'Flat map')}
@@ -62,7 +62,7 @@ export function SiteMapPanel({ data, selected, onSelect }: { data: AppData; sele
           aria-pressed={armed}
           onClick={() => arm(!armed)}
           disabled={status === 'loading'}
-          className="rounded-sm border border-regolith px-2 py-1 text-xs text-dust hover:border-dust hover:text-bright aria-pressed:border-sun aria-pressed:text-sun disabled:opacity-50"
+          className="btn btn-sm btn-sun"
         >
           {armed ? 'Cancel pin' : pin ? 'Move the pin' : 'Drop a pin'}
         </button>

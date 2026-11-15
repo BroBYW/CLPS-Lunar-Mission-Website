@@ -32,7 +32,7 @@ export function MetricsPanel({ metrics, pending }: { metrics: Metrics | null; pe
 
   return (
     <section aria-label="Metrics for the selected dates" aria-busy={pending} className="mt-6">
-      <h3 className="font-display text-lg font-medium">Over the selected dates</h3>
+      <h3 className="title-2">Over the selected dates</h3>
       {metrics ? (
         <div className={`mt-3 grid grid-cols-2 gap-x-6 gap-y-5 md:grid-cols-3${pending ? 'opacity-60' : ''}`}>
           <Stat

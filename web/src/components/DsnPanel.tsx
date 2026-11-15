@@ -83,7 +83,7 @@ export function DsnPanel({ series }: { series: Series | null }) {
 
   return (
     <section aria-label="Deep Space Network contact" className="mt-8">
-      <h3 className="flex items-center gap-2 font-display text-lg font-medium">
+      <h3 className="flex items-center gap-2 title-2">
         <EarthGlyph className="text-earth" />
         Deep Space Network contact
       </h3>

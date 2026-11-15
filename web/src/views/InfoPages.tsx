@@ -3,7 +3,7 @@ import type { ReactNode } from 'react'
 function Page({ title, children }: { title: string; children: ReactNode }) {
   return (
     <main className="mx-auto max-w-3xl px-4 py-8 lg:px-6">
-      <h2 className="font-display text-3xl font-medium">{title}</h2>
+      <h2 className="heading-4">{title}</h2>
       <div className="mt-6 space-y-8 leading-relaxed text-bright/90 [&_a]:text-bright [&_a]:underline [&_a]:decoration-regolith [&_a]:underline-offset-2 hover:[&_a]:decoration-bright [&_h3]:font-display [&_h3]:text-xl [&_h3]:font-medium [&_li]:mt-1.5 [&_p]:mt-3 [&_p]:max-w-[68ch] [&_ul]:mt-3 [&_ul]:list-disc [&_ul]:pl-5">
         {children}
       </div>
@@ -312,7 +312,7 @@ export function CreditsPage() {
         <ul>
           <li>Web: React, Vite, TypeScript, Tailwind CSS, Zustand (MIT); d3-scale and d3-time-format (ISC); Comlink, CesiumJS, and MediaPipe Tasks Vision with its Hand Landmarker model (Apache-2.0).</li>
           <li>Pipeline: SpiceyPy and pyproj (MIT); NumPy, SciPy and rasterio (BSD); Matplotlib; Pillow.</li>
-          <li>Fonts: Jost and Atkinson Hyperlegible Next (SIL Open Font License), self-hosted through Fontsource.</li>
+          <li>Font: Geist by Vercel (SIL Open Font License), self-hosted through Fontsource. Interface icons: Phosphor Icons (MIT).</li>
         </ul>
       </section>
       <section>

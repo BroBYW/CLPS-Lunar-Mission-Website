@@ -246,7 +246,7 @@ export default function Globe3D({ data }: { data: AppData }) {
         point: { pixelSize: 11, color: bright, outlineColor: Cesium.Color.BLACK, outlineWidth: 2, disableDepthTestDistance: Number.POSITIVE_INFINITY },
         label: {
           text: s.name,
-          font: '14px "Atkinson Hyperlegible Next Variable", sans-serif',
+          font: '14px "Geist Variable", sans-serif',
           fillColor: bright,
           outlineColor: Cesium.Color.BLACK,
           outlineWidth: 4,
@@ -332,7 +332,7 @@ export default function Globe3D({ data }: { data: AppData }) {
           position: Cesium.Cartesian3.fromDegrees(lo, la, heightAt(horizonAt(mask, az) + 1.2)),
           label: {
             text: 'NESW'[i],
-            font: '16px "Jost Variable", sans-serif',
+            font: '16px "Geist Variable", sans-serif',
             fillColor: Cesium.Color.fromCssColorString('#b8b2a7'),
             outlineColor: Cesium.Color.BLACK,
             outlineWidth: 3,
@@ -560,9 +560,9 @@ export default function Globe3D({ data }: { data: AppData }) {
   const b = bodiesAt(data.ephemeris, frame, timeMs)
   const f = sunFraction(mask, b.sunAz, b.sunEl, b.sunRadius, { az: b.earthAz, el: b.earthEl, radius: b.earthRadius })
   const earthUp = earthVisible(mask, b.earthAz, b.earthEl)
-  const btn = 'rounded-sm border px-3 py-1.5 text-sm backdrop-blur-sm max-sm:px-2.5 max-sm:text-[13px]'
-  const on = 'border-bright bg-sky/60 text-bright'
-  const off = 'border-regolith bg-sky/60 text-dust hover:border-dust hover:text-bright'
+  const btn = 'btn btn-glass'
+  const on = 'btn-on'
+  const off = ''
   const description =
     mode === 'ground'
       ? `Standing at ${site.name} on LOLA terrain, lit by the Sun at the time shown. A thin line marks the computed horizon.`
@@ -571,11 +571,11 @@ export default function Globe3D({ data }: { data: AppData }) {
         : `Globe view, ${site.name} selected.`
 
   return (
-    <main className="px-4 py-4 lg:px-6">
+    <main className="mx-auto max-w-[1600px] px-4 py-6 lg:px-6">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h2 className="font-display text-2xl font-medium">3D view</h2>
-          <p className="mt-1 max-w-prose text-sm text-dust">
+          <h2 className="heading-4">3D view</h2>
+          <p className="body-6 mt-2 max-w-prose text-dust">
             Fly to a site to see the LOLA terrain around it, lit and shadowed by the Sun at the time below, then stand
             on it.{' '}
             <span className="max-sm:hidden">
@@ -588,17 +588,17 @@ export default function Globe3D({ data }: { data: AppData }) {
       </div>
 
       {/* On phones the view buttons sit in a bar above the 3D view; on larger screens they float over it */}
-      <div className="relative mt-4 flex h-[62vh] min-h-[420px] w-full flex-col overflow-hidden rounded-sm bg-sky">
+      <div className="relative mt-6 flex h-[62vh] min-h-[420px] w-full flex-col overflow-hidden rounded-2xl border border-white/10 bg-sky">
         {ready && (
-          <div className="z-10 flex flex-wrap gap-2 border-b border-shadow-2 p-2 sm:absolute sm:left-3 sm:top-3 sm:border-0 sm:p-0">
-            <button type="button" className={`${btn} ${mode === 'globe' ? on : off}`} onClick={showGlobe}>
+          <div className="z-10 flex flex-wrap gap-2 p-2 sm:absolute sm:left-4 sm:top-4 sm:p-0">
+            <button type="button" className={`${btn} ${mode === 'globe' ? on : off}`} aria-pressed={mode === 'globe'} onClick={showGlobe}>
               Globe
             </button>
-            <button type="button" className={`${btn} ${mode === 'flying' || mode === 'terrain' ? on : off}`} onClick={() => flyToSite()}>
+            <button type="button" className={`${btn} ${mode === 'globe' ? 'btn-primary' : ''}`} aria-pressed={mode === 'flying' || mode === 'terrain'} onClick={() => flyToSite()}>
               Fly to <span className="max-sm:hidden">{site.name}</span>
               <span className="sm:hidden">site</span>
             </button>
-            <button type="button" className={`${btn} ${mode === 'ground' ? on : off}`} onClick={() => void standAtSite()}>
+            <button type="button" className={`${btn} ${mode === 'ground' ? on : off}`} aria-pressed={mode === 'ground'} onClick={() => void standAtSite()}>
               Stand at the site
             </button>
             {mode === 'ground' && (
@@ -658,6 +658,7 @@ export default function Globe3D({ data }: { data: AppData }) {
       {postcard && <PostcardPreview card={postcard} onClose={() => setPostcard(null)} />}
       <TimeControls />
       {ready && api.current && (
+        <div className="card mt-6">
         <DrivePanel
           Cesium={api.current.mod.Cesium}
           viewer={api.current.mv.viewer}
@@ -665,8 +666,10 @@ export default function Globe3D({ data }: { data: AppData }) {
           patch={terrain.current?.siteId === site.id ? terrain.current.patch : null}
           ephemeris={data.ephemeris}
         />
+        </div>
       )}
       {ready && api.current && (
+        <div className="card mt-6">
         <RoverGame
           Cesium={api.current.mod.Cesium}
           viewer={api.current.mv.viewer}
@@ -677,8 +680,11 @@ export default function Globe3D({ data }: { data: AppData }) {
           onFly={() => flyToSite()}
           overlay={hud}
         />
+        </div>
       )}
-      <PrintPanel site={site} />
+      <div className="card mt-6">
+        <PrintPanel site={site} />
+      </div>
     </main>
   )
 }

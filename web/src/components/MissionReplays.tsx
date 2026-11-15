@@ -87,7 +87,7 @@ export function MissionReplays({ data }: { data: AppData }) {
             type="button"
             aria-pressed={active?.id === m.id}
             onClick={() => play(m)}
-            className="rounded-sm border border-regolith px-2 py-1 text-dust hover:border-dust hover:text-bright aria-pressed:border-bright aria-pressed:text-bright"
+            className="btn"
           >
             {m.name}, {m.when}
           </button>

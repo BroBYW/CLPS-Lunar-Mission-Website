@@ -69,8 +69,8 @@ export function SurviveGame({ data }: { data: AppData }) {
     setDay(formatUtcDate(Date.UTC(2026, 0, 1) + Math.floor(Math.random() * span) * DAY_MS))
   }
 
-  const btn = 'rounded-sm border border-regolith px-3 py-1.5 text-sm text-dust hover:border-dust hover:text-bright aria-pressed:border-bright aria-pressed:text-bright disabled:opacity-40'
-  const primary = 'rounded-sm border border-sun px-4 py-1.5 text-sm text-sun hover:bg-sun hover:text-sky disabled:opacity-40 disabled:hover:bg-transparent disabled:hover:text-sun'
+  const btn = 'btn'
+  const primary = 'btn btn-primary'
 
   if (phase !== 'setup' && series) {
     return <Mission key={`${siteId}/${startMs}/${JSON.stringify(design)}`} siteName={site.name} series={series} design={design} onEnd={() => setPhase('over')} onSetup={() => setPhase('setup')} />
@@ -96,7 +96,7 @@ export function SurviveGame({ data }: { data: AppData }) {
             min={formatUtcDate(MIN_MS)}
             max={formatUtcDate(MAX_MS - MISSION_DAYS * DAY_MS)}
             onChange={(e) => setDay(e.target.value)}
-            className="mt-1 w-full rounded-sm border border-regolith bg-sky px-2 py-1.5 text-sm"
+            className="mt-1 w-full field text-sm"
           />
         </div>
       </div>
@@ -104,13 +104,13 @@ export function SurviveGame({ data }: { data: AppData }) {
         Surprise me
       </button>
 
-      <h3 className="mt-6 font-display text-lg font-medium">Build your lander</h3>
+      <h3 className="mt-6 title-2">Build your lander</h3>
       <div className="mt-2 grid max-w-3xl gap-4 sm:grid-cols-3">
         <div>
           <label htmlFor={ids.panel} className="block text-xs text-dust">
             Solar panel (tracks the Sun)
           </label>
-          <select id={ids.panel} value={design.panelM2} onChange={(e) => setDesign({ ...design, panelM2: Number(e.target.value) })} className="mt-1 w-full rounded-sm border border-regolith bg-sky px-2 py-1.5 text-sm">
+          <select id={ids.panel} value={design.panelM2} onChange={(e) => setDesign({ ...design, panelM2: Number(e.target.value) })} className="mt-1 w-full field text-sm">
             {PANEL_STEPS.map((m) => (
               <option key={m} value={m}>
                 {m} m² ({m * 8} points)
@@ -122,7 +122,7 @@ export function SurviveGame({ data }: { data: AppData }) {
           <label htmlFor={ids.battery} className="block text-xs text-dust">
             Battery
           </label>
-          <select id={ids.battery} value={design.batteryWh} onChange={(e) => setDesign({ ...design, batteryWh: Number(e.target.value) })} className="mt-1 w-full rounded-sm border border-regolith bg-sky px-2 py-1.5 text-sm">
+          <select id={ids.battery} value={design.batteryWh} onChange={(e) => setDesign({ ...design, batteryWh: Number(e.target.value) })} className="mt-1 w-full field text-sm">
             {BATTERY_STEPS.map((wh) => (
               <option key={wh} value={wh}>
                 {kwh(wh)} ({(wh / 1000) * 4} points)
@@ -222,7 +222,7 @@ function Mission({ siteName, series, design, onEnd, onSetup }: { siteName: strin
   const pct = state.chargeWh / usable
   const dayN = Math.min(MISSION_DAYS, Math.floor((state.i * series.stepMs) / DAY_MS) + 1)
   const over = state.frozen || state.done
-  const btn = 'rounded-sm border border-regolith px-3 py-1.5 text-sm text-dust hover:border-dust hover:text-bright aria-pressed:border-bright aria-pressed:text-bright disabled:opacity-40'
+  const btn = 'btn'
 
   return (
     <section aria-label="Survive the lunar night">
@@ -282,7 +282,7 @@ function Mission({ siteName, series, design, onEnd, onSetup }: { siteName: strin
               <label htmlFor={speedId} className="sr-only">
                 Speed
               </label>
-              <select id={speedId} value={speed} onChange={(e) => setSpeed(Number(e.target.value))} className="rounded-sm border border-regolith bg-sky px-2 py-1 text-sm">
+              <select id={speedId} value={speed} onChange={(e) => setSpeed(Number(e.target.value))} className="field text-sm">
                 {SPEEDS.map((v) => (
                   <option key={v} value={v}>
                     {v} h per second
@@ -302,7 +302,7 @@ function Mission({ siteName, series, design, onEnd, onSetup }: { siteName: strin
       </ul>
       <div className="mt-4 flex gap-2">
         {over && (
-          <button type="button" className="rounded-sm border border-sun px-4 py-1.5 text-sm text-sun hover:bg-sun hover:text-sky" onClick={onSetup}>
+          <button type="button" className="btn btn-primary" onClick={onSetup}>
             Try again
           </button>
         )}

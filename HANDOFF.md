@@ -1,6 +1,15 @@
-# Handoff: 15 November 2026, 14:30 (UTC+8)
+# Handoff: 15 November 2026, 16:40 (UTC+8)
 
-The first computer has no camera, so the work moves to a second computer to test the new **hand control** and record the demo. This file is everything the next Claude session needs; [CLAUDE.md](CLAUDE.md) has the standing rules.
+Written on the second computer (the one with a camera). This file is everything the next Claude session needs; [CLAUDE.md](CLAUDE.md) has the standing rules.
+
+## Demo video (done)
+
+- English, 29.15 s, 1080p, voice-over, captions and music: [docs/demo/CLPS-demo-30s.mp4](docs/demo/CLPS-demo-30s.mp4).
+- **Link for the "Link to Project Demo" field** (plays in the browser, no sign-in, pinned to commit `48e0071`): https://cdn.jsdelivr.net/gh/BroBYW/CLPS-Lunar-Mission-Website@48e0071/docs/demo/CLPS-demo-30s.mp4. GitHub's own file page won't play a file this size; it only offers a download.
+- Space Apps SI rules: the video has a visible "SI-assisted" watermark and an SI disclosure in its metadata (the voice is Microsoft neural text-to-speech; the music was synthesised in code). Say the same in the submission's SI field.
+- Team **Luosifen**, challenge **Lunar Landing Site Navigator**: https://www.spaceappschallenge.org/2026/find-a-team/luosifen/?tab=project
+- The video shows the redesigned site, so production must serve the redesign (see below).
+- The scripts that made it (Playwright screencast, edge-tts, numpy music, ffmpeg) were in a temporary folder and are not in the repository.
 
 ## Deadline
 
@@ -9,12 +18,9 @@ The first computer has no camera, so the work moves to a second computer to test
 ## Where things stand
 
 - GitHub `main` = `dev` = the commit that adds this file. Pushes don't deploy (Vercel isn't linked to GitHub).
-- **Production still serves `ad699f0` (27 Oct).** Two things on `dev` are not live yet:
-  1. `14d5bd1`: a countdown to the next sunset, sunrise, Earthset or Earthrise and the Sun's elevation as a metric (`NowPanel.tsx`, `nextEvents.ts`, `useSkyNow.ts`).
-  2. Hand control (below).
-- A preview with both: https://clps-lunar-mission-browser-g8zxnor3s-alvin-s.vercel.app (sign in to Vercel to open it). Its web build matches this commit; only docs changed after it. Once the user has tried hand control and approves, it can go live with `npx vercel promote https://clps-lunar-mission-browser-g8zxnor3s-alvin-s.vercel.app --scope alvin-s`. If code changes first, deploy a new preview and promote that one instead.
-- [DEMO_30S.md](DEMO_30S.md) records from the production URL, and its Plan shot shows the countdown cards. So **promote before recording**, or record from `npm run dev`.
-- On the first computer, another Claude session was rendering a demo video in `demo-video/`. That folder is git-ignored, so none of it is in this push. If the user wants it, they copy it across by hand.
+- This commit adds the **redesign** (Geist type, solid buttons, cards, floating nav, docked time bar), the **newcomer changes** (the home button leads into the guided story; the Plan view opens with an "At a glance" card; expert panels fold under "Show more details") and the **fun changes** (a hand control button in story step 1; home cards for hand control and the lunar night game). AI_USAGE.md has the details.
+- Deploy it with a new preview from `web/` and promote that preview with the user's OK; older previews don't have the redesign.
+- Hand control passed an automated check (MediaPipe's hand photos through a fake camera) but **has not been tried with a real hand** yet.
 
 ## Hand control (new, needs a real camera test)
 
@@ -66,14 +72,9 @@ Verified on the first computer:
 
 Known limits: one hand only; needs reasonable light; detection runs on the main thread beside Cesium; not tried on phones.
 
-## Demo idea using hand control
-
-[DEMO_30S.md](DEMO_30S.md) has a 30 s shot list from the first computer, with no hand control in it yet. A strong replacement for its 3D shot (16–23 s): the user in front of the camera, sweeping an open hand while the shadows sweep across Shackleton rim's terrain; then a fist, and everything stops. The hand-control panel shows the camera feed and skeleton, so one screen recording captures both. On Windows, use the Snipping Tool's video mode (Win+Shift+R) or Xbox Game Bar (Win+Alt+R).
-
 ## Next steps, in order
 
-1. Test hand control with a real camera (checklist above); tune if needed; commit on `dev`.
-2. With the user's OK: push, then promote a preview to production. Check the live site afterwards.
-3. Record the demo (30 s or less), upload it, and get a public link that needs no sign-in (YouTube "unlisted" works).
-4. Submit before 21:00 (UTC+8).
-5. Add rows to AI_USAGE.md for any further AI-assisted work.
+1. Deploy a preview of this commit, check it, and promote it to production with the user's OK. Check the live site afterwards.
+2. The user fills in the Space Apps project page (all in English): the demo link above, the live site as the final project, the SI field, NASA data. Then **Submit for Judging** before 21:00 (UTC+8); the official close is 23:59 local event time.
+3. If there's time: the user tries hand control with a real hand (checklist above) and it gets tuned.
+4. Add rows to AI_USAGE.md for any further AI-assisted work.

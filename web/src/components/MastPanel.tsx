@@ -60,7 +60,7 @@ export function MastPanel({ site }: { site: Site }) {
 
   return (
     <section aria-label="Mast height" className="mt-8">
-      <h3 className="font-display text-lg font-medium">Mast height</h3>
+      <h3 className="title-2">Mast height</h3>
       <p className="mt-1 max-w-prose text-xs text-dust">
         At the pole the Sun skims the horizon, so a few metres of height can add days of sunlight. NASA's Vertical Solar Array
         Technology project is building solar arrays on masts about 10 m tall for the south pole, and larger designs reach over
@@ -79,7 +79,7 @@ export function MastPanel({ site }: { site: Site }) {
               <label htmlFor={targetId} className="text-dust">
                 Mast needed for
               </label>
-              <select id={targetId} value={target} onChange={(e) => setTarget(Number(e.target.value))} className="rounded-sm border border-regolith bg-sky px-2 py-1">
+              <select id={targetId} value={target} onChange={(e) => setTarget(Number(e.target.value))} className="field">
                 {TARGETS.map((t) => (
                   <option key={t} value={t}>
                     {t}% sunlight

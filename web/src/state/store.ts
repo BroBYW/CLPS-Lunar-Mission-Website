@@ -37,6 +37,8 @@ export interface AppState {
   power: PowerInputs
   /** Camera hand control: an open hand drags time, a fist holds it */
   handControl: boolean
+  /** The Plan view shows its expert panels (metrics, DSN, power, mast, LRO photos, shadow movie, replays) */
+  moreDetails: boolean
   setView: (view: View) => void
   setGame: (game: Game) => void
   setSite: (id: string) => void
@@ -50,6 +52,17 @@ export interface AppState {
   setEarthMargin: (deg: number) => void
   setPower: (p: Partial<PowerInputs>) => void
   setHandControl: (on: boolean) => void
+  setMoreDetails: (on: boolean) => void
+}
+
+// A per-browser convenience: remember whether the Plan view's expert panels were open
+const DETAILS_KEY = 'clps.moreDetails'
+function readDetails(): boolean {
+  try {
+    return typeof localStorage !== 'undefined' && localStorage.getItem(DETAILS_KEY) === '1'
+  } catch {
+    return false
+  }
 }
 
 export const clamp = (v: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, v))
@@ -82,7 +95,8 @@ export const useApp = create<AppState>()((set, get) => ({
   earthMarginDeg: 0,
   power: DEFAULT_POWER,
   handControl: false,
-  setView: (view) => set({ view, playing: false }),
+  moreDetails: readDetails(),
+  setView: (view) => set(view === 'home' ? { view, playing: false, handControl: false } : { view, playing: false }),
   setGame: (game) => set({ game }),
   setSite: (siteId) => set({ siteId }),
   setCompare: (ids) => set({ compareIds: ids.slice(0, MAX_COMPARE) }),
@@ -106,4 +120,12 @@ export const useApp = create<AppState>()((set, get) => ({
   setEarthMargin: (earthMarginDeg) => set({ earthMarginDeg: clamp(earthMarginDeg, 0, 10) }),
   setPower: (p) => set({ power: { ...get().power, ...p } }),
   setHandControl: (handControl) => set({ handControl }),
+  setMoreDetails: (moreDetails) => {
+    try {
+      localStorage.setItem(DETAILS_KEY, moreDetails ? '1' : '0')
+    } catch {
+      // Storage can be blocked; the panels still open for this visit
+    }
+    set({ moreDetails })
+  },
 }))

@@ -38,14 +38,14 @@ export function EclipseReplays({ data, site }: { data: AppData; site: Site }) {
         <label htmlFor={pickId} className="text-dust">
           Watch Earth eclipse the Sun:
         </label>
-        <select id={pickId} value={pick} onChange={(e) => setPick(Number(e.target.value))} className="rounded-sm border border-regolith bg-sky px-2 py-1">
+        <select id={pickId} value={pick} onChange={(e) => setPick(Number(e.target.value))} className="field">
           {eclipses.map((e, i) => (
             <option key={e.peakMs} value={i}>
               {day(e.peakMs)}
             </option>
           ))}
         </select>
-        <button type="button" className="rounded-sm border border-regolith px-2 py-1 text-dust hover:border-dust hover:text-bright" onClick={() => eclipses[pick] && watch(eclipses[pick])}>
+        <button type="button" className="btn" onClick={() => eclipses[pick] && watch(eclipses[pick])}>
           Watch
         </button>
       </div>

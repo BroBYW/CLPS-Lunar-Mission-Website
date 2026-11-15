@@ -11,8 +11,8 @@ export function WindowsTable({ windows, onDownload }: { windows: Window[]; onDow
   return (
     <section aria-label="Sun and Earth windows">
       <div className="flex flex-wrap items-baseline justify-between gap-2">
-        <h3 className="font-display text-lg font-medium">Windows with sunlight and Earth in view</h3>
-        <button type="button" onClick={onDownload} className="rounded-sm border border-regolith px-3 py-1 text-sm hover:border-dust">
+        <h3 className="title-2">Windows with sunlight and Earth in view</h3>
+        <button type="button" onClick={onDownload} className="btn">
           Download CSV
         </button>
       </div>

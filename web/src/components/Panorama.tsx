@@ -287,7 +287,7 @@ export function Panorama({ mask, track, bodies, sunFrac, earthVis, initialWidth 
   const earthText = `Earth ${earthVis ? 'in view' : 'hidden'}, azimuth ${fmtDeg(bodies.earthAz)}, elevation ${fmtDeg(bodies.earthEl, 2)}.`
 
   const btn =
-    'rounded-sm border border-regolith px-2 py-1 text-sm text-dust hover:border-dust hover:text-bright aria-pressed:border-bright aria-pressed:text-bright'
+    'btn'
 
   return (
     <section aria-label="Horizon panorama" className="select-none">

@@ -6,7 +6,7 @@ export function SiteHeader({ site }: { site: Site }) {
   return (
     <header>
       <p className="text-xs text-dust">{GROUP_LABELS[site.group]}</p>
-      <h2 className="font-display text-2xl font-medium">{site.name}</h2>
+      <h2 className="heading-5">{site.name}</h2>
       <p className="mt-1 text-sm tabular text-dust">
         {fmtLatLon(site.lat, site.lon, 4)}. Terrain {site.height_m.toFixed(0)} m above the 1737.4 km reference sphere.
       </p>

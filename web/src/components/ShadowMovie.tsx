@@ -140,7 +140,7 @@ export function ShadowMovie({ data, site }: { data: AppData; site: Site }) {
     ctx.fillStyle = 'rgba(0,0,0,0.6)'
     ctx.fillRect(0, 0, W, 44)
     ctx.fillStyle = css('--color-bright')
-    ctx.font = '22px "Atkinson Hyperlegible Next Variable", sans-serif'
+    ctx.font = '22px "Geist Variable", sans-serif'
     ctx.textBaseline = 'middle'
     ctx.fillText(`${site.name} · ${formatUtc(current.times[Math.min(index, current.times.length - 1)])}`, 14, 22)
     const bar = ((10_000 / 120) * SCALE) | 0
@@ -186,12 +186,12 @@ export function ShadowMovie({ data, site }: { data: AppData; site: Site }) {
     }, 1000 / FPS)
   }
 
-  const btn = 'rounded-sm border border-regolith px-3 py-1.5 text-sm text-dust hover:border-dust hover:text-bright disabled:opacity-40'
+  const btn = 'btn'
   const days = (endMs - startMs) / DAY_MS
 
   return (
     <section aria-label="Shadow movie" className="mt-8">
-      <h3 className="font-display text-lg font-medium">Shadow movie</h3>
+      <h3 className="title-2">Shadow movie</h3>
       <p className="mt-1 max-w-prose text-xs text-dust">
         LRO made movies of the poles from its photos, one frame every two hours. This is one made from the app instead: the 48 km
         around {site.name} lit by the Sun over your {days.toFixed(0)} days, one frame every {stepMs / HOUR_MS} hours, with the terrain's own
@@ -216,7 +216,7 @@ export function ShadowMovie({ data, site }: { data: AppData; site: Site }) {
               </button>
             )}
             {video && (
-              <a href={video.url} download={video.name} className="rounded-sm border border-sun px-3 py-1.5 text-sm text-sun hover:bg-sun hover:text-sky">
+              <a href={video.url} download={video.name} className="btn btn-primary">
                 Download {video.name.endsWith('mp4') ? 'MP4' : 'WebM'}
               </a>
             )}

@@ -169,15 +169,15 @@ export default function Finder({ data }: { data: AppData }) {
         max={max}
         value={Number.isFinite(value) ? value : ''}
         onChange={(e) => onChange(e.target.value === '' ? (max === 100 ? 0 : Infinity) : Number(e.target.value))}
-        className="w-20 rounded-sm border border-regolith bg-shadow px-2 py-1 tabular text-bright"
+        className="w-20 field tabular text-bright"
       />
       {unit}
     </label>
   )
 
   return (
-    <main className="px-4 py-4 lg:px-6">
-      <h2 className="font-display text-2xl font-medium">Find landing dates</h2>
+    <main className="mx-auto max-w-[1600px] px-4 py-6 lg:px-6">
+      <h2 className="heading-4">Find landing dates</h2>
       <p className="mt-1 max-w-prose text-sm text-dust">
         Every site and every start date in a year, scored for a mission of the length you choose. Bright cells meet your limits;
         dark ones don't. Pick a cell, or a row in the table below, to open those dates in the Plan view.
@@ -186,7 +186,7 @@ export default function Finder({ data }: { data: AppData }) {
       <div className="mt-4 flex flex-wrap items-end gap-x-6 gap-y-3">
         <label htmlFor={ids.year} className="flex flex-col gap-1 text-xs text-dust">
           Year
-          <select id={ids.year} value={year} onChange={(e) => setYear(Number(e.target.value))} className="rounded-sm border border-regolith bg-shadow px-2 py-1 text-sm text-bright">
+          <select id={ids.year} value={year} onChange={(e) => setYear(Number(e.target.value))} className="field text-sm text-bright">
             {YEARS.map((y) => (
               <option key={y} value={y}>
                 {y}
@@ -196,7 +196,7 @@ export default function Finder({ data }: { data: AppData }) {
         </label>
         <label htmlFor={ids.len} className="flex flex-col gap-1 text-xs text-dust">
           Mission length
-          <select id={ids.len} value={lengthDays} onChange={(e) => setLengthDays(Number(e.target.value))} className="rounded-sm border border-regolith bg-shadow px-2 py-1 text-sm text-bright">
+          <select id={ids.len} value={lengthDays} onChange={(e) => setLengthDays(Number(e.target.value))} className="field text-sm text-bright">
             {LENGTHS.map((l) => (
               <option key={l} value={l}>
                 {l} days
@@ -206,7 +206,7 @@ export default function Finder({ data }: { data: AppData }) {
         </label>
         <label htmlFor={ids.h} className="flex flex-col gap-1 text-xs text-dust">
           Observer
-          <select id={ids.h} value={heightIndex} onChange={(e) => setHeightIndex(Number(e.target.value))} className="rounded-sm border border-regolith bg-shadow px-2 py-1 text-sm text-bright">
+          <select id={ids.h} value={heightIndex} onChange={(e) => setHeightIndex(Number(e.target.value))} className="field text-sm text-bright">
             {heightsM.map((h, i) => (
               <option key={h} value={i}>
                 {i === 0 ? `Lander, ${h} m` : `Mast, ${h} m`}
@@ -216,7 +216,7 @@ export default function Finder({ data }: { data: AppData }) {
         </label>
         <label htmlFor={ids.rank} className="flex flex-col gap-1 text-xs text-dust">
           Brightest for
-          <select id={ids.rank} value={rankBy} onChange={(e) => setRankBy(e.target.value as RankBy)} className="rounded-sm border border-regolith bg-shadow px-2 py-1 text-sm text-bright">
+          <select id={ids.rank} value={rankBy} onChange={(e) => setRankBy(e.target.value as RankBy)} className="field text-sm text-bright">
             {RANKS.map(([v, label]) => (
               <option key={v} value={v}>
                 {label}
@@ -289,7 +289,7 @@ export default function Finder({ data }: { data: AppData }) {
       </section>
 
       <section aria-label="Best windows" className="mt-8">
-        <h3 className="font-display text-lg font-medium">Best windows in {year}</h3>
+        <h3 className="title-2">Best windows in {year}</h3>
         <p className="mt-1 max-w-prose text-sm text-dust">
           The {BEST_COUNT} best that meet your limits, ranked by {RANKS.find(([v]) => v === rankBy)![1].toLowerCase()}, with at most one per
           site in any {lengthDays} days. Hourly samples here; the Plan view recomputes every 10 minutes.
@@ -338,7 +338,7 @@ export default function Finder({ data }: { data: AppData }) {
                       <td className="py-2 pr-4">{w.earthPct[p.day].toFixed(1)}%</td>
                       <td className="py-2 pr-4">{w.bothPct[p.day].toFixed(1)}%</td>
                       <td className="py-2">
-                        <button type="button" onClick={() => open(sites[p.site], p.day)} className="rounded-sm border border-regolith px-2 py-0.5 text-xs hover:border-dust">
+                        <button type="button" onClick={() => open(sites[p.site], p.day)} className="btn btn-sm">
                           Open in Plan
                         </button>
                       </td>

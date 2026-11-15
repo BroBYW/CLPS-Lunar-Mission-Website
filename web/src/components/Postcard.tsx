@@ -28,11 +28,11 @@ export async function composePostcard(frameUrl: string, title: string, lines: st
   const pad = Math.round(w * 0.03)
   ctx.textBaseline = 'top'
   ctx.fillStyle = '#ede9e1'
-  ctx.font = `500 ${Math.round(band * 0.3)}px "Jost Variable", sans-serif`
+  ctx.font = `500 ${Math.round(band * 0.3)}px "Geist Variable", sans-serif`
   ctx.fillText(title, pad, h + band * 0.14)
   ctx.fillStyle = '#b8b2a7'
   lines.forEach((line, i) => {
-    ctx.font = `${Math.round(band * (i ? 0.13 : 0.17))}px "Atkinson Hyperlegible Next Variable", sans-serif`
+    ctx.font = `${Math.round(band * (i ? 0.13 : 0.17))}px "Geist Variable", sans-serif`
     ctx.fillText(line, pad, h + band * (0.52 + i * 0.22))
   })
   return c.toDataURL('image/jpeg', 0.92)
@@ -52,12 +52,12 @@ export function PostcardPreview({ card, onClose }: { card: PostcardImage; onClos
     }
   }, [card])
   const canShare = !!file && typeof navigator.canShare === 'function' && navigator.canShare({ files: [file] })
-  const btn = 'rounded-sm border border-regolith px-3 py-1.5 text-sm text-dust hover:border-dust hover:text-bright'
+  const btn = 'btn'
   return (
     <section aria-label="Earth postcard" className="mt-4 max-w-3xl rounded-sm border border-shadow-2 bg-shadow p-3">
       <img src={card.url} alt={card.alt} className="w-full" />
       <div className="mt-3 flex flex-wrap gap-2">
-        <a href={card.url} download={card.fileName} className="rounded-sm border border-sun px-3 py-1.5 text-sm text-sun hover:bg-sun hover:text-sky">
+        <a href={card.url} download={card.fileName} className="btn btn-primary">
           Download
         </a>
         {canShare && file && (

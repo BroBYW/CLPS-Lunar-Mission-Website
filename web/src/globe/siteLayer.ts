@@ -9,7 +9,7 @@ import { Cesium } from './moonViewer.ts'
 
 const BRIGHT = Cesium.Color.fromCssColorString('#ede9e1')
 const SKY = Cesium.Color.fromCssColorString('#000000')
-const LABEL_FONT = '13px "Atkinson Hyperlegible Next Variable", sans-serif'
+const LABEL_FONT = '13px "Geist Variable", sans-serif'
 
 export interface SiteLayer {
   select: (id: string) => void

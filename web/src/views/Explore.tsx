@@ -1,5 +1,5 @@
 import { useEffect, useId, useMemo, useRef, useState } from 'react'
-import { EarthGlyph, SunGlyph } from '../components/Glyphs.tsx'
+import { cameraAvailable, EarthGlyph, HandGlyph, SunGlyph } from '../components/Glyphs.tsx'
 import { Panorama, type Follow } from '../components/Panorama.tsx'
 import { Timeline } from '../components/Timeline.tsx'
 import type { AppData, Site } from '../data/load.ts'
@@ -61,9 +61,33 @@ function PlayMonth() {
         setPlaying(!playing)
       }}
       aria-pressed={playing}
-      className="mt-4 rounded-full bg-bright px-5 py-2.5 text-sm font-semibold text-sky"
+      className="btn btn-primary"
     >
       {playing ? 'Pause' : 'Play the month'}
+    </button>
+  )
+}
+
+/** The story's hands-on moment: an open hand moved left or right sweeps the Sun along the skyline */
+function HandSun() {
+  const on = useApp((s) => s.handControl)
+  const setHandControl = useApp((s) => s.setHandControl)
+  const setSpeed = useApp((s) => s.setSpeed)
+  if (!cameraAvailable) return null
+  return (
+    <button
+      type="button"
+      className="btn btn-sun"
+      aria-pressed={on}
+      onClick={() => {
+        // A sweep across the camera then moves time six days
+        setSpeed(72)
+        setHandControl(!on)
+      }}
+      title="Uses your camera. The image stays on this device."
+    >
+      <HandGlyph />
+      {on ? 'Stop hand control' : 'Move the Sun with your hand'}
     </button>
   )
 }
@@ -85,9 +109,13 @@ function Body({ step, data, onSite }: { step: number; data: AppData; onSite: (id
           </p>
           <p className="mt-3">
             Press play to watch a month pass at the Connecting ridge. The yellow line is the Sun's path; the grey silhouette is
-            the real terrain around the site, from NASA's LOLA laser altimeter.
+            the real terrain around the site, from NASA's LOLA laser altimeter. Or turn on your camera and sweep an open hand
+            left or right: the Sun follows it. Make a fist to hold it still.
           </p>
-          <PlayMonth />
+          <div className="mt-4 flex flex-wrap gap-3">
+            <PlayMonth />
+            <HandSun />
+          </div>
         </>
       )
     case 1:
@@ -307,6 +335,7 @@ export default function Explore({ data }: { data: AppData }) {
   const [step, setStep] = useState(0)
   const heading = useRef<HTMLHeadingElement>(null)
   const setSite = useApp((s) => s.setSite)
+  const setView = useApp((s) => s.setView)
   const setRange = useApp((s) => s.setRange)
   const setTime = useApp((s) => s.setTime)
   const setPlaying = useApp((s) => s.setPlaying)
@@ -331,11 +360,11 @@ export default function Explore({ data }: { data: AppData }) {
   const scene = useSiteScene(data, site)
 
   return (
-    <main className="mx-auto max-w-5xl px-4 py-4 lg:px-6">
-      <p className="text-xs text-dust">
+    <main className="mx-auto max-w-5xl px-4 py-6 lg:px-6">
+      <p className="caption-4 text-dust">
         Step {step + 1} of {STEPS.length}
       </p>
-      <h2 ref={heading} tabIndex={-1} className="mt-1 font-display text-2xl font-medium outline-none">
+      <h2 ref={heading} tabIndex={-1} className="heading-4 mt-1 outline-none">
         {def.title}
       </h2>
       <p className="mt-1 text-sm text-dust">
@@ -356,8 +385,8 @@ export default function Explore({ data }: { data: AppData }) {
       <div className="mt-4 max-w-[68ch] text-base leading-relaxed">
         <Body step={step} data={data} onSite={setSite} />
       </div>
-      <nav aria-label="Story steps" className="mt-8 flex items-center justify-between gap-3 border-t border-shadow-2 pt-4">
-        <button type="button" onClick={() => go(step - 1)} disabled={step === 0} className="rounded-full border border-regolith px-5 py-2.5 text-sm disabled:opacity-30">
+      <nav aria-label="Story steps" className="card mt-8 flex items-center justify-between gap-3 py-4">
+        <button type="button" onClick={() => go(step - 1)} disabled={step === 0} className="btn">
           Back
         </button>
         <ol className="flex gap-1.5" aria-label="Progress">
@@ -373,9 +402,15 @@ export default function Explore({ data }: { data: AppData }) {
             </li>
           ))}
         </ol>
-        <button type="button" onClick={() => go(step + 1)} disabled={step === STEPS.length - 1} className="rounded-full bg-bright px-5 py-2.5 text-sm font-semibold text-sky disabled:opacity-30">
-          Next
-        </button>
+        {step === STEPS.length - 1 ? (
+          <button type="button" onClick={() => setView('plan')} className="btn btn-primary">
+            Open the planner
+          </button>
+        ) : (
+          <button type="button" onClick={() => go(step + 1)} className="btn btn-primary">
+            Next
+          </button>
+        )}
       </nav>
     </main>
   )
