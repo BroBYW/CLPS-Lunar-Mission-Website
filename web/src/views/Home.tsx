@@ -112,6 +112,9 @@ export function Home({ data }: { data: AppData | null }) {
             <span className="whitespace-nowrap max-sm:hidden">CLPS Lunar Mission Browser</span>
           </a>
           <div className="flex items-center gap-0.5">
+            <button type="button" onClick={() => go('explore')} className={navLink}>
+              Tour
+            </button>
             <button type="button" onClick={() => go('plan')} className={navLink}>
               Plan
             </button>
@@ -121,8 +124,8 @@ export function Home({ data }: { data: AppData | null }) {
             <button type="button" onClick={() => go('3d')} className={`${navLink} max-sm:hidden`}>
               3D
             </button>
-            <button type="button" onClick={() => go('explore')} className={navLink}>
-              Explore
+            <button type="button" onClick={() => go('play')} className={navLink}>
+              Play
             </button>
           </div>
         </nav>

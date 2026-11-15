@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect, useMemo, useState } from 'react'
+import { lazy, Suspense, useEffect, useMemo, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { AtAGlance } from './components/AtAGlance.tsx'
 import { CompareView } from './components/CompareView.tsx'
@@ -35,19 +35,98 @@ import { Home, Logo } from './views/Home.tsx'
 import { initWorker, seriesRequest, useSeries } from './workers/client.ts'
 
 /** View, label, and a shorter label for phones where it differs. */
-const VIEWS: [View, string, string?][] = [
+type NavItem = [View, string, string?]
+/** The header's five views: the guided story first, so newcomers see where to start. */
+const VIEWS: NavItem[] = [
+  ['explore', 'Tour'],
   ['plan', 'Plan'],
   ['compare', 'Compare'],
-  ['finder', 'Find dates', 'Dates'],
   ['3d', '3D'],
-  ['explore', 'Explore'],
   ['play', 'Play'],
+]
+/** Pages for readers who want more, under "More" in the header. */
+const MORE: NavItem[] = [
+  ['finder', 'Find dates', 'Dates'],
   ['about', 'Method'],
   ['credits', 'Credits'],
 ]
-/** On phones the header keeps the four main views; these two move to the footer. */
-const SECONDARY: View[] = ['about', 'credits']
+/** Also linked from the footer. */
+const FOOTER: View[] = ['about', 'credits']
 const REPO_URL = 'https://github.com/BroBYW/CLPS-Lunar-Mission-Website'
+
+const navButton = (active: boolean) =>
+  `title-4 rounded-lg px-3 py-2 whitespace-nowrap transition-colors max-sm:px-2 ${active ? 'bg-bright text-sky' : 'text-dust hover:bg-shadow-2 hover:text-bright'}`
+
+function NavLabel({ item: [, label, short] }: { item: NavItem }) {
+  if (!short) return <>{label}</>
+  return (
+    <>
+      <span className="max-sm:hidden">{label}</span>
+      <span className="sm:hidden">{short}</span>
+    </>
+  )
+}
+
+/** "More" opens a short menu. While one of its pages is shown, the button takes that page's name. */
+function MoreMenu({ view, setView }: { view: View; setView: (v: View) => void }) {
+  const [open, setOpen] = useState(false)
+  const root = useRef<HTMLDivElement>(null)
+  const current = MORE.find(([v]) => v === view)
+
+  // Close on a click elsewhere or Escape (which hands focus back to the button)
+  useEffect(() => {
+    if (!open) return
+    const away = (e: PointerEvent) => {
+      if (!root.current?.contains(e.target as Node)) setOpen(false)
+    }
+    const esc = (e: KeyboardEvent) => {
+      if (e.key !== 'Escape') return
+      setOpen(false)
+      root.current?.querySelector('button')?.focus()
+    }
+    document.addEventListener('pointerdown', away)
+    document.addEventListener('keydown', esc)
+    return () => {
+      document.removeEventListener('pointerdown', away)
+      document.removeEventListener('keydown', esc)
+    }
+  }, [open])
+
+  return (
+    <div ref={root} className="relative">
+      <button
+        type="button"
+        aria-expanded={open}
+        aria-controls="more-views"
+        onClick={() => setOpen(!open)}
+        className={`${navButton(current !== undefined)} flex items-center gap-1`}
+      >
+        {current ? <NavLabel item={current} /> : 'More'}
+        <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true" className={`transition-transform ${open ? 'rotate-180' : ''}`}>
+          <path d="M3 4.5 6 7.5 9 4.5" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      </button>
+      {open && (
+        <div id="more-views" className="absolute top-full right-0 z-50 mt-2 flex min-w-44 flex-col gap-0.5 rounded-xl border border-white/10 bg-shadow p-1 shadow-lg shadow-black/50">
+          {MORE.map(([v, label]) => (
+            <button
+              key={v}
+              type="button"
+              aria-current={view === v ? 'page' : undefined}
+              onClick={() => {
+                setOpen(false)
+                setView(v)
+              }}
+              className={`${navButton(view === v)} text-left`}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
 
 // CesiumJS only loads when the 3D view (or the home page backdrop) is shown
 const Globe3D = lazy(() => import('./views/Globe3D.tsx'))
@@ -101,27 +180,18 @@ export default function App() {
           aria-label="Views"
           className="flex gap-0.5 max-sm:w-full max-sm:justify-between"
         >
-          {VIEWS.map(([v, label, short]) => (
+          {VIEWS.map((item) => (
             <button
-              key={v}
+              key={item[0]}
               type="button"
-              aria-current={view === v ? 'page' : undefined}
-              aria-label={short ? label : undefined}
-              onClick={() => setView(v)}
-              className={`title-4 rounded-lg px-3 py-2 whitespace-nowrap transition-colors max-sm:px-2 ${SECONDARY.includes(v) ? 'max-sm:hidden' : ''} ${
-                view === v ? 'bg-bright text-sky' : 'text-dust hover:bg-shadow-2 hover:text-bright'
-              }`}
+              aria-current={view === item[0] ? 'page' : undefined}
+              onClick={() => setView(item[0])}
+              className={navButton(view === item[0])}
             >
-              {short ? (
-                <>
-                  <span className="max-sm:hidden">{label}</span>
-                  <span className="sm:hidden">{short}</span>
-                </>
-              ) : (
-                label
-              )}
+              <NavLabel item={item} />
             </button>
           ))}
+          <MoreMenu view={view} setView={setView} />
         </nav>
       </header>
       <div id="content" tabIndex={-1} className="outline-none" />
@@ -173,7 +243,7 @@ export default function App() {
         )}
       <footer className="mt-12 px-4 py-6 text-xs text-dust lg:px-6">
         <nav aria-label="About this project" className="flex flex-wrap gap-x-6 gap-y-2">
-          {VIEWS.filter(([v]) => SECONDARY.includes(v)).map(([v, label]) => (
+          {MORE.filter(([v]) => FOOTER.includes(v)).map(([v, label]) => (
             <button key={v} type="button" onClick={() => setView(v)} className="underline decoration-regolith underline-offset-2 hover:text-bright">
               {label}
             </button>
