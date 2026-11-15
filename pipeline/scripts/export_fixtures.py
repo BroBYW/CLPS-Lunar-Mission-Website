@@ -115,7 +115,7 @@ def metrics_cases(eph: Ephemeris) -> list[dict]:
         s = by_id[sid]
         for hi, h in enumerate(heights):
             ser = site_series(eph, s["lat"], s["lon"], s["height_m"] + h, masks[s["mask_index"], hi], t)
-            m = metrics(ser["f_sun"], ser["earth_vis"], STEP_MS / 3.6e6)
+            m = metrics(ser["f_sun"], ser["earth_vis"], STEP_MS / 3.6e6, sun_el=ser["sun_el"])
             out.append({"site": sid, "height_index": hi, "start_ms": start, "end_ms": end, "step_ms": STEP_MS,
                         "samples": len(t), "metrics": m})
     return out

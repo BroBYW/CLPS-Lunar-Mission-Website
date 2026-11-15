@@ -14,7 +14,8 @@ interface Row {
   label: string
   value: (m: Metrics) => number
   text: (m: Metrics) => string
-  better: 'high' | 'low'
+  /** Which way is better, or null where neither is (a higher Sun helps flat panels but heats the lander) */
+  better: 'high' | 'low' | null
 }
 
 const ROWS: Row[] = [
@@ -24,6 +25,13 @@ const ROWS: Row[] = [
   { label: 'Longest blackout', value: (m) => m.longestBlackout.hours, text: (m) => `${m.longestBlackout.atEdge ? '≥ ' : ''}${fmtHours(m.longestBlackout.hours)}`, better: 'low' },
   { label: 'Sun and Earth together', value: (m) => m.bothPct, text: (m) => `${m.bothPct.toFixed(1)}%`, better: 'high' },
   { label: 'Longest window with both', value: (m) => m.longestWindowH, text: (m) => fmtHours(m.longestWindowH), better: 'high' },
+  { label: "Sun's highest elevation", value: (m) => m.sunElMaxDeg, text: (m) => `${m.sunElMaxDeg.toFixed(2)}°`, better: null },
+  {
+    label: "Sun's mean elevation while lit",
+    value: (m) => m.sunElLitMeanDeg,
+    text: (m) => (Number.isFinite(m.sunElLitMeanDeg) ? `${m.sunElLitMeanDeg.toFixed(2)}°` : 'never lit'),
+    better: null,
+  },
 ]
 
 export function CompareView({ data }: { data: AppData }) {
@@ -62,7 +70,7 @@ export function CompareView({ data }: { data: AppData }) {
   const ready = metrics.every((m) => m)
   const table = ROWS.map((row) => {
     const vals = metrics.map((m) => (m ? row.value(m) : NaN))
-    const best = ready && sites.length > 1 ? (row.better === 'high' ? Math.max(...vals) : Math.min(...vals)) : NaN
+    const best = ready && sites.length > 1 && row.better ? (row.better === 'high' ? Math.max(...vals) : Math.min(...vals)) : NaN
     return { row, vals, best }
   })
   const siteColumns = { gridTemplateColumns: `repeat(${Math.max(1, sites.length)}, minmax(0, 1fr))` }

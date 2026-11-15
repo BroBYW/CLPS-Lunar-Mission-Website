@@ -1,5 +1,5 @@
 {
- "generated_utc": "2026-10-26T15:41:39Z",
+ "generated_utc": "2026-11-15T05:50:19Z",
  "description": "P0 metrics (threshold 0, margin 0) over 2027-01-01T00:00:00..2027-04-01T00:00:00 UTC at 10 min.",
  "cases": [
   {
@@ -10,6 +10,8 @@
    "step_ms": 600000,
    "samples": 12960,
    "metrics": {
+    "sun_el_max_deg": 1.5279873574175906,
+    "sun_el_lit_mean_deg": -0.059377171922336325,
     "sun_mean_pct": 91.82000316733804,
     "sun_any_pct": 95.51697530864197,
     "sun_full_pct": 87.2145061728395,
@@ -31,6 +33,8 @@
    "step_ms": 600000,
    "samples": 12960,
    "metrics": {
+    "sun_el_max_deg": 1.5279873542967317,
+    "sun_el_lit_mean_deg": -0.08163759242676202,
     "sun_mean_pct": 95.26173079074984,
     "sun_any_pct": 97.01388888888889,
     "sun_full_pct": 91.86728395061728,
@@ -52,6 +56,8 @@
    "step_ms": 600000,
    "samples": 12960,
    "metrics": {
+    "sun_el_max_deg": 1.2531031504621015,
+    "sun_el_lit_mean_deg": -0.05739388001744364,
     "sun_mean_pct": 86.1897715582474,
     "sun_any_pct": 90.4320987654321,
     "sun_full_pct": 80.625,
@@ -73,6 +79,8 @@
    "step_ms": 600000,
    "samples": 12960,
    "metrics": {
+    "sun_el_max_deg": 1.2531031473393233,
+    "sun_el_lit_mean_deg": -0.06017614306512374,
     "sun_mean_pct": 87.36583352115957,
     "sun_any_pct": 90.87191358024691,
     "sun_full_pct": 82.92438271604938,

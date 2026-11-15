@@ -34,7 +34,7 @@ export function MetricsPanel({ metrics, pending }: { metrics: Metrics | null; pe
     <section aria-label="Metrics for the selected dates" aria-busy={pending} className="mt-6">
       <h3 className="font-display text-lg font-medium">Over the selected dates</h3>
       {metrics ? (
-        <div className={`mt-3 grid grid-cols-2 gap-x-6 gap-y-5 md:grid-cols-3 xl:grid-cols-5 ${pending ? 'opacity-60' : ''}`}>
+        <div className={`mt-3 grid grid-cols-2 gap-x-6 gap-y-5 md:grid-cols-3${pending ? 'opacity-60' : ''}`}>
           <Stat
             glyph={<SunGlyph className="text-sun" />}
             label="Sunlight"
@@ -69,6 +69,12 @@ export function MetricsPanel({ metrics, pending }: { metrics: Metrics | null; pe
             label="Sun and Earth together"
             value={`${metrics.bothPct.toFixed(1)}%`}
             meaning={`${metrics.windows.length} window${metrics.windows.length === 1 ? '' : 's'} with power and a link to Earth; the longest lasts ${fmtHours(metrics.longestWindowH)}.`}
+          />
+          <Stat
+            glyph={<SunGlyph className="text-sun" />}
+            label="Sun's elevation"
+            value={Number.isFinite(metrics.sunElMaxDeg) ? `peak ${metrics.sunElMaxDeg.toFixed(2)}°` : '–'}
+            meaning={`Above the level horizon${Number.isFinite(metrics.sunElLitMeanDeg) ? `; ${metrics.sunElLitMeanDeg.toFixed(2)}° on average while lit` : ''}. A panel lying flat would get only ${(Math.max(0, Math.sin((metrics.sunElMaxDeg * Math.PI) / 180)) * 100).toFixed(1)}% of full sunlight even at the peak, so panels here stand up.`}
           />
         </div>
       ) : (

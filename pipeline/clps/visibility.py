@@ -85,15 +85,21 @@ def longest_run(flags: np.ndarray) -> tuple[int, bool]:
     return best, touches
 
 
-def metrics(f_sun: np.ndarray, earth_vis: np.ndarray, step_h: float, dark_threshold: float = 0.0) -> dict:
-    """The P0 metrics of PLAN.md §4.5 for one series."""
+def metrics(f_sun: np.ndarray, earth_vis: np.ndarray, step_h: float, dark_threshold: float = 0.0,
+            sun_el: np.ndarray | None = None) -> dict:
+    """The P0 metrics of PLAN.md §4.5 for one series, plus the Sun's elevation (above the level horizon) when given:
+    its highest, and its mean while the site is lit."""
     dark = f_sun <= dark_threshold
     both = ~dark & earth_vis
     ld, ld_edge = longest_run(dark)
     lb, lb_edge = longest_run(~earth_vis)
     windows = runs(both)
     lw = max((b - a for a, b in windows), default=0)
-    return {
+    elevation = {}
+    if sun_el is not None:
+        elevation = {"sun_el_max_deg": float(sun_el.max()),
+                     "sun_el_lit_mean_deg": float(sun_el[~dark].mean()) if (~dark).any() else None}
+    return elevation | {
         "sun_mean_pct": float(f_sun.mean() * 100),
         "sun_any_pct": float((f_sun > 0).mean() * 100),
         "sun_full_pct": float((f_sun >= 1.0 - 1e-6).mean() * 100),  # tolerance matches the browser's float32

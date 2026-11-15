@@ -1,5 +1,5 @@
 {
- "generated_utc": "2026-10-26T15:41:39Z",
+ "generated_utc": "2026-11-15T05:50:19Z",
  "description": "Visible solar-disk fraction (terrain and Earth) from pipeline/clps/visibility.py for the given angles and the site's mask in horizons.bin. The browser must return the same value.",
  "cases": [
   {

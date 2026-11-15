@@ -57,6 +57,9 @@ export interface Metrics {
   bothPct: number
   windows: Window[]
   longestWindowH: number
+  /** The Sun's elevation above the level horizon: its highest, and its mean while the site is lit (NaN if never) */
+  sunElMaxDeg: number
+  sunElLitMeanDeg: number
 }
 
 export interface Criteria {
@@ -75,9 +78,17 @@ export function computeMetrics(s: Series, c: Criteria): Metrics {
   let full = 0
   let earthN = 0
   let bothN = 0
+  let elMax = -Infinity
+  let elLit = 0
+  let litN = 0
   for (let i = 0; i < n; i++) {
     const f = fSun[i]
     sum += f
+    if (s.sunEl[i] > elMax) elMax = s.sunEl[i]
+    if (!dark(i)) {
+      elLit += s.sunEl[i]
+      litN++
+    }
     if (f > 0) any++
     if (f >= 1 - 1e-6) full++ // fractions are stored as float32
     const e = earth(i)
@@ -100,6 +111,8 @@ export function computeMetrics(s: Series, c: Criteria): Metrics {
     bothPct: pct(bothN),
     windows,
     longestWindowH: windows.reduce((m, w) => Math.max(m, w.hours), 0),
+    sunElMaxDeg: n ? elMax : Number.NaN,
+    sunElLitMeanDeg: litN ? elLit / litN : Number.NaN,
   }
 }
 

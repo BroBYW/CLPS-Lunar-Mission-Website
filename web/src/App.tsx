@@ -5,6 +5,7 @@ import { EclipseReplays } from './components/EclipseReplays.tsx'
 import { LroPanel } from './components/LroPanel.tsx'
 import { MastPanel } from './components/MastPanel.tsx'
 import { MissionReplays } from './components/MissionReplays.tsx'
+import { NowPanel } from './components/NowPanel.tsx'
 import { MetricsPanel } from './components/MetricsPanel.tsx'
 import { Panorama } from './components/Panorama.tsx'
 import { PowerPanel } from './components/PowerPanel.tsx'
@@ -168,7 +169,7 @@ function Planner({ data }: { data: AppData }) {
   const site = useMemo(() => (siteId === PIN_ID && pin ? pinSite(pin) : (data.sites.find((s) => s.id === siteId) ?? data.sites[0])), [siteId, pin, data])
   const pickable = useMemo(() => (pin ? [pinSite(pin), ...data.sites] : data.sites), [pin, data])
   const heightsM = data.horizons.heightsM
-  const { heightIndex, heightM, mask, track, bodies, sunFrac, earthVis } = useSiteScene(data, site, site.mask_index < 0 ? pin?.masks : undefined)
+  const { heightIndex, heightM, frame, mask, track, bodies, sunFrac, earthVis } = useSiteScene(data, site, site.mask_index < 0 ? pin?.masks : undefined)
   const { series, pending } = useSeries(seriesRequest(site, heightIndex, heightsM, startMs, endMs))
   const metrics = useMemo(() => (series ? computeMetrics(series, { darkThreshold, earthMarginDeg }) : null), [series, darkThreshold, earthMarginDeg])
 
@@ -212,6 +213,7 @@ function Planner({ data }: { data: AppData }) {
           <Panorama key={focus.n} mask={mask} track={track} bodies={bodies} sunFrac={sunFrac} earthVis={earthVis} initialFollow={focus.follow} initialWidth={focus.width} />
         </div>
         <TimeControls />
+        <NowPanel data={data} frame={frame} mask={mask} />
         <section aria-label="Timeline" className="mt-4">
           <Timeline rows={[{ label: site.name, series }]} startMs={startMs} endMs={endMs} />
           {metrics && (

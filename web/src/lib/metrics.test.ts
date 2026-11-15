@@ -35,6 +35,9 @@ describe('metrics vs Python (browser recomputes the series itself)', () => {
       expect(m.longestDark.atEdge).toBe(p.longest_dark_at_edge)
       expect(m.windows.length).toBe(p.windows)
       expect(Math.abs(m.longestWindowH - p.longest_window_h)).toBeLessThanOrEqual(1 / 6 + 1e-9)
+      // Same float32 ephemeris on both sides, so the elevations match closely
+      expect(m.sunElMaxDeg).toBeCloseTo(p.sun_el_max_deg, 3)
+      expect(m.sunElLitMeanDeg).toBeCloseTo(p.sun_el_lit_mean_deg!, 3)
     })
   }
 })
